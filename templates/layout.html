@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <title>CA vote ou pas </title>
+    <!-- meta -->
+    <!-- icon
+    <link rel="shortcut icon" href="favicon.ico"> -->
+    <!-- ma template.css -->
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/bootstrap.css') }}">
+    <!--<link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/cavote.css') }}">-->
+    <!-- css javascript -->
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/jquery.ui.all.css') }}">
+    <!-- javascript -->
+  </head>
+<body>
+
+<div class="container-fluid">
+
+<h1 class="page-header"><a href="/">Fédéral Database</a> <small>{% block subtitle %}{% endblock %}</small></h1>
+{% with messages = get_flashed_messages(with_categories="true") %}
+  {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }} fade in">
+      <button class="close" data-dismiss="alert">×</button>
+      {{ message }}
+    </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<div class="container">
+{% block body %}{% endblock %}
+</div>
+
+</div> <!-- container -->   
+  <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $("[rel=tooltip]").tooltip();
+    });
+  </script>
+</body>
+</html>

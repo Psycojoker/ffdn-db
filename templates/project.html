@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block subtitle %}
+{% endblock %}
+{% block body %}
+<!--<div class="row">-->
+<!--<div class="span9">-->
+  <a class="pull-right btn btn-success btn-small" href="{{ url_for('edit_project', projectid=project.id) }}"><i class="icon-edit icon-white"></i> Éditer</a>
+  {% if project.name != project.shortname %}
+  <h2 class='page-header'>{{ project.name }} ({{ project.shortname }})</h2> 
+  {% else %}
+  <h2 class='page-header'>{{ project.name }} <small> &nbsp;-&nbsp; {{ project.description }}</small></h2> 
+  {% endif %}
+  {{ project }}
+  <dl class="dl-horizontal">
+    <dt>Website<dd><a href="{{ project.website }}">{{ project.website }}</a>
+    <dt>Email<dd>{{ project.email }}
+    <dt>IRC<dd>Canal {{ project.irc_channel }}, Serveur {{ project.irc_server }}
+    <dt>Étape<dd>{{ project.stepname }}
+<!--</div>-->
+<!--</div>-->
+{% endblock %}

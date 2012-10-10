@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="row">
+  <div class="span6 well">
+    <form action="{{ url_for('edit_project', projectid=project.id) }}" method="post" class="form-horizontal">
+      <fieldset><legend>Édition du projet</legend>
+        <div class="control-group">
+          <label class="control-label" for="name">Nom</label>
+          <div class="controls">
+            <input type="text" size=30 name="name" id="name" value="{{ project.name }}" />
+            <span class="help-inline"><font color="red">*</font></span>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="description">Description</label>
+          <div class="controls">
+            <input type="description" size=50 name="description" id="description" value="{{ project.description }}"></input>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <input type="submit" class="btn btn-primary" value="Enregistrer" />
+          <input type="reset" class="btn" value="Annuler" />
+        </div>
+      </fieldset>
+    </form>
+  </div>
+
+  <div class="span5 well pull-right">
+    <fieldset><legend>Pièces jointes</legend>
+      <table class="table table-stripped table-condensed">
+        <thead>
+          <tr>
+            <th>Lien
+            <th>Actions
+          </tr>
+        </thead>
+        <tbody>
+        {% for attachment in attachments %}
+          <tr>
+            <td>{{ attachment.url }}</td>
+            <td><a href="" class="btn btn-small btn-danger">Supprimer</a></td>
+          </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <form action="" method="post">
+              <td><input type="text" name="url" value="Nouveau document" 
+                onfocus="if(this.value=='Nouveau document')this.value='';"
+                onblur="if(this.value=='')this.value='Nouveau document';" /></td>
+              <td><input type="submit" class="btn btn-small btn-primary" value="+ Ajouter" />
+            </form>
+          </tr>
+        </tfoot>
+      </table>
+    </fieldset>
+  </div>
+
+</div>
+
+{% endblock %}

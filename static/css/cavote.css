@@ -1,0 +1,34 @@
+.table-votes th {
+    text-align: right;
+}
+
+.table-votes input {
+    margin: 0;
+}
+
+.table-votes td {
+    text-align: center;
+}
+
+.table-votes .yes {
+    background-color: #46a546; /* green */
+    /*background-color: #049cdb;*/ /* blue */
+    color: white;
+    font-weight: bold;
+}
+
+.table-votes .no {
+    background-color: #9d261d; /* red */
+    color: white;
+    font-weight: bold;
+}
+
+.table-votes tr:hover .yes {
+    /*background-color: #60C160; [> green <]*/
+    background-color: #55ab55; /* green */
+    /*background-color: #049cdb;*/ /* blue */
+}
+
+.table-votes tr:hover .no {
+    background-color: #C73F38; /* red */
+}
