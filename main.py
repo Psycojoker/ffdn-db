@@ -68,10 +68,12 @@ def edit_project(projectid):
     project = query_db('select * from fai where id = ?', (projectid), one=True)
     if project is None:
         abort(404)
-    project['stepname'] = STEPS[project['step']]
     if request.method == 'POST':
-        d.db.execute('update fai set name = ?, description = ? where id = ?', [request.form['name'], request.form['description'], projectid]) 
+        g.db.execute('update fai set name = ?, description = ? where id = ?', [request.form['name'], request.form['description'], projectid]) 
         g.db.commit()
+        flash(u"Le projet a bien été mis à jour. Merci pour votre contribution !", "success")
+    project = query_db('select * from fai where id = ?', (projectid), one=True)
+    project['stepname'] = STEPS[project['step']]
     return render_template('edit_project.html', project=project)
 
 @app.route('/create/<projectid>')
