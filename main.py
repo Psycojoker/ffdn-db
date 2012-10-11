@@ -50,7 +50,7 @@ def members():
 @app.route('/projects')
 def projects():
     projects = list()
-    for project in query_db('select * from fai order by is_member,step,name'):
+    for project in query_db('select * from fai order by is_member,step desc,name'):
         project['stepname'] = STEPS[project['step']]
         projects.append(project)
     return render_template('projects.html', projects=projects)
@@ -92,6 +92,19 @@ def projects_json(projects):
     for fai in query_db(query):
         fais[fai['name']] = fai
     return jsonify(fais)
+
+#------
+# Filters
+
+@app.template_filter('step_to_label')
+def step_to_label(step):
+    return u"<a href='#' rel='tooltip' data-placement='right' title='" + STEPS[step] + "'><span class='badge badge-" + STEPS_LABELS[step] + "'>" + str(step) + "</span></a>"
+
+@app.template_filter('member_to_label')
+def member_to_label(is_member):
+    if is_member:
+        return u'<a href="#" rel="tooltip" data-placement="right" title="Membre de la Fédération FDN"><span class="label label-success">FFDN</span></a>'
+    return ''
 
 #------
 # Main

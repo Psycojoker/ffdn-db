@@ -4,7 +4,7 @@ Liste des projets recencés
 {% endblock %}
 {% block body %}
 <div>
-<table class="table">
+<table class="table table-condensed table-striped table-hover">
   <thead>
     <tr>
       <th>Nom</th>
@@ -16,9 +16,11 @@ Liste des projets recencés
   <tbody>
     {% for project in projects %}
     <tr>
-      <td>{{ project.name }}</td>
+      <td>{% autoescape false %}{{ project.is_member | member_to_label }}{% endautoescape %} &nbsp;{{ project.name }}</td>
       <td>{{ project.zone }}</td>
-      <td><a href="#" rel="tooltip" data-placement="right" title="{{ project.stepname }}">{{ project.step }}</a></td>
+      {% autoescape false %}
+      <td>{{ project.step | step_to_label }}</td>
+      {% endautoescape %}
       <td><a class="pull-right btn btn-small" href="{{ url_for('project', projectid=project.id) }}"><i class="icon-search"></i></a>
     </tr>
     {% endfor %}
