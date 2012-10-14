@@ -1,0 +1,87 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="row">
+  <div class="span11 well">
+    <form action="{{ url_for('create_project') }}" method="post" class="form-horizontal">
+      <fieldset><legend>Nouveau projet de FAI <small>- I'm exited :)</small></legend>
+        <div class="control-group">
+          <label class="control-label" for="name">Nom complet</label>
+          <div class="controls">
+            <input type="text" name="name" id="name" />
+            <span class="help-inline"><font color="red">*</font> &nbsp; Exemple : French Data Network</span>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="shortname">Nom court</label>
+          <div class="controls">
+            <input type="text" name="shortname" id="shortname" />
+            <span class="help-inline"><font color="red">*</font> &nbsp; Exemple :  FDN</span>
+            <span class="help-block">Si le nom court et le même que le nom complet, mettez simplement la même chose.</span>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="description">Description</label>
+          <div class="controls">
+            <input type="text" name="description" id="description" />
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="website">Website</label>
+          <div class="controls">
+            <input type="text" name="website" id="website" />
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="email">Email</label>
+          <div class="controls">
+            <input type="text" name="email" id="email" />
+            <span class="help-block">Email de contact du projet. N'hésitez pas à utiliser des [at] au lieu de @, pour éviter le spam.</span>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="irc">IRC</label>
+          <div class="controls">
+            Chan <input class="span2" type="text" name="irc_channel" id="irc_channel" />
+            sur <input class="span2" type="text" name="irc_server" id="irc_server" />
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="zone">Zone</label>
+          <div class="controls">
+            <input type="text" name="zone" id="zone" />
+            <span class="help-block">Zone (région, département, ville, village…) concernée par le FAI.</span>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="gps">Coordonnées GPS</label>
+          <div class="controls">
+            <div class="input-append input-prepend">
+              <input class="span2" type="text" name="gps1" id="gps1" />
+              <span class="add-on">:</span>
+              <input class="span2" type="text" name="gps2" id="gps2" />
+            </div>
+            <span class="help-block">Coordonnées GPS du siège social ou du point de rencontre habituel, pour la carte</span>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="step">Étape</label>
+          <div class="controls">
+            <select name="step" id="step">
+              {% for i in range(1, 8) %}
+              <option>{{ i }} - {{ i | stepname }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <input type="submit" class="btn btn-primary" value="Enregistrer" />
+          <input type="reset" class="btn" value="Annuler" />
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
