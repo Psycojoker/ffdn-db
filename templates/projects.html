@@ -9,6 +9,7 @@ Liste des projets recencés
     <tr>
       <th>Nom</th>
       <th>Zone</th>
+      <th>Services</th>
       <th>Étape</th>
       <th></th>
     </tr>
@@ -18,6 +19,7 @@ Liste des projets recencés
     <tr>
       <td>{% autoescape false %}{{ project.is_member | member_to_label }}{% endautoescape %} &nbsp;{{ project.name }}</td>
       <td>{{ project.zone }}</td>
+      <td>{{ project.services }}</td>
       {% autoescape false %}
       <td>{{ project.step | step_to_label }}</td>
       {% endautoescape %}
@@ -26,6 +28,6 @@ Liste des projets recencés
     {% endfor %}
   </tbody>
 </table>
-<a class="pull-right btn btn-primary btn-small" href="">Ajoutez le votre !</a>
+<a class="pull-right btn btn-primary btn-small" href="{{ url_for('create_project') }}">Ajoutez le votre !</a>
 </div>
 {% endblock %}

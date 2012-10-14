@@ -50,14 +50,14 @@ def members():
 @app.route('/projects')
 def projects():
     projects = list()
-    for project in query_db('select * from fai order by is_member,step desc,name'):
+    for project in query_db('select * from fai order by is_member desc,step desc,name'):
         project['stepname'] = STEPS[project['step']]
         projects.append(project)
     return render_template('projects.html', projects=projects)
 
 @app.route('/fai/<projectid>')
 def project(projectid):
-    project = query_db('select * from fai where id = ?', (projectid), one=True) 
+    project = query_db('select * from fai where id = ?', [projectid], one=True) 
     if project is None:
         abort(404)
     project['stepname'] = STEPS[project['step']]
@@ -65,20 +65,60 @@ def project(projectid):
 
 @app.route('/edit/<projectid>', methods=['GET', 'POST'])
 def edit_project(projectid):
-    project = query_db('select * from fai where id = ?', (projectid), one=True)
+    project = query_db('select * from fai where id = ?', [projectid], one=True)
     if project is None:
         abort(404)
     if request.method == 'POST':
-        g.db.execute('update fai set name = ?, description = ? where id = ?', [request.form['name'], request.form['description'], projectid]) 
-        g.db.commit()
-        flash(u"Le projet a bien été mis à jour. Merci pour votre contribution !", "success")
-    project = query_db('select * from fai where id = ?', (projectid), one=True)
+        if request.form['name']:
+            if request.form['shortname']:
+                if query_db('select * from fai where id!=? and (name=? or shortname=?)', [projectid, request.form['name'], request.form['shortname']], one=True) is None:
+                    is_member = 0
+                    if 'is_member' in request.form.keys():
+                        is_member = 1
+                    g.db.execute('update fai set name = ?, shortname = ?, description = ?, website = ?, email = ?, irc_channel = ?, irc_server = ?, zone = ?, gps = ?, step = ?, is_member = ? where id = ?', 
+                            [request.form['name'], request.form['shortname'], request.form['description'], request.form['website'], request.form['email'], request.form['irc_channel'], request.form['irc_server'], request.form['zone'], request.form['gps1'] + ':' + request.form['gps2'], request.form['step'][:1], is_member, projectid]) 
+                    g.db.commit()
+                    flash(u"Le projet a bien été mis à jour. Merci pour votre contribution !", "success")
+                    project = query_db('select * from fai where id = ?', [projectid], one=True)
+                    return redirect(url_for(project, projectid=projectid))
+                else:
+                    flash(u'Le nom complet ou le nom court que vous avez choisi est déjà pris.', 'error')
+            else:
+                flash(u'Vous devez spécifier un nom court (éventuellement, le même que le nom complet).', 'error')
+        else:
+            flash(u'Vous devez spécifier un nom.', 'error')
+
     project['stepname'] = STEPS[project['step']]
     return render_template('edit_project.html', project=project)
 
-@app.route('/create/<projectid>')
-def create_project(projectid):
-    abort(404) # TODO
+@app.route('/create', methods=['GET', 'POST'])
+def create_project():
+    if request.method == 'POST':
+        if request.form['name']:
+            if request.form['shortname']:
+                if query_db('select * from fai where name=? or shortname=?', [request.form['name'], request.form['shortname']], one=True) is None:
+                    g.db.execute('INSERT INTO fai (name, shortname, description, website, email, irc_channel, irc_server, zone, gps, step) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+                            [request.form['name'], request.form['shortname'], request.form['description'], request.form['website'], request.form['email'], request.form['irc_channel'], request.form['irc_server'], request.form['zone'], request.form['gps1'] + ':' + request.form['gps2'], request.form['step'][:1]]) 
+                    g.db.commit()
+                    flash(u"Le projet a bien été créé. Merci pour votre contribution !", "success")
+                    project = query_db('select * from fai where name = ?', [request.form['name']], one=True)
+                    if project is not None:
+                        return redirect(url_for(project))
+                    else:
+                        flash(u'Hum… il semble que le projet n\'a pas été créé… vous voulez-bien réessayer ?', 'error')
+                else:
+                    flash(u'Le nom complet ou le nom court que vous avez choisi est déjà pris.', 'error')
+            else:
+                flash(u'Vous devez spécifier un nom court (éventuellement, le même que le nom complet).', 'error')
+        else:
+            flash(u'Vous devez spécifier un nom.', 'error')
+    return render_template('create_project.html')
+
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    if request.method == 'POST':
+        pass
+    return render_template('search.html')
 
 @app.route('/api/<projects>.json')
 def projects_json(projects):
@@ -105,6 +145,19 @@ def member_to_label(is_member):
     if is_member:
         return u'<a href="#" rel="tooltip" data-placement="right" title="Membre de la Fédération FDN"><span class="label label-success">FFDN</span></a>'
     return ''
+
+@app.template_filter('stepname')
+def stepname(step):
+    return STEPS[step]
+
+@app.template_filter('gpspart')
+def gpspart(gps, part):
+    parts = gps.split(':');
+    if part == 1:
+        return parts[0]
+    elif part == 2:
+        return parts[1]
+    return "";
 
 #------
 # Main
