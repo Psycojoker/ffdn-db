@@ -1,0 +1,9 @@
+{% for member in members %}
+<a class="box" href="{{ member.website }}">
+  <div class="infobox">
+    <h3 class="box-title">{{ member.shortname }}</h3>
+    <img class="box-image" src="{{ member.logo }}" alt="Logo {{ member.shortname }}" />
+    <span class="box-content">{{ member.services }}<br /><strong>{{ member.zone }}</strong></span>
+  </div>
+</a>
+{% endfor %}

@@ -4,6 +4,7 @@ Liste des projets recencés
 {% endblock %}
 {% block body %}
 <div>
+<a class="pull-right btn btn-primary btn-small" href="{{ url_for('create_project') }}">Ajoutez le votre !</a>
 <table class="table table-condensed table-striped table-hover">
   <thead>
     <tr>
@@ -17,7 +18,8 @@ Liste des projets recencés
   <tbody>
     {% for project in projects %}
     <tr>
-      <td>{% autoescape false %}{{ project.is_member | member_to_label }}{% endautoescape %} &nbsp;{{ project.name }}</td>
+      <td>{% autoescape false %}{{ project.is_member | member_to_label }}{% endautoescape %} &nbsp;
+        <a href="{{ url_for('project', projectid=project.id) }}">{{ project.name }}</a></td>
       <td>{{ project.zone }}</td>
       <td>{{ project.services }}</td>
       {% autoescape false %}

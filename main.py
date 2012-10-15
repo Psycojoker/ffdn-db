@@ -80,7 +80,7 @@ def edit_project(projectid):
                     g.db.commit()
                     flash(u"Le projet a bien été mis à jour. Merci pour votre contribution !", "success")
                     project = query_db('select * from fai where id = ?', [projectid], one=True)
-                    return redirect(url_for(project, projectid=projectid))
+                    return redirect(url_for('project', projectid=projectid))
                 else:
                     flash(u'Le nom complet ou le nom court que vous avez choisi est déjà pris.', 'error')
             else:
@@ -103,7 +103,7 @@ def create_project():
                     flash(u"Le projet a bien été créé. Merci pour votre contribution !", "success")
                     project = query_db('select * from fai where name = ?', [request.form['name']], one=True)
                     if project is not None:
-                        return redirect(url_for(project))
+                        return redirect(url_for('project', projectid=project['id']))
                     else:
                         flash(u'Hum… il semble que le projet n\'a pas été créé… vous voulez-bien réessayer ?', 'error')
                 else:
@@ -132,6 +132,11 @@ def projects_json(projects):
     for fai in query_db(query):
         fais[fai['name']] = fai
     return jsonify(fais)
+
+@app.route('/api/members_drupal')
+def members_drupal():
+    members = query_db('select * from fai where is_member = 1 order by shortname') 
+    return render_template('members_drupal.html', members=members)
 
 #------
 # Filters
