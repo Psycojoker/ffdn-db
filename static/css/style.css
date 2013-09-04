@@ -1,0 +1,48 @@
+.control-group.required label:before {
+    content: '*';
+    color: red;
+    padding-right: 5px;
+}
+
+.fieldlist, .formfield {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    display: inline-block;
+}
+
+.fieldlist li {
+    margin: 0 0 2px 0;
+    padding: 0;
+}
+
+.formfield li {
+    display: inline;
+    margin-right: 3px;
+}
+
+.formfield li .bootstrap-select {
+    width: 190px;
+}
+
+.formfield li .bootstrap-select .filter-option {
+    font-size: 0.9em !important;
+}
+
+.formfield li .bootstrap-select .dropdown-menu li {
+    display: list-item;
+}
+
+.input-middle input:first-of-type {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+.input-middle input:last-of-type {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.form-horizontal .help-block {
+    margin-top: 0 !important;
+}

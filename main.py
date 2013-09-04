@@ -3,6 +3,7 @@
 
 from flask import Flask, request, session, g, redirect, url_for, abort, \
     render_template, flash, jsonify 
+from flask.ext.babel import Babel, gettext as _
 import sqlite3
 from datetime import date, time, timedelta, datetime
 import locale
@@ -10,9 +11,11 @@ locale.setlocale(locale.LC_ALL, '')
 import string
 
 from settings import *
+import forms
 
 app = Flask(__name__) 
 app.config.from_object(__name__)
+babel = Babel(app)
 
 def connect_db():
     return sqlite3.connect(app.config['DATABASE'])
@@ -91,8 +94,8 @@ def edit_project(projectid):
     project['stepname'] = STEPS[project['step']]
     return render_template('edit_project.html', project=project)
 
-@app.route('/create', methods=['GET', 'POST'])
-def create_project():
+@app.route('/create_old', methods=['GET', 'POST'])
+def create_project_old():
     if request.method == 'POST':
         if request.form['name']:
             if request.form['shortname']:
@@ -113,6 +116,14 @@ def create_project():
         else:
             flash(u'Vous devez spécifier un nom.', 'error')
     return render_template('create_project.html')
+
+@app.route('/create', methods=['GET', 'POST'])
+def create_project():
+    form = forms.ProjectForm()
+    if form.validate_on_submit():
+        flash(_(u'Thanks !'))
+        return redirect('/')
+    return render_template('project_form.html', form=form)
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
