@@ -27,7 +27,7 @@
 
 <div class="row">
   <div class="span11 well">
-    <form action="{{ url_for('test') }}" method="post" class="form-horizontal">
+    <form action="{{ url_for('create_project') }}" method="post" class="form-horizontal">
       {{ form.csrf_token }}
       <fieldset><legend>{{ _("Add a new project") }}</legend>
         {{ render_field(form.name) }}
