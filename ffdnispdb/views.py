@@ -23,7 +23,7 @@ def members():
     return render_template('members.html', members=members)
 
 @app.route('/projects')
-def projects():
+def project_list():
     projects = list()
     for project in query_db('select * from fai order by is_member desc,step desc,name'):
         project['stepname'] = STEPS[project['step']]

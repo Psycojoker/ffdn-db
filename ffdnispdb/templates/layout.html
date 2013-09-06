@@ -2,7 +2,7 @@
 <html lang="fr">
   <head>
     <meta charset="utf-8">
-    <title>Fédéral Database</title>
+    <title>FFDN ISP Database</title>
     <!-- meta -->
     <!-- icon
     <link rel="shortcut icon" href="favicon.ico"> -->
@@ -30,7 +30,7 @@
           <li class="active">
           <a href="/">Home</a>
           </li>
-          <li><a href="#">Project List</a></li>
+          <li><a href="{{ url_for('project_list') }}">Project List</a></li>
           <li><a href="#">Schema</a></li>
           <li><a href="#">API</a></li>
         </ul>
@@ -39,9 +39,7 @@
   </div>
 </div>
 
-<div class="container">
-{% block container %}
-<h2 class="page-header">{% block subtitle %}{% endblock %}</h2>
+<div id="main-container" class="container">
 {% with messages = get_flashed_messages(with_categories="true") %}
   {% if messages %}
     {% for category, message in messages %}
@@ -52,7 +50,8 @@
     {% endfor %}
   {% endif %}
 {% endwith %}
-
+{%- block container %}
+<h2 class="page-header">{% block page_title %}{% endblock %}</h2>
 <div class="container">
 {% block body %}{% endblock %}
 </div>

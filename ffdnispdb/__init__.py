@@ -4,7 +4,7 @@ from flask import Flask, g
 from flask.ext.babel import Babel
 import sqlite3
 
-app = Flask(__name__) 
+app = Flask(__name__)
 app.config.from_object('config')
 babel = Babel(app)
 
