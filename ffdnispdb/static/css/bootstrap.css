@@ -4439,7 +4439,7 @@ input[type="submit"].btn.btn-mini {
 
 .navbar-link:hover,
 .navbar-link:focus {
-  color: #dddddd;
+  color: #f8f8f8;
 }
 
 .navbar .divider-vertical {
@@ -4624,9 +4624,9 @@ input[type="submit"].btn.btn-mini {
 
 .navbar .nav > li > a:focus,
 .navbar .nav > li > a:hover {
-  color: #dddddd;
+  color: #f8f8f8;
   text-decoration: none;
-  background-color: transparent;
+  background-color: #729fcf;
 }
 
 .navbar .nav > .active > a,
@@ -4738,8 +4738,8 @@ input[type="submit"].btn.btn-mini {
 
 .navbar .nav li.dropdown > a:hover .caret,
 .navbar .nav li.dropdown > a:focus .caret {
-  border-top-color: #dddddd;
-  border-bottom-color: #dddddd;
+  border-top-color: #f8f8f8;
+  border-bottom-color: #f8f8f8;
 }
 
 .navbar .nav li.dropdown.open > .dropdown-toggle,

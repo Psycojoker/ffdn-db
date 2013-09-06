@@ -17,6 +17,25 @@
     margin-top: 0;
 }
 
+input#search-input {
+    position: relative;
+    padding-left: 23px;
+}
+
+.navbar-search:before {
+    content:'';
+    display: block;
+    width: 14px;
+    height: 14px;
+    background-image: url(../img/glyphicons-halflings.png);
+    background-position: -48px 0;
+    position: absolute;
+    top: 9px;
+    left: 8px;
+    z-index:99;
+    opacity: 0.5;
+}
+
 #ffdn-header {
     font-family: ffdn;
     font-size: 24px;

@@ -26,6 +26,9 @@
       </a>
       <a class="brand" href="/"><span id="ffdn-header"><span>F</span><span>F</span><span>D</span><span>N</span></span> Database</a>
       <div class="nav-collapse collapse">
+        <form class="navbar-search pull-right">
+          <input type="text" id="search-input" class="search-query input-medium" placeholder="{{ _("Search") }}"/>
+        </form>
         <ul class="nav pull-right">
           <li class="active">
           <a href="/">Home</a>
@@ -33,8 +36,9 @@
           <li><a href="{{ url_for('project_list') }}">Project List</a></li>
           <li><a href="#">Schema</a></li>
           <li><a href="#">API</a></li>
+          <li class="divider-vertical"></li>
         </ul>
-        </div>
+      </div>
     </div>
   </div>
 </div>
