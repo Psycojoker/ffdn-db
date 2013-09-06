@@ -49,7 +49,7 @@ class CoveredArea(InsecureForm):
 
 class ProjectForm(Form):
     name          = TextField(_(u'full name'), validators=[DataRequired(), Length(min=2)], description=[_(u'E.g. French Data Network')])
-    short_name    = TextField(_(u'short name'), validators=[Optional(), Length(min=2, max=12)], description=[_(u'E.g. FDN')])
+    short_name    = TextField(_(u'short name'), validators=[Optional(), Length(min=2, max=15)], description=[_(u'E.g. FDN')])
     description   = TextField(_(u'description'), description=[None, _(u'Short text describing the project')])
     website       = TextField(_(u'website'), validators=[Optional(), URL(require_tld=True)])
     contact_email = TextField(_(u'contact email'), validators=[Optional(), Email()])
