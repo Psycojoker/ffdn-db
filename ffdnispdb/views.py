@@ -1,49 +1,21 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from flask import Flask, request, session, g, redirect, url_for, abort, \
+from flask import request, g, redirect, url_for, abort, \
     render_template, flash, jsonify 
-from flask.ext.babel import Babel, gettext as _
-import sqlite3
+from flask.ext.babel import gettext as _
 from datetime import date, time, timedelta, datetime
 import locale
 locale.setlocale(locale.LC_ALL, '')
 import string
 
-from settings import *
-import forms
+from . import forms
+from .constants import *
+from . import app, query_db
 
-app = Flask(__name__) 
-app.config.from_object(__name__)
-babel = Babel(app)
-
-def connect_db():
-    return sqlite3.connect(app.config['DATABASE'])
-
-@app.before_request
-def before_request():
-    g.db = connect_db()
-    #g.db.execute("PRAGMA foreign_keys = ON")
-
-@app.teardown_request
-def teardown_request(exception):
-    g.db.close()
 
 @app.route('/')
 def home():
     return render_template('index.html', active_button="home")
-
-def query_db(query, args=(), one=False):
-    cur = g.db.execute(query, args)
-    rv = [dict((cur.description[idx][0], value)
-        for idx, value in enumerate(row)) for row in cur.fetchall()]
-    return (rv[0] if rv else None) if one else rv
-
-def init_db():
-    with closing(connect_db()) as db:
-        with app.open_resource('schema.sql') as f:
-            db.cursor().executescript(f.read())
-        db.commit()
 
 @app.route('/members')
 def members():
@@ -181,10 +153,4 @@ def gpspart(gps, part):
     elif part == 2:
         return parts[1]
     return "";
-
-#------
-# Main
-
-if __name__ == '__main__':
-    app.run()
 

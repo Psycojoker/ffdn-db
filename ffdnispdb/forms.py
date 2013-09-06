@@ -6,7 +6,7 @@ from wtforms import TextField, DecimalField, SelectField, SelectMultipleField, F
 from wtforms.widgets import TextInput, ListWidget, html_params, HTMLString, CheckboxInput, Select
 from wtforms.validators import DataRequired, Optional, URL, Email, Length
 from flask.ext.babel import Babel, gettext as _
-from settings import STEPS
+from .constants import STEPS
 
 
 class InputListWidget(ListWidget):
