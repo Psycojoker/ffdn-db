@@ -9,10 +9,18 @@
     font-style: normal;
 }
 
+#homepage-body {
+    margin-top: 25px;
+}
+
 #ffdn-header {
     font-family: ffdn;
     font-size: 24px;
     letter-spacing: 1px;
+    display: inline-block;
+}
+
+#ffdn-header span {
     display: inline-block;
 }
 
@@ -29,6 +37,10 @@
     50% {
         transform: scaleX(1.5);
     }
+}
+
+#map {
+    height: 600px;
 }
 
 .control-group.required label:before {

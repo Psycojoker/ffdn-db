@@ -8,8 +8,10 @@
     <link rel="shortcut icon" href="favicon.ico"> -->
     <!-- css -->
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/bootstrap.css') }}">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/bootstrap-responsive.css') }}">
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/jquery.ui.all.css') }}">
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/bootstrap-select.min.css') }}">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/leaflet.css') }}">
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/style.css') }}">
   </head>
 <body>
@@ -22,13 +24,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </a>
-      <a class="brand" href="/"><span id="ffdn-header">FFDN</span> Database</a>
+      <a class="brand" href="/"><span id="ffdn-header"><span>F</span><span>F</span><span>D</span><span>N</span></span> Database</a>
       <div class="nav-collapse collapse">
         <ul class="nav pull-right">
           <li class="active">
           <a href="/">Home</a>
           </li>
-          <li><a href="#">Add Project</a></li>
           <li><a href="#">Project List</a></li>
           <li><a href="#">Schema</a></li>
           <li><a href="#">API</a></li>
@@ -39,6 +40,7 @@
 </div>
 
 <div class="container">
+{% block container %}
 <h2 class="page-header">{% block subtitle %}{% endblock %}</h2>
 {% with messages = get_flashed_messages(with_categories="true") %}
   {% if messages %}
@@ -55,10 +57,13 @@
 {% block body %}{% endblock %}
 </div>
 
+{% endblock container%}
 </div> <!-- container -->   
+
   <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-select.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='js/leaflet.js') }}"></script>
   <script type="text/javascript" src="{{ url_for('static', filename='js/site.js') }}"></script>
   <script type="text/javascript">
     $(document).ready(function () {

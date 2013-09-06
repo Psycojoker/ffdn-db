@@ -15,7 +15,46 @@ $(function () {
         });
     });
     $('.selectpicker').selectpicker();
+    init_map();
 });
+
+function init_map() {
+    var mapquest=L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.jpg', {
+        attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, '+
+                     'Tiles courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a>',
+        subdomains: '1234'
+    });
+    var mapquestsat=L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.jpg', {
+        attribution: '&copy; Tiles courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a>, '+
+                     'Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency',
+        subdomains: '1234',
+        maxZoom: 11
+    });
+    var osm=L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
+        subdomains: 'ab'
+    });
+    var hyb=L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/hyb/{z}/{x}/{y}.jpg', {
+        subdomains: '1234',
+        maxZoom: 11
+    });
+
+    var map = L.map('map', {
+        center: new L.LatLng(46.603354, 10),
+        zoom: 4,
+        layers: [mapquest]
+    });
+    map.attributionControl.setPrefix('');
+    L.control.layers({'MapQuest': mapquest, 'OSM Mapnik': osm, 'MapQuest Aerial': mapquestsat}).addTo(map);
+    map.on('baselayerchange', function(a) {
+        if(a.name == 'MapQuest Aerial') {
+            map.addLayer(hyb);
+            hyb.bringToFront();
+        } else {
+            map.removeLayer(hyb);
+        }
+    });
+}
 
 function change_input_num(li, new_num, reset=false) {
     li.find('input,select').each(function() {
