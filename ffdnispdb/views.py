@@ -89,7 +89,7 @@ def create_project_old():
             flash(u'Vous devez spécifier un nom.', 'error')
     return render_template('create_project.html')
 
-@app.route('/add-my-project', methods=['GET'])
+@app.route('/add-a-project', methods=['GET'])
 def add_project():
     return render_template('add_project.html')
 

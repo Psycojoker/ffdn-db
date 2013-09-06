@@ -122,6 +122,35 @@ input#search-input {
     height: 600px;
 }
 
+
+.project-choice {
+    padding: 30px;
+    background-color: #dddddd;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+}
+
+.same-height-hack {
+    margin-bottom: -99999px;
+    padding-bottom: 99999px;
+}
+
+.same-height-borderfix {
+    margin-top: -15px;
+    padding: 0;
+}
+
+.project-choice h3 {
+    text-align: center;
+}
+
+
+
+/*
+ * Forms & stuff
+ */
+
 .control-group.required label:before {
     content: '*';
     color: red;
