@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-DATABASE = '/tmp/cavote.db'
+DATABASE = './ffdn-db.sqlite'
 #PASSWD_SALT = 'change this value to some random chars!'
 SECRET_KEY = '{J@uRKO,xO-PK7B,jF?>iHbxLasF9s#zjOoy=+:'
 DEBUG = True

@@ -117,7 +117,12 @@ def create_project_old():
             flash(u'Vous devez spécifier un nom.', 'error')
     return render_template('create_project.html')
 
-@app.route('/create', methods=['GET', 'POST'])
+@app.route('/add-my-project', methods=['GET'])
+def add_project():
+    return render_template('add_project.html')
+
+
+@app.route('/create/form', methods=['GET', 'POST'])
 def create_project():
     form = forms.ProjectForm()
     if form.validate_on_submit():
@@ -125,11 +130,13 @@ def create_project():
         return redirect('/')
     return render_template('project_form.html', form=form)
 
+
 @app.route('/search', methods=['GET', 'POST'])
 def search():
     if request.method == 'POST':
         pass
     return render_template('search.html')
+
 
 @app.route('/api/<projects>.json')
 def projects_json(projects):

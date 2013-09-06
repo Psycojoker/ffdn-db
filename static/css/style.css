@@ -1,3 +1,36 @@
+
+@font-face {
+    font-family: 'ffdn';
+    src: url('../fonts/ffdn.eot');
+    src: url('../fonts/ffdn.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/ffdn.woff') format('woff'),
+         url('../fonts/ffdn.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+#ffdn-header {
+    font-family: ffdn;
+    font-size: 24px;
+    letter-spacing: 1px;
+    display: inline-block;
+}
+
+.brand:hover #ffdn-header {
+    animation-duration: 0.6s;
+    animation-name: lulz;
+}
+
+@keyframes lulz {
+    0% {
+        transform: scaleX(1);
+        transform: scaleY(0.5);
+    }
+    50% {
+        transform: scaleX(1.5);
+    }
+}
+
 .control-group.required label:before {
     content: '*';
     color: red;
