@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% block page_title -%}
+{% trans project_name=project.name -%}
+<small>Project:</small> {{ project_name }}
+{%- endtrans %}
+{%- endblock %}
+{% block body %}
+  <div class="pull-right">
+    <div class="text-right">
+      <a class="btn btn-success btn-small" href="{{ url_for('edit_project', projectid=project.id) }}"><i class="icon-edit icon-white"></i> {{ _("Edit") }}</a>
+    </div>
+    <a href="{{ project.website }}"><img alt="{{ project.name }}" src="{{ project.logoURL }}" style="max-width: 300px;" /></a>
+  </div>
+  <dl class="dl-horizontal">
+    <dt>{{ _("name")|capitalize }}</dt>
+      <dd>{{ project.name }}</dd>
+    <dt>{{ _("short name")|capitalize }}</dt>
+      <dd>{{ project.shortname }}</dd>
+    <dt>{{ _("description")|capitalize }}</dt>
+      <dd>{{ project.description|default(_("<em>None yet</em>")) }}</dd>
+    <dt>{{ _("covered areas")|capitalize }}</dt>
+      <dd>{{ project.zone|default(_("<em>None yet</em>")) }}</dd>
+    <dt>{{ _("website")|capitalize }}</dt>
+      <dd>{% if project.website %}<a href="{{ project.website }}">{{ project.website }}</a>{% else %}<em>None</em>{% endif %}</dd>
+    <dt>{{ _("email")|capitalize }}</dt>
+      <dd>{{ project.email|default(_("<em>None given</em>"), True) }}</dd>
+    <dt>{{ _("main mailing list")|capitalize }}</dt>
+      <dd>{{ project.email|default(_("<em>None given</em>"), True) }}</dd>
+    <dt>{{ _("chatrooms")|capitalize }}</dt>
+      {%- for c in project.chatrooms -%}
+      <dd><code>{{ c }}</code></dd>
+      {%- else -%}
+      <dd><em>None</em></dd>
+      {%- endfor -%}
+    {% autoescape false %}
+    <dt>{{ _("step")|capitalize }}</dt>
+      <dd>{{ project.progressStatus | step_to_label }}</dd>
+    {% endautoescape %}
+  </dl>
+{% endblock %}

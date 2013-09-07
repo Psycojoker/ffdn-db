@@ -46,7 +46,6 @@ class Unique(object):
 
     def __call__(self, form, field):
         check = self.model.query.filter(self.field == field.data).first()
-        print "lol", check, self.field, field.data
         if check:
             raise ValidationError(self.message)
 
@@ -86,7 +85,33 @@ class ProjectForm(Form):
                              description=[None, _(u'Geographical coordinates of your registered office or usual meeting location.')])
     longitude     = DecimalField(_(u'longitude'), validators=[Optional()])
     step          = SelectField(_(u'step'), choices=[(k, u'%u - %s' % (k, STEPS[k])) for k in STEPS], coerce=int)
-    member_count     = DecimalField(_(u'Members'), validators=[Optional(), NumberRange(min=0)],
+    member_count     = DecimalField(_(u'members'), validators=[Optional(), NumberRange(min=0)],
                                     description=[None, _('Number of members')])
-    subscriber_count = DecimalField(_(u'Subscribers'), validators=[Optional(), NumberRange(min=0)],
+    subscriber_count = DecimalField(_(u'subscribers'), validators=[Optional(), NumberRange(min=0)],
                                     description=[None, _('Number of subscribers to an internet access')])
+
+    def to_json(self, json=None):
+        if json is None:
+            json={}
+
+        json['name'] = self.name.data
+
+        def optstr(k, v):
+            if k in json or v:
+                json[k]=v
+
+        def optlist(k, v):
+            if k in json or len(v):
+                json[k]=v
+
+        optstr('shortname', self.shortname.data)
+        optstr('description', self.description.data)
+        optstr('logoURL', self.logo_url.data)
+        optstr('website', self.website.data)
+        optstr('email', self.contact_email.data)
+        optstr('mainMailingList', self.main_ml.data)
+        optstr('creationDate', self.creation_date.data)
+        optstr('progressStatus', self.step.data)
+        optlist('chatrooms', filter(bool, self.chatrooms.data)) # remove empty strings
+        return json
+

@@ -25,19 +25,14 @@ def members():
 
 @app.route('/projects')
 def project_list():
-    projects = list()
-    for project in query_db('select * from fai order by is_member desc,step desc,name'):
-        project['stepname'] = STEPS[project['step']]
-        projects.append(project)
-    return render_template('projects.html', projects=projects)
+    return render_template('project_list.html', projects=ISP.query.filter_by(is_disabled=False))
 
 @app.route('/fai/<projectid>')
 def project(projectid):
-    project = query_db('select * from fai where id = ?', [projectid], one=True) 
-    if project is None:
+    p=ISP.query.get(projectid)
+    if not p:
         abort(404)
-    project['stepname'] = STEPS[project['step']]
-    return render_template('project.html', project=project)
+    return render_template('project_detail.html', project_row=p, project=p.json)
 
 @app.route('/edit/<projectid>', methods=['GET', 'POST'])
 def edit_project(projectid):
@@ -102,11 +97,11 @@ def create_project():
         isp=ISP()
         isp.name = form.name.data
         isp.shortname = form.shortname.data or None
-        isp.json='TODO'
+        isp.json=form.to_json(isp.json)
 
         db.session.add(isp)
         db.session.commit()
-        flash(_(u'Project created'))
+        flash(_(u'Project created'), 'info')
         return redirect(url_for('project', projectid=isp.id))
     return render_template('project_form.html', form=form)
 
@@ -141,7 +136,10 @@ def members_drupal():
 
 @app.template_filter('step_to_label')
 def step_to_label(step):
-    return u"<a href='#' rel='tooltip' data-placement='right' title='" + STEPS[step] + "'><span class='badge badge-" + STEPS_LABELS[step] + "'>" + str(step) + "</span></a>"
+    if step:
+        return u"<a href='#' rel='tooltip' data-placement='right' title='" + STEPS[step] + "'><span class='badge badge-" + STEPS_LABELS[step] + "'>" + str(step) + "</span></a>"
+    else:
+        return u'-'
 
 @app.template_filter('member_to_label')
 def member_to_label(is_member):
