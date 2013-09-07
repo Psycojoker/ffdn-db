@@ -2,11 +2,12 @@ from functools import partial
 import itertools
 from flask.ext.wtf import Form
 from wtforms import Form as InsecureForm
-from wtforms import TextField, DecimalField, SelectField, SelectMultipleField, FieldList, FormField
+from wtforms import TextField, DateField, DecimalField, SelectField, SelectMultipleField, FieldList, FormField
 from wtforms.widgets import TextInput, ListWidget, html_params, HTMLString, CheckboxInput, Select
-from wtforms.validators import DataRequired, Optional, URL, Email, Length
+from wtforms.validators import DataRequired, Optional, URL, Email, Length, NumberRange, ValidationError
 from flask.ext.babel import Babel, gettext as _
 from .constants import STEPS
+from .models import ISP
 
 
 class InputListWidget(ListWidget):
@@ -34,6 +35,21 @@ class MyFormField(FormField):
     def flattened_errors(self):
         return list(itertools.chain.from_iterable(self.errors.values()))
 
+class Unique(object):
+    """ validator that checks field uniqueness """
+    def __init__(self, model, field, message=None):
+        self.model = model
+        self.field = field
+        if not message:
+            message = u'this element already exists'
+        self.message = message
+
+    def __call__(self, form, field):
+        check = self.model.query.filter(self.field == field.data).first()
+        print "lol", check, self.field, field.data
+        if check:
+            raise ValidationError(self.message)
+
 
 TECHNOLOGIES_CHOICES=(
     ('ftth', _('FTTH')),
@@ -48,16 +64,29 @@ class CoveredArea(InsecureForm):
 
 
 class ProjectForm(Form):
-    name          = TextField(_(u'full name'), validators=[DataRequired(), Length(min=2)], description=[_(u'E.g. French Data Network')])
-    short_name    = TextField(_(u'short name'), validators=[Optional(), Length(min=2, max=15)], description=[_(u'E.g. FDN')])
+    name          = TextField(_(u'full name'), description=[_(u'E.g. French Data Network')],
+                              validators=[DataRequired(), Length(min=2), Unique(ISP, ISP.name)])
+    shortname     = TextField(_(u'short name'), description=[_(u'E.g. FDN')],
+                              validators=[Optional(), Length(min=2, max=15), Unique(ISP, ISP.shortname)])
     description   = TextField(_(u'description'), description=[None, _(u'Short text describing the project')])
+    logo_url      = TextField(_(u'logo url'), validators=[Optional(), URL(require_tld=True)])
     website       = TextField(_(u'website'), validators=[Optional(), URL(require_tld=True)])
-    contact_email = TextField(_(u'contact email'), validators=[Optional(), Email()])
+    contact_email = TextField(_(u'contact email'), validators=[Optional(), Email()],
+                              description=[None, _(u'General contact email address')])
+    main_ml       = TextField(_(u'main mailing list'), validators=[Optional(), Email()],
+                              description=[None, u'Address of your main <b>public</b> mailing list'])
+    creation_date = DateField(_(u'creation date'), validators=[Optional()],
+                              description=[None, u'Date at which the legal structure for your project was created'])
     chatrooms     = FieldList(TextField(_(u'chatrooms')), min_entries=1, widget=InputListWidget(),
-                              description=[None, _(u'In URI form, e.g. <code>irc://irc.isp.net/#isp</code> or <code>xmpp:isp@chat.isp.net?join</code>')])
+                              description=[None, _(u'In URI form, e.g. <code>irc://irc.isp.net/#isp</code> or '+
+                                                    '<code>xmpp:isp@chat.isp.net?join</code>')])
     covered_areas = FieldList(MyFormField(CoveredArea, widget=partial(InputListWidget(), class_='formfield')), min_entries=1, widget=InputListWidget(),
-                                        description=[None, _(u'Descriptive name of the covered areas and technologies deployed')])
+                                          description=[None, _(u'Descriptive name of the covered areas and technologies deployed')])
     latitude      = DecimalField(_(u'latitude'), validators=[Optional()],
                              description=[None, _(u'Geographical coordinates of your registered office or usual meeting location.')])
     longitude     = DecimalField(_(u'longitude'), validators=[Optional()])
     step          = SelectField(_(u'step'), choices=[(k, u'%u - %s' % (k, STEPS[k])) for k in STEPS], coerce=int)
+    member_count     = DecimalField(_(u'Members'), validators=[Optional(), NumberRange(min=0)],
+                                    description=[None, _('Number of members')])
+    subscriber_count = DecimalField(_(u'Subscribers'), validators=[Optional(), NumberRange(min=0)],
+                                    description=[None, _('Number of subscribers to an internet access')])

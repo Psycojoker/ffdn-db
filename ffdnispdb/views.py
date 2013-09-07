@@ -10,7 +10,8 @@ import string
 
 from . import forms
 from .constants import *
-from . import app, query_db
+from . import app, query_db, db
+from .models import ISP
 
 
 @app.route('/')
@@ -98,8 +99,15 @@ def add_project():
 def create_project():
     form = forms.ProjectForm()
     if form.validate_on_submit():
-        flash(_(u'Thanks !'))
-        return redirect('/')
+        isp=ISP()
+        isp.name = form.name.data
+        isp.shortname = form.shortname.data or None
+        isp.json='TODO'
+
+        db.session.add(isp)
+        db.session.commit()
+        flash(_(u'Project created'))
+        return redirect(url_for('project', projectid=isp.id))
     return render_template('project_form.html', form=form)
 
 

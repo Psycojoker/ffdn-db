@@ -30,12 +30,16 @@
       {{ form.csrf_token }}
       <fieldset><legend>{{ _("Add a new project") }}</legend>
         {{ render_field(form.name) }}
-        {{ render_field(form.short_name) }}
+        {{ render_field(form.shortname) }}
         {{ render_field(form.description) }}
+        {{ render_field(form.logo_url) }}
         {{ render_field(form.website) }}
         {{ render_field(form.contact_email) }}
+        {{ render_field(form.main_ml) }}
+        {{ render_field(form.creation_date) }}
+        {{ render_field(form.member_count, class_="input-small") }}
+        {{ render_field(form.subscriber_count, class_="input-small") }}
         {{ render_field(form.chatrooms, class="fieldlist") }}
-{#        {{ render_field(form.covered_areas, class="fieldlist") }}#}
         <div class="control-group{% if form.covered_areas.errors %} error{% endif %}">
           <label class="control-label" for="coordinates">{{ form.covered_areas.label.text }}</label>
           <div class="controls">
