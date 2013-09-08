@@ -2,7 +2,8 @@ from functools import partial
 import itertools
 from flask.ext.wtf import Form
 from wtforms import Form as InsecureForm
-from wtforms import TextField, DateField, DecimalField, SelectField, SelectMultipleField, FieldList, FormField
+from wtforms import (TextField, DateField, DecimalField, IntegerField, SelectField,
+                     SelectMultipleField, FieldList, FormField)
 from wtforms.widgets import TextInput, ListWidget, html_params, HTMLString, CheckboxInput, Select
 from wtforms.validators import DataRequired, Optional, URL, Email, Length, NumberRange, ValidationError
 from flask.ext.babel import Babel, gettext as _
@@ -84,14 +85,21 @@ class ProjectForm(Form):
                                                     '<code>xmpp:isp@chat.isp.net?join</code>')])
     covered_areas = FieldList(MyFormField(CoveredArea, widget=partial(InputListWidget(), class_='formfield')), min_entries=1, widget=InputListWidget(),
                                           description=[None, _(u'Descriptive name of the covered areas and technologies deployed')])
-    latitude      = DecimalField(_(u'latitude'), validators=[Optional()],
+    latitude      = DecimalField(_(u'latitude'), validators=[Optional(), NumberRange(min=-90, max=90)],
                              description=[None, _(u'Geographical coordinates of your registered office or usual meeting location.')])
-    longitude     = DecimalField(_(u'longitude'), validators=[Optional()])
+    longitude     = DecimalField(_(u'longitude'), validators=[Optional(), NumberRange(min=-180, max=180)])
     step          = SelectField(_(u'step'), choices=[(k, u'%u - %s' % (k, STEPS[k])) for k in STEPS], coerce=int)
-    member_count     = DecimalField(_(u'members'), validators=[Optional(), NumberRange(min=0)],
+    member_count     = IntegerField(_(u'members'), validators=[Optional(), NumberRange(min=0)],
                                     description=[None, _('Number of members')])
-    subscriber_count = DecimalField(_(u'subscribers'), validators=[Optional(), NumberRange(min=0)],
+    subscriber_count = IntegerField(_(u'subscribers'), validators=[Optional(), NumberRange(min=0)],
                                     description=[None, _('Number of subscribers to an internet access')])
+
+    def validate(self, *args, **kwargs):
+        r=super(ProjectForm, self).validate(*args, **kwargs)
+        if (self.latitude.data is None) != (self.longitude.data is None):
+            self._fields['longitude'].errors += [_(u'You must fill both fields')]
+            r=False
+        return r
 
     def to_json(self, json=None):
         if json is None:
