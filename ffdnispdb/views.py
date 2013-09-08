@@ -29,7 +29,7 @@ def project_list():
 
 @app.route('/isp/<projectid>/')
 def project(projectid):
-    p=ISP.query.get(projectid)
+    p=ISP.query.filter_by(id=projectid, is_disabled=False).first()
     if not p:
         abort(404)
     return render_template('project_detail.html', project_row=p, project=p.json)
@@ -37,7 +37,7 @@ def project(projectid):
 
 @app.route('/isp/<projectid>/edit', methods=['GET', 'POST'])
 def edit_project(projectid):
-    isp=ISP.query.get(projectid)
+    isp=ISP.query.filter_by(id=projectid, is_disabled=False).first()
     if not isp:
         abort(404)
     form = forms.ProjectForm.edit_json(isp.json)
