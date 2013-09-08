@@ -1,3 +1,6 @@
+{% macro menu_item(name, endpoint=None) -%}
+<li{% if request.endpoint == endpoint %} class="active"{% endif %}><a href="{{ url_for(endpoint) if endpoint else "#" }}">{{ _(name) }}</a></li>
+{% endmacro %}
 <!doctype html>
 <html lang="fr">
   <head>
@@ -30,12 +33,10 @@
           <input type="text" id="search-input" class="search-query input-medium" placeholder="{{ _("Search") }}"/>
         </form>
         <ul class="nav pull-right">
-          <li class="active">
-          <a href="/">Home</a>
-          </li>
-          <li><a href="{{ url_for('project_list') }}">Project List</a></li>
-          <li><a href="#">Schema</a></li>
-          <li><a href="#">API</a></li>
+          {{ menu_item('Home', 'home') }}
+          {{ menu_item('Project List', 'project_list') }}
+          {{ menu_item('Schema') }}
+          {{ menu_item('API') }}
           <li class="divider-vertical"></li>
         </ul>
       </div>
