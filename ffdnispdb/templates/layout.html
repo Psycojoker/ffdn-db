@@ -60,19 +60,14 @@
 {% block body %}{% endblock %}
 </div>
 
-{% endblock container%}
-</div> <!-- container -->   
+{% endblock container %}
+</div>
 
-  <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.js') }}"></script>
-  <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
-  <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-select.min.js') }}"></script>
-  <script type="text/javascript" src="{{ url_for('static', filename='js/leaflet.js') }}"></script>
-  <script type="text/javascript" src="{{ url_for('static', filename='js/site.js') }}"></script>
-  <script type="text/javascript">
-    $(document).ready(function () {
-      $("[rel=tooltip]").tooltip();
-    });
-  </script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-select.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/leaflet.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/site.js') }}"></script>
 </body>
 
 </html>

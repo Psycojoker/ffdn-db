@@ -7,9 +7,11 @@
 {% block body %}
   <div class="pull-right">
     <div class="text-right">
-      <a class="btn btn-success btn-small" href="{{ url_for('edit_project', projectid=project.id) }}"><i class="icon-edit icon-white"></i> {{ _("Edit") }}</a>
+      <a class="btn btn-success btn-small" href="{{ url_for('edit_project', projectid=project_row.id) }}"><i class="icon-edit icon-white"></i> {{ _("Edit") }}</a>
     </div>
+{%- if project.logoURL %}
     <a href="{{ project.website }}"><img alt="{{ project.name }}" src="{{ project.logoURL }}" style="max-width: 300px;" /></a>
+{%- endif %}
   </div>
   <dl class="dl-horizontal">
     <dt>{{ _("name")|capitalize }}</dt>
@@ -23,11 +25,11 @@
     <dt>{{ _("website")|capitalize }}</dt>
       <dd>{% if project.website %}<a href="{{ project.website }}">{{ project.website }}</a>{% else %}<em>None</em>{% endif %}</dd>
     <dt>{{ _("email")|capitalize }}</dt>
-      <dd>{{ project.email|default(_("<em>None given</em>"), True) }}</dd>
+      <dd>{% if project.email %}<a href="mailto:{{ project.email }}">{{ project.email }}</a>{% else %}<em>None given</em>{% endif %}</dd>
     <dt>{{ _("main mailing list")|capitalize }}</dt>
-      <dd>{{ project.email|default(_("<em>None given</em>"), True) }}</dd>
+      <dd>{% if project.mainMailingList %}<a href="mailto:{{ project.mainMailingList }}">{{ project.mainMailingList }}</a>{% else %}<em>None given</em>{% endif %}</dd>
     <dt>{{ _("chatrooms")|capitalize }}</dt>
-      {%- for c in project.chatrooms -%}
+      {% for c in project.chatrooms -%}
       <dd><code>{{ c }}</code></dd>
       {%- else -%}
       <dd><em>None</em></dd>

@@ -15,6 +15,7 @@ $(function () {
         });
     });
     $('.selectpicker').selectpicker();
+    $("[rel=tooltip]").tooltip();
     init_map();
 });
 
