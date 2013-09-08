@@ -27,63 +27,31 @@ def members():
 def project_list():
     return render_template('project_list.html', projects=ISP.query.filter_by(is_disabled=False))
 
-@app.route('/fai/<projectid>')
+@app.route('/isp/<projectid>/')
 def project(projectid):
     p=ISP.query.get(projectid)
     if not p:
         abort(404)
     return render_template('project_detail.html', project_row=p, project=p.json)
 
-@app.route('/edit/<projectid>', methods=['GET', 'POST'])
+
+@app.route('/isp/<projectid>/edit', methods=['GET', 'POST'])
 def edit_project(projectid):
-    project = query_db('select * from fai where id = ?', [projectid], one=True)
-    if project is None:
+    isp=ISP.query.get(projectid)
+    if not isp:
         abort(404)
-    if request.method == 'POST':
-        if request.form['name']:
-            if request.form['shortname']:
-                if query_db('select * from fai where id!=? and (name=? or shortname=?)', [projectid, request.form['name'], request.form['shortname']], one=True) is None:
-                    is_member = 0
-                    if 'is_member' in request.form.keys():
-                        is_member = 1
-                    g.db.execute('update fai set name = ?, shortname = ?, description = ?, website = ?, email = ?, irc_channel = ?, irc_server = ?, zone = ?, gps = ?, step = ?, is_member = ? where id = ?', 
-                            [request.form['name'], request.form['shortname'], request.form['description'], request.form['website'], request.form['email'], request.form['irc_channel'], request.form['irc_server'], request.form['zone'], request.form['gps1'] + ':' + request.form['gps2'], request.form['step'][:1], is_member, projectid]) 
-                    g.db.commit()
-                    flash(u"Le projet a bien été mis à jour. Merci pour votre contribution !", "success")
-                    project = query_db('select * from fai where id = ?', [projectid], one=True)
-                    return redirect(url_for('project', projectid=projectid))
-                else:
-                    flash(u'Le nom complet ou le nom court que vous avez choisi est déjà pris.', 'error')
-            else:
-                flash(u'Vous devez spécifier un nom court (éventuellement, le même que le nom complet).', 'error')
-        else:
-            flash(u'Vous devez spécifier un nom.', 'error')
+    form = forms.ProjectForm.edit_json(isp.json)
+    if form.validate_on_submit():
+        isp.name = form.name.data
+        isp.shortname = form.shortname.data or None
+        isp.json=form.to_json(isp.json)
 
-    project['stepname'] = STEPS[project['step']]
-    return render_template('edit_project.html', project=project)
+        db.session.add(isp)
+        db.session.commit()
+        flash(_(u'Project modified'), 'info')
+        return redirect(url_for('project', projectid=isp.id))
+    return render_template('project_form.html', form=form, project=isp)
 
-@app.route('/create_old', methods=['GET', 'POST'])
-def create_project_old():
-    if request.method == 'POST':
-        if request.form['name']:
-            if request.form['shortname']:
-                if query_db('select * from fai where name=? or shortname=?', [request.form['name'], request.form['shortname']], one=True) is None:
-                    g.db.execute('INSERT INTO fai (name, shortname, description, website, email, irc_channel, irc_server, zone, gps, step) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
-                            [request.form['name'], request.form['shortname'], request.form['description'], request.form['website'], request.form['email'], request.form['irc_channel'], request.form['irc_server'], request.form['zone'], request.form['gps1'] + ':' + request.form['gps2'], request.form['step'][:1]]) 
-                    g.db.commit()
-                    flash(u"Le projet a bien été créé. Merci pour votre contribution !", "success")
-                    project = query_db('select * from fai where name = ?', [request.form['name']], one=True)
-                    if project is not None:
-                        return redirect(url_for('project', projectid=project['id']))
-                    else:
-                        flash(u'Hum… il semble que le projet n\'a pas été créé… vous voulez-bien réessayer ?', 'error')
-                else:
-                    flash(u'Le nom complet ou le nom court que vous avez choisi est déjà pris.', 'error')
-            else:
-                flash(u'Vous devez spécifier un nom court (éventuellement, le même que le nom complet).', 'error')
-        else:
-            flash(u'Vous devez spécifier un nom.', 'error')
-    return render_template('create_project.html')
 
 @app.route('/add-a-project', methods=['GET'])
 def add_project():

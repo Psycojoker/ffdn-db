@@ -41,6 +41,7 @@ input#search-input {
     font-size: 24px;
     letter-spacing: 1px;
     display: inline-block;
+    vertical-align: text-bottom;
 }
 
 #ffdn-header span {

@@ -3,7 +3,7 @@
 {% block container %}
 <div class="row">
   <div class="span11 well">
-    <form action="{{ url_for('create_project_form') }}" method="post" class="form-horizontal">
+    <form method="post" class="form-horizontal">
       {{ form.csrf_token }}
       <fieldset>
         <legend>{{ _("Add a new project") }}</legend>

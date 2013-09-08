@@ -37,14 +37,17 @@ class MyFormField(FormField):
 
 class Unique(object):
     """ validator that checks field uniqueness """
-    def __init__(self, model, field, message=None):
+    def __init__(self, model, field, message=None, allow_edit=False):
         self.model = model
         self.field = field
         if not message:
-            message = u'this element already exists'
+            message = _(u'this element already exists')
         self.message = message
 
     def __call__(self, form, field):
+        default=field.default() if callable(field.default) else field.default
+        if field.object_data != default and field.object_data == field.data:
+            return
         check = self.model.query.filter(self.field == field.data).first()
         if check:
             raise ValidationError(self.message)
@@ -115,3 +118,25 @@ class ProjectForm(Form):
         optlist('chatrooms', filter(bool, self.chatrooms.data)) # remove empty strings
         return json
 
+    @classmethod
+    def edit_json(cls, json):
+        obj=type('abject', (object,), {})
+        def set_attr(attr, itemk=None):
+            if itemk is None:
+                itemk=attr
+            if itemk in json:
+                setattr(obj, attr, json[itemk])
+        set_attr('name')
+        set_attr('shortname')
+        set_attr('description')
+        set_attr('logo_url', 'logoURL')
+        set_attr('website')
+        set_attr('contact_email', 'email')
+        set_attr('main_ml', 'mainMailingList')
+        set_attr('creation_date', 'creationDate')
+        set_attr('step', 'progressStatus')
+        return cls(obj=obj)
+
+
+class ProjectJSONForm(Form):
+    url = TextField(_(u'link url'), validators=[Optional(), URL(require_tld=True)])
