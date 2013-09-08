@@ -123,17 +123,21 @@ class ProjectForm(Form):
         optstr('mainMailingList', self.main_ml.data)
         optstr('creationDate', self.creation_date.data)
         optstr('progressStatus', self.step.data)
+        optstr('memberCount', self.member_count.data)
+        optstr('subscriberCount', self.subscriber_count.data)
         optlist('chatrooms', filter(bool, self.chatrooms.data)) # remove empty strings
+        optstr('coordinates', {'latitude': self.latitude.data, 'longitude': self.longitude.data}
+                                if self.latitude.data else {})
         return json
 
     @classmethod
     def edit_json(cls, json):
         obj=type('abject', (object,), {})
-        def set_attr(attr, itemk=None):
+        def set_attr(attr, itemk=None, d=json):
             if itemk is None:
                 itemk=attr
-            if itemk in json:
-                setattr(obj, attr, json[itemk])
+            if itemk in d:
+                setattr(obj, attr, d[itemk])
         set_attr('name')
         set_attr('shortname')
         set_attr('description')
@@ -143,6 +147,12 @@ class ProjectForm(Form):
         set_attr('main_ml', 'mainMailingList')
         set_attr('creation_date', 'creationDate')
         set_attr('step', 'progressStatus')
+        set_attr('member_count', 'memberCount')
+        set_attr('subscriber_count', 'subscriberCount')
+        set_attr('chatrooms', 'chatrooms')
+        if 'coordinates' in json:
+            set_attr('latitude', d=json['coordinates'])
+            set_attr('longitude', d=json['coordinates'])
         return cls(obj=obj)
 
 

@@ -13,8 +13,13 @@
     margin-top: 25px;
 }
 
-#main-container h2.page-header {
+#main-container .page-header {
     margin-top: 0;
+}
+
+#main-container .page-header h2 {
+    margin: 0;
+    display: inline;
 }
 
 input#search-input {

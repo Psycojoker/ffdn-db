@@ -1,6 +1,6 @@
 {% macro menu_item(name, endpoint=None) -%}
-<li{% if request.endpoint == endpoint %} class="active"{% endif %}><a href="{{ url_for(endpoint) if endpoint else "#" }}">{{ _(name) }}</a></li>
-{% endmacro %}
+<li{% if request.endpoint == endpoint %} class="active"{% endif %}><a href="{{ url_for(endpoint) if endpoint else "#" }}">{{ name }}</a></li>
+{%- endmacro %}
 <!doctype html>
 <html lang="fr">
   <head>
@@ -33,10 +33,10 @@
           <input type="text" id="search-input" class="search-query input-medium" placeholder="{{ _("Search") }}"/>
         </form>
         <ul class="nav pull-right">
-          {{ menu_item('Home', 'home') }}
-          {{ menu_item('Project List', 'project_list') }}
-          {{ menu_item('Schema') }}
-          {{ menu_item('API') }}
+          {{ menu_item(_("Home"), 'home') }}
+          {{ menu_item(_("Project List"), 'project_list') }}
+          {{ menu_item(_("Schema")) }}
+          {{ menu_item(_("API")) }}
           <li class="divider-vertical"></li>
         </ul>
       </div>
@@ -56,7 +56,11 @@
   {% endif %}
 {% endwith %}
 {%- block container %}
-<h2 class="page-header">{% block page_title %}{% endblock %}</h2>
+<div class="page-header">
+  {% block page_header -%}
+  <h2>{% block page_title %}{% endblock %}</h2>
+  {%- endblock %}
+</div>
 <div class="container">
 {% block body %}{% endblock %}
 </div>

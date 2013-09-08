@@ -1,42 +1,74 @@
 {% extends "layout.html" %}
+{% macro field(name) -%}
+<dt>{{ name|capitalize }}</dt>
+{%- endmacro %}
 {% block page_title -%}
 {% trans project_name=project.name -%}
 <small>Project:</small> {{ project_name }}
 {%- endtrans %}
 {%- endblock %}
+{% block page_header %}
+    {{ super() }}
+    <a class="btn btn-success btn-small pull-right" style="margin: 15px 10px 0;" href="{{ url_for('edit_project', projectid=project_row.id) }}"><i class="icon-edit icon-white"></i> {{ _("Edit") }}</a>
+{% endblock %}
 {% block body %}
-  <div class="pull-right">
-    <div class="text-right">
-      <a class="btn btn-success btn-small" href="{{ url_for('edit_project', projectid=project_row.id) }}"><i class="icon-edit icon-white"></i> {{ _("Edit") }}</a>
-    </div>
+  <div class="row-fluid">
+    <div class="pull-right">
 {%- if project.logoURL %}
-    <a href="{{ project.website }}"><img alt="{{ project.name }}" src="{{ project.logoURL }}" style="max-width: 300px;" /></a>
+      <a href="{{ project.website }}"><img alt="{{ project.name }}" src="{{ project.logoURL }}" style="max-width: 300px; margin: 30px 30px 0;" /></a>
 {%- endif %}
+    </div>
+    <div class="span6 offset1">
+      <dl class="dl-horizontal">
+        {{ field(_("name")) }}
+          <dd>{{ project.name }}</dd>
+        {%- if project.shortname %}
+        {{ field(_("short name")) }}
+          <dd>{{ project.shortname }}</dd>
+        {%- endif %}
+        {%- if project.description %}
+        {{ field(_("description")) }}
+          <dd>{{ project.description }}</dd>
+        {%- endif %}
+        {%- if project.coveredAreas %}
+        {{ field(_("covered areas")) }}
+          <dd>{{ project.coveredAreas }}</dd>
+        {%- endif %}
+        {%- if project.website%}
+        {{ field(_("website")) }}
+          <dd><a href="{{ project.website }}">{{ project.website }}</a></dd>
+        {%- endif %}
+        {%- if project.email %}
+        {{ field(_("email")) }}
+          <dd>{% if project.email %}<a href="mailto:{{ project.email }}"><i class="icon-envelope"></i> {{ project.email }}</a>{% else %}<em>None given</em>{% endif %}</dd>
+        {%- endif %}
+        {%- if project.mainMailingList %}
+        {{ field(_("main mailing list")) }}
+          <dd>{% if project.mainMailingList %}<a href="mailto:{{ project.mainMailingList }}"><i class="icon-envelope"></i> {{ project.mainMailingList }}</a>{% else %}<em>None given</em>{% endif %}</dd>
+        {%- endif %}
+        {%- if project.progressStatus %}
+        {{ field(_("step")) }}
+          <dd>{{ project.progressStatus|step_to_label|safe }}</dd>
+        {%- endif %}
+        {%- if project.memberCount %}
+        {{ field(_("members")) }}
+          <dd>{{ project.memberCount }}</dd>
+        {%- endif %}
+        {%- if project.subscriberCount %}
+        {{ field(_("subscribers")) }}
+          <dd>{{ project.subscriberCount }}</dd>
+        {%- endif %}
+        {%- if project.chatrooms %}
+        {{ field(_("chatrooms")) }}
+          {% for c in project.chatrooms -%}
+          <dd><code>{{ c }}</code></dd>
+          {%- endfor -%}
+        {%- endif %}
+        {%- if project.coordinates %}
+        {{ field(_("coordinates")) }}
+          <dd>{{ project.coordinates.latitude }} {{ project.coordinates.longitude }}</dd>
+        {%- endif %}
+      </dl>
+    </div>
   </div>
-  <dl class="dl-horizontal">
-    <dt>{{ _("name")|capitalize }}</dt>
-      <dd>{{ project.name }}</dd>
-    <dt>{{ _("short name")|capitalize }}</dt>
-      <dd>{{ project.shortname }}</dd>
-    <dt>{{ _("description")|capitalize }}</dt>
-      <dd>{{ project.description|default(_("<em>None yet</em>")) }}</dd>
-    <dt>{{ _("covered areas")|capitalize }}</dt>
-      <dd>{{ project.zone|default(_("<em>None yet</em>")) }}</dd>
-    <dt>{{ _("website")|capitalize }}</dt>
-      <dd>{% if project.website %}<a href="{{ project.website }}">{{ project.website }}</a>{% else %}<em>None</em>{% endif %}</dd>
-    <dt>{{ _("email")|capitalize }}</dt>
-      <dd>{% if project.email %}<a href="mailto:{{ project.email }}">{{ project.email }}</a>{% else %}<em>None given</em>{% endif %}</dd>
-    <dt>{{ _("main mailing list")|capitalize }}</dt>
-      <dd>{% if project.mainMailingList %}<a href="mailto:{{ project.mainMailingList }}">{{ project.mainMailingList }}</a>{% else %}<em>None given</em>{% endif %}</dd>
-    <dt>{{ _("chatrooms")|capitalize }}</dt>
-      {% for c in project.chatrooms -%}
-      <dd><code>{{ c }}</code></dd>
-      {%- else -%}
-      <dd><em>None</em></dd>
-      {%- endfor -%}
-    {% autoescape false %}
-    <dt>{{ _("step")|capitalize }}</dt>
-      <dd>{{ project.progressStatus | step_to_label }}</dd>
-    {% endautoescape %}
-  </dl>
 {% endblock %}

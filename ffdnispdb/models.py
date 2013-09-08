@@ -1,9 +1,23 @@
 # -*- coding: utf-8 -*-
 
+from decimal import Decimal
 import json
 from . import db
 from sqlalchemy.types import TypeDecorator, VARCHAR
 from sqlalchemy.ext.mutable import MutableDict
+
+
+class fakefloat(float):
+    def __init__(self, value):
+        self._value = value
+    def __repr__(self):
+        return str(self._value)
+
+def defaultencode(o):
+    if isinstance(o, Decimal):
+        # Subclass float with custom repr?
+        return fakefloat(o)
+    raise TypeError(repr(o) + " is not JSON serializable")
 
 
 class JSONEncodedDict(TypeDecorator):
@@ -13,7 +27,7 @@ class JSONEncodedDict(TypeDecorator):
 
     def process_bind_param(self, value, dialect):
         if value is not None:
-            value = json.dumps(value)
+            value = json.dumps(value, default=defaultencode)
         return value
 
     def process_result_value(self, value, dialect):
