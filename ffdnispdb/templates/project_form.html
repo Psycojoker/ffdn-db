@@ -1,51 +1,29 @@
 {% extends "layout.html" %}
-{% macro display_errors(errors) -%}
-            {%- if errors -%}
-            <span class="help-inline error-list">
-              <strong>{%- trans ercnt=errors|count %}Error:{% pluralize %}Errors:{% endtrans -%}</strong>{#
-              #}<ul class="inline" style="display: inline;">
-              {%- for e in errors -%}
-                <li>{{ e }}</li>
-              {%- endfor -%}
-              </ul>
-            </span>
-            {%- endif -%}
-{%- endmacro %}
-{% macro render_field(field) -%}
-        <div class="control-group{% if field.flags.required %} required{%endif%}{% if field.errors %} error{% endif %}">
-          <label class="control-label" for="{{ field.name }}">{{ field.label.text|capitalize }}</label>
-          <div class="controls">
-            {{ field(placeholder=field.description.0, **kwargs) if field.description.0 else field(**kwargs) }}
-            {{ display_errors(field.errors) }}
-            {%- if field.description.1 -%}
-            <span class="help-block">{{ field.description.1|safe }}</span>
-            {%- endif %}
-          </div>
-        </div>
-{%- endmacro %}
+{% import "form_macros.html" as fm %}
 {% block container %}
 <div class="row">
   <div class="span11 well">
-    <form action="{{ url_for('create_project') }}" method="post" class="form-horizontal">
+    <form action="{{ url_for('create_project_form') }}" method="post" class="form-horizontal">
       {{ form.csrf_token }}
-      <fieldset><legend>{{ _("Add a new project") }}</legend>
-        {{ render_field(form.name) }}
-        {{ render_field(form.shortname) }}
-        {{ render_field(form.description) }}
-        {{ render_field(form.logo_url) }}
-        {{ render_field(form.website) }}
-        {{ render_field(form.contact_email) }}
-        {{ render_field(form.main_ml) }}
-        {{ render_field(form.creation_date) }}
-        {{ render_field(form.member_count, class_="input-small") }}
-        {{ render_field(form.subscriber_count, class_="input-small") }}
-        {{ render_field(form.chatrooms, class="fieldlist") }}
+      <fieldset>
+        <legend>{{ _("Add a new project") }}</legend>
+        {{ fm.render_field(form.name) }}
+        {{ fm.render_field(form.shortname) }}
+        {{ fm.render_field(form.description) }}
+        {{ fm.render_field(form.logo_url) }}
+        {{ fm.render_field(form.website) }}
+        {{ fm.render_field(form.contact_email) }}
+        {{ fm.render_field(form.main_ml) }}
+        {{ fm.render_field(form.creation_date) }}
+        {{ fm.render_field(form.member_count, class_="input-small") }}
+        {{ fm.render_field(form.subscriber_count, class_="input-small") }}
+        {{ fm.render_field(form.chatrooms, class="fieldlist") }}
         <div class="control-group{% if form.covered_areas.errors %} error{% endif %}">
           <label class="control-label" for="coordinates">{{ form.covered_areas.label.text }}</label>
           <div class="controls">
             <ul class="fieldlist">
               {% for c in form.covered_areas -%}
-              <li>{{ c() }}{{ display_errors(c.flattened_errors) }}</li>
+              <li>{{ c() }}{{ fm.display_errors(c.flattened_errors) }}</li>
               {%- endfor %}
             </ul>
             {% if form.covered_areas.description.1 -%}
@@ -61,13 +39,13 @@
               <span class="add-on">:</span>
               {{ form.longitude(class="input-small", placeholder=form.longitude.label.text|capitalize) }}
             </div>
-            {{ display_errors(form.latitude.errors+form.longitude.errors) }}
+            {{ fm.display_errors(form.latitude.errors+form.longitude.errors) }}
             {%- if form.latitude.description.1 -%}
             <span class="help-block">{{ form.latitude.description.1|safe }}</span>
             {%- endif %}
           </div>
         </div>
-        {{ render_field(form.step) }}
+        {{ fm.render_field(form.step) }}
         <div class="form-actions">
           <input type="submit" class="btn btn-primary" value="{{ _("Submit") }}" />
           <input type="reset" class="btn" value="{{ _("Cancel") }}" />

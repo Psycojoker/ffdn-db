@@ -1,0 +1,24 @@
+{% macro display_errors(errors) -%}
+            {%- if errors -%}
+            <span class="help-inline error-list">
+              <strong>{%- trans ercnt=errors|count %}Error:{% pluralize %}Errors:{% endtrans -%}</strong>{#
+              #}<ul class="inline" style="display: inline;">
+              {%- for e in errors -%}
+                <li>{{ e }}</li>
+              {%- endfor -%}
+              </ul>
+            </span>
+            {%- endif -%}
+{%- endmacro %}
+{% macro render_field(field) -%}
+        <div class="control-group{% if field.flags.required %} required{%endif%}{% if field.errors %} error{% endif %}">
+          <label class="control-label" for="{{ field.name }}">{{ field.label.text|capitalize }}</label>
+          <div class="controls">
+            {{ field(placeholder=field.description.0, **kwargs) if field.description.0 else field(**kwargs) }}
+            {{ display_errors(field.errors) }}
+            {%- if field.description.1 -%}
+            <span class="help-block">{{ field.description.1|safe }}</span>
+            {%- endif %}
+          </div>
+        </div>
+{%- endmacro %}

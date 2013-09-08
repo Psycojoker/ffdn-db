@@ -91,7 +91,7 @@ def add_project():
 
 
 @app.route('/create/form', methods=['GET', 'POST'])
-def create_project():
+def create_project_form():
     form = forms.ProjectForm()
     if form.validate_on_submit():
         isp=ISP()
@@ -104,6 +104,18 @@ def create_project():
         flash(_(u'Project created'), 'info')
         return redirect(url_for('project', projectid=isp.id))
     return render_template('project_form.html', form=form)
+
+
+@app.route('/create/json-url', methods=['GET', 'POST'])
+def create_project_json():
+    form = forms.ProjectJSONForm()
+    if form.validate_on_submit():
+        isp=ISP()
+        db.session.add(isp)
+        db.session.commit()
+        flash(_(u'Project created'), 'info')
+        return redirect(url_for('project', projectid=isp.id))
+    return render_template('project_json_form.html', form=form)
 
 
 @app.route('/search', methods=['GET', 'POST'])
