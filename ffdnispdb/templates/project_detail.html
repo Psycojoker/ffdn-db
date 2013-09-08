@@ -32,11 +32,19 @@
         {%- endif %}
         {%- if project.coveredAreas %}
         {{ field(_("covered areas")) }}
-          <dd>{{ project.coveredAreas }}</dd>
+          {% for a in project.coveredAreas -%}
+          <dd>{{ a.name }} ({{ a.technologies|join(',') }})</dd>
+          {%- endfor -%}
         {%- endif %}
-        {%- if project.website%}
+        {%- if project.website %}
         {{ field(_("website")) }}
           <dd><a href="{{ project.website }}">{{ project.website }}</a></dd>
+        {%- endif %}
+        {%- if project.otherWebsites %}
+        {{ field(_("other websites")) }}
+          {% for n, w in project.otherWebsites.iteritems() -%}
+          <dd>{{ n }}: <a href="{{ w }}">{{ w }}</a></dd>
+          {%- endfor -%}
         {%- endif %}
         {%- if project.email %}
         {{ field(_("email")) }}

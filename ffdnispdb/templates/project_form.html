@@ -12,13 +12,27 @@
         {{ fm.render_field(form.description) }}
         {{ fm.render_field(form.logo_url) }}
         {{ fm.render_field(form.website) }}
+        <div class="control-group{% if form.other_websites.errors %} error{% endif %}">
+          <label class="control-label" for="coordinates">{{ form.other_websites.label.text }}</label>
+          <div class="controls">
+            <ul class="fieldlist">
+              {% for c in form.other_websites -%}
+              <li>{{ c() }}{{ fm.display_errors(c.flattened_errors) }}</li>
+              {%- endfor %}
+            </ul>
+            {% if form.other_websites.description.1 -%}
+            <span class="help-block">{{ form.other_websites.description.1|safe }}</span>
+            {%- endif %}
+          </div>
+        </div>
         {{ fm.render_field(form.contact_email) }}
         {{ fm.render_field(form.main_ml) }}
         {{ fm.render_field(form.creation_date) }}
+        {{ fm.render_field(form.step) }}
         {{ fm.render_field(form.member_count, class_="input-small") }}
         {{ fm.render_field(form.subscriber_count, class_="input-small") }}
         {{ fm.render_field(form.chatrooms, class="fieldlist") }}
-        <div class="control-group{% if form.covered_areas.errors %} error{% endif %}">
+        <div class="control-group required{% if form.covered_areas.errors %} error{% endif %}">
           <label class="control-label" for="coordinates">{{ form.covered_areas.label.text }}</label>
           <div class="controls">
             <ul class="fieldlist">
@@ -45,7 +59,6 @@
             {%- endif %}
           </div>
         </div>
-        {{ fm.render_field(form.step) }}
         <div class="form-actions">
           <input type="submit" class="btn btn-primary" value="{{ _("Submit") }}" />
           <input type="reset" class="btn" value="{{ _("Cancel") }}" />

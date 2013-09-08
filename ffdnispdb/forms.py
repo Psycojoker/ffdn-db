@@ -60,10 +60,22 @@ TECHNOLOGIES_CHOICES=(
     ('wifi', _('Wi-Fi')),
 )
 class CoveredArea(InsecureForm):
-    area_name    = TextField(_(u'name'), widget=partial(TextInput(), class_='input-medium', placeholder=_(u'Area')))
+    name         = TextField(_(u'name'), widget=partial(TextInput(), class_='input-medium', placeholder=_(u'Area')))
     technologies = SelectMultipleField(_(u'technologies'), choices=TECHNOLOGIES_CHOICES,
                                        widget=partial(Select(True), **{'class': 'selectpicker', 'data-title': _(u'Technologies deployed')}))
 #    area          =
+
+    def validate(self, *args, **kwargs):
+        r=super(CoveredArea, self).validate(*args, **kwargs)
+        if bool(self.name.data) != bool(self.technologies.data):
+            self._fields['name'].errors += [_(u'You must fill both fields')]
+            r=False
+        return r
+
+
+class OtherWebsites(InsecureForm):
+    name = TextField(_(u'name'), widget=partial(TextInput(), class_='input-small', placeholder=_(u'Name')))
+    url  = TextField(_(u'url'), widget=partial(TextInput(), class_='input-medium', placeholder=_(u'URL')))
 
 
 class ProjectForm(Form):
@@ -74,21 +86,25 @@ class ProjectForm(Form):
     description   = TextField(_(u'description'), description=[None, _(u'Short text describing the project')])
     logo_url      = TextField(_(u'logo url'), validators=[Optional(), URL(require_tld=True)])
     website       = TextField(_(u'website'), validators=[Optional(), URL(require_tld=True)])
+    other_websites= FieldList(MyFormField(OtherWebsites, widget=partial(InputListWidget(), class_='formfield')),
+                                          min_entries=1, widget=InputListWidget(),
+                                          description=[None, _(u'Additional websites that you host (e.g. wiki, etherpad...)')])
     contact_email = TextField(_(u'contact email'), validators=[Optional(), Email()],
                               description=[None, _(u'General contact email address')])
     main_ml       = TextField(_(u'main mailing list'), validators=[Optional(), Email()],
-                              description=[None, u'Address of your main <b>public</b> mailing list'])
+                              description=[None, u'Address of your main mailing list'])
     creation_date = DateField(_(u'creation date'), validators=[Optional()],
                               description=[None, u'Date at which the legal structure for your project was created'])
     chatrooms     = FieldList(TextField(_(u'chatrooms')), min_entries=1, widget=InputListWidget(),
                               description=[None, _(u'In URI form, e.g. <code>irc://irc.isp.net/#isp</code> or '+
                                                     '<code>xmpp:isp@chat.isp.net?join</code>')])
-    covered_areas = FieldList(MyFormField(CoveredArea, widget=partial(InputListWidget(), class_='formfield')), min_entries=1, widget=InputListWidget(),
+    covered_areas = FieldList(MyFormField(CoveredArea, widget=partial(InputListWidget(), class_='formfield')),
+                                          min_entries=1, widget=InputListWidget(),
                                           description=[None, _(u'Descriptive name of the covered areas and technologies deployed')])
     latitude      = DecimalField(_(u'latitude'), validators=[Optional(), NumberRange(min=-90, max=90)],
                              description=[None, _(u'Geographical coordinates of your registered office or usual meeting location.')])
     longitude     = DecimalField(_(u'longitude'), validators=[Optional(), NumberRange(min=-180, max=180)])
-    step          = SelectField(_(u'step'), choices=[(k, u'%u - %s' % (k, STEPS[k])) for k in STEPS], coerce=int)
+    step          = SelectField(_(u'progress step'), choices=[(k, u'%u - %s' % (k, STEPS[k])) for k in STEPS], coerce=int)
     member_count     = IntegerField(_(u'members'), validators=[Optional(), NumberRange(min=0)],
                                     description=[None, _('Number of members')])
     subscriber_count = IntegerField(_(u'subscribers'), validators=[Optional(), NumberRange(min=0)],
@@ -100,6 +116,11 @@ class ProjectForm(Form):
             self._fields['longitude'].errors += [_(u'You must fill both fields')]
             r=False
         return r
+
+    def validate_covered_areas(self, field):
+        if len(filter(lambda e: e['name'], field.data)) == 0:
+            # not printed, whatever..
+            raise ValidationError(_(u'You must specify at least one area'))
 
     def to_json(self, json=None):
         if json is None:
@@ -119,6 +140,7 @@ class ProjectForm(Form):
         optstr('description', self.description.data)
         optstr('logoURL', self.logo_url.data)
         optstr('website', self.website.data)
+        optstr('otherWebsites', dict(((w['name'], w['url']) for w in self.other_websites.data)))
         optstr('email', self.contact_email.data)
         optstr('mainMailingList', self.main_ml.data)
         optstr('creationDate', self.creation_date.data)
@@ -128,11 +150,12 @@ class ProjectForm(Form):
         optlist('chatrooms', filter(bool, self.chatrooms.data)) # remove empty strings
         optstr('coordinates', {'latitude': self.latitude.data, 'longitude': self.longitude.data}
                                 if self.latitude.data else {})
+        optlist('coveredAreas', filter(lambda e: e['name'], self.covered_areas.data))
         return json
 
     @classmethod
     def edit_json(cls, json):
-        obj=type('abject', (object,), {})
+        obj=type('abject', (object,), {})()
         def set_attr(attr, itemk=None, d=json):
             if itemk is None:
                 itemk=attr
@@ -153,8 +176,12 @@ class ProjectForm(Form):
         if 'coordinates' in json:
             set_attr('latitude', d=json['coordinates'])
             set_attr('longitude', d=json['coordinates'])
+        if 'otherWebsites' in json:
+            setattr(obj, 'other_websites', [{'name': n, 'url': w} for n, w in json['otherWebsites'].iteritems()])
+        set_attr('covered_areas', 'coveredAreas')
         return cls(obj=obj)
 
 
 class ProjectJSONForm(Form):
     url = TextField(_(u'link url'), validators=[Optional(), URL(require_tld=True)])
+
