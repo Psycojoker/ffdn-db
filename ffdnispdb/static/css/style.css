@@ -22,6 +22,10 @@
     display: inline;
 }
 
+#main-container .span3 {
+    margin-left: 15px;
+}
+
 input#search-input {
     position: relative;
     padding-left: 23px;
@@ -68,66 +72,24 @@ input#search-input {
     }
 }
 
-/*.brand:hover #ffdn-header span:nth-child(1) {
-    animation-duration: 0.6s;
-    animation-name: lulz2A;
-}
-
-.brand:hover #ffdn-header span:nth-child(2) {
-    animation-duration: 0.6s;
-    animation-name: lulz2B;
-}
-
-.brand:hover #ffdn-header span:nth-child(3) {
-    animation-duration: 0.6s;
-    animation-name: lulz2C;
-}
-
-.brand:hover #ffdn-header span:nth-child(4) {
-    animation-duration: 0.6s;
-    animation-name: lulz2D;
-}
-
-@keyframes lulz2A {
-    0% {
-        transform: scaleY(1.5);
-    }
-    37% {
-        transform: scaleX(1.0);
-    }
-}
-
-@keyframes lulz2B {
-    25% {
-        transform: scaleY(1.5);
-    }
-    62% {
-        transform: scaleX(1.0);
-    }
-}
-
-@keyframes lulz2C {
-    50% {
-        transform: scaleY(1.5);
-    }
-    87% {
-        transform: scaleX(1.0);
-    }
-}
-
-@keyframes lulz2D {
-    75% {
-        transform: scaleY(1.5);
-    }
-    100% {
-        transform: scaleX(1.0);
-    }
-}*/
-
 #map {
     height: 600px;
 }
 
+@media (min-width: 768px) and (max-width: 979px) {
+    #map {
+        height: 500px;
+    }
+}
+
+@media (max-width: 767px) {
+    #map {
+        height: 400px;
+    }
+    #main-container .span3 {
+        margin: 15px 0 0;
+    }
+}
 
 .project-choice {
     padding: 30px;

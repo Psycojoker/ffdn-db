@@ -75,7 +75,8 @@ class CoveredArea(InsecureForm):
 
 class OtherWebsites(InsecureForm):
     name = TextField(_(u'name'), widget=partial(TextInput(), class_='input-small', placeholder=_(u'Name')))
-    url  = TextField(_(u'url'), widget=partial(TextInput(), class_='input-medium', placeholder=_(u'URL')))
+    url  = TextField(_(u'url'), widget=partial(TextInput(), class_='input-medium', placeholder=_(u'URL')),
+                     validators=[Optional(), URL(require_tld=True)])
 
 
 class ProjectForm(Form):
