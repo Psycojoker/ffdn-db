@@ -4,7 +4,7 @@ from jsonschema import Draft4Validator, RefResolver, draft4_format_checker
 from jsonschema.exceptions import RefResolutionError, SchemaError, ValidationError
 import json
 import os.path
-from urlparse import urlparse
+from urlparse import urlsplit
 
 
 class MyRefResolver(RefResolver):
@@ -40,7 +40,7 @@ resources={
     'http://json-schema.org/geojson/crs.json#': load_schema('geojson/crs'),
 }
 
-def validate_diyisp(jdict):
+def validate_isp(jdict):
     """
     Validate a json-object against the diyisp json-schema
     """
@@ -62,7 +62,7 @@ def validate_diyisp(jdict):
 
     def is_valid_url(u):
         try:
-            pu=urlparse(u)
+            pu=urlsplit(u)
         except:
             return False
         if pu.scheme not in ('', 'http', 'https'):
@@ -91,12 +91,5 @@ def validate_diyisp(jdict):
                               instance=url, schema=sch, path=[u'otherWebsite', name],
                               schema_path=[u'properties', u'otherWebsites', u'patternProperties', u'^.+$', 'description'],
                               validator=u'validate_url', validator_value=url)
-
-
-if __name__ == '__main__':
-    import sys
-    j=json.load(open(sys.argv[1]))
-    for e in validate_diyisp(j):
-        print e
 
 
