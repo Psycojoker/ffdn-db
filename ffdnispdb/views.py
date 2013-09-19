@@ -10,7 +10,7 @@ import string
 
 from . import forms
 from .constants import *
-from . import app, query_db, db
+from . import app
 from .models import ISP
 
 
@@ -18,14 +18,11 @@ from .models import ISP
 def home():
     return render_template('index.html', active_button="home")
 
-@app.route('/members')
-def members():
-    members = query_db('select * from fai where is_member = 1')
-    return render_template('members.html', members=members)
 
 @app.route('/projects')
 def project_list():
     return render_template('project_list.html', projects=ISP.query.filter_by(is_disabled=False))
+
 
 @app.route('/isp/<projectid>/')
 def project(projectid):
@@ -92,24 +89,6 @@ def search():
         pass
     return render_template('search.html')
 
-
-@app.route('/api/<projects>.json')
-def projects_json(projects):
-    if projects == 'projects':
-        query = 'select * from fai'
-    elif projects == 'members':
-        query = 'select * from fai where is_member = 1'
-    else:
-        abort(404)
-    fais = dict()
-    for fai in query_db(query):
-        fais[fai['name']] = fai
-    return jsonify(fais)
-
-@app.route('/api/members_drupal')
-def members_drupal():
-    members = query_db('select * from fai where is_member = 1 order by shortname') 
-    return render_template('members_drupal.html', members=members)
 
 #------
 # Filters
