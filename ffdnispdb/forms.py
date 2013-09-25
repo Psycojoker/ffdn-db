@@ -1,5 +1,6 @@
 from functools import partial
 import itertools
+import urlparse
 from flask.ext.wtf import Form
 from wtforms import Form as InsecureForm
 from wtforms import (TextField, DateField, DecimalField, IntegerField, SelectField,
@@ -183,6 +184,27 @@ class ProjectForm(Form):
         return cls(obj=obj)
 
 
+class URLField(TextField):
+    def _value(self):
+        return urlparse.urlunsplit(self.data) if self.data is not None else ''
+
+    def process_formdata(self, valuelist):
+        if valuelist:
+            try:
+                self.data = urlparse.urlsplit(valuelist[0])
+            except:
+                self.data = None
+                raise ValidationError(_(u'Invalid URL'))
+
 class ProjectJSONForm(Form):
-    url = TextField(_(u'link url'), validators=[Optional(), URL(require_tld=True)])
+    url = URLField(_(u'base url'), description=['E.g. https://isp.com/', 'A ressource implementing our '+\
+                                                'JSON-Schema specification must exist at path /isp.json'])
+
+    def validate_url(self, field):
+        if not field.data.netloc:
+            raise ValidationError(_(u'Invalid URL'))
+
+        if field.data.scheme not in ('http', 'https'):
+            raise ValidationError(_(u'Invalid URL (must be HTTP(s))'))
+
 

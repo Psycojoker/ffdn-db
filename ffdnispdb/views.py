@@ -4,6 +4,7 @@ from flask import request, g, redirect, url_for, abort, \
     render_template, flash, jsonify 
 from flask.ext.babel import gettext as _
 from datetime import date, time, timedelta, datetime
+from urlparse import urlunsplit
 import locale
 locale.setlocale(locale.LC_ALL, '')
 import string
@@ -75,6 +76,10 @@ def create_project_form():
 def create_project_json():
     form = forms.ProjectJSONForm()
     if form.validate_on_submit():
+        u=list(form.url.data)
+        u[2]='/isp.json' # new path
+        url=urlunsplit(u)
+
         isp=ISP()
         db.session.add(isp)
         db.session.commit()

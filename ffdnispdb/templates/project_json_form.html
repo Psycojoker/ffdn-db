@@ -1,11 +1,13 @@
 {% extends "layout.html" %}
+{% import "form_macros.html" as fm %}
 {% block container %}
 <div class="row">
   <div class="span11 well">
-    <form action="{{ url_for('create_project_form') }}" method="post" class="form-horizontal">
+    <form method="post" class="form-horizontal">
       {{ form.csrf_token }}
       <fieldset>
         <legend>{{ _("Add a new project from a JSON URL") }}</legend>
+        {{ fm.render_field(form.url) }}
         <div class="form-actions">
           <input type="submit" class="btn btn-primary" value="{{ _("Submit") }}" />
           <input type="reset" class="btn" value="{{ _("Cancel") }}" />
