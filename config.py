@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 SQLALCHEMY_DATABASE_URI = 'sqlite:///../ffdn-db.sqlite'
