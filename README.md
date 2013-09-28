@@ -7,7 +7,7 @@ ffdnispdb
 ## How to deploy & use
 Preferably in a virtualenv, run:
 
-    python -r requirements.txt
+    pip install -r requirements.txt
     python shell.py
     >> db.create_all()
     python run.py
