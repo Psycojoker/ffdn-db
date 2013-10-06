@@ -74,7 +74,7 @@
         {%- endif %}
         {%- if project.coordinates %}
         {{ field(_("coordinates")) }}
-          <dd>{{ project.coordinates.latitude }} {{ project.coordinates.longitude }}</dd>
+          <dd><code style="color: #666;">{{ project.coordinates.latitude }},{{ project.coordinates.longitude }}</code></dd>
         {%- endif %}
       </dl>
     </div>
