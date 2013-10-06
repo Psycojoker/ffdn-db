@@ -40,6 +40,9 @@ function init_map() {
         maxZoom: 11
     });
 
+    if(!$('#map').length)
+        return;
+
     var map = L.map('map', {
         center: new L.LatLng(46.603354, 10),
         zoom: 4,

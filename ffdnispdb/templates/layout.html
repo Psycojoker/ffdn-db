@@ -4,6 +4,7 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    {% block head -%}
     <meta charset="utf-8">
     <title>FFDN ISP Database</title>
     <!-- meta -->
@@ -16,6 +17,7 @@
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/bootstrap-select.min.css') }}">
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/leaflet.css') }}">
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/style.css') }}">
+    {%- endblock %}
   </head>
 <body>
 
@@ -68,11 +70,13 @@
 {% endblock container %}
 </div>
 
+{% block script -%}
 <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-select.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/leaflet.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/site.js') }}"></script>
+{%- endblock %}
 </body>
 
 </html>

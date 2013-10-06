@@ -9,3 +9,7 @@ argparse==1.2.1
 itsdangerous==0.23
 wsgiref==0.1.2
 jsonschema==2.0.0
+requests==2.0.0
+# ndg & pyasn required for SNI
+ndg-httpsclient==0.3.2
+pyasn1==0.1.7
