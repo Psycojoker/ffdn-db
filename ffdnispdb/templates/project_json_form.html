@@ -8,8 +8,9 @@
       <fieldset>
         <legend>{{ _("Add a new project from a JSON URL") }}</legend>
         {{ fm.render_field(form.url) }}
+        {{ fm.render_field(form.tech_email) }}
         <div class="form-actions">
-          <input type="submit" class="btn btn-primary" value="{{ _("Submit") }}" />
+          <input type="submit" class="btn btn-primary" value="{{ _("Next") }}" />
           <input type="reset" class="btn" value="{{ _("Cancel") }}" />
         </div>
       </fieldset>

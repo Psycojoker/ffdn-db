@@ -196,9 +196,23 @@ class URLField(TextField):
                 self.data = None
                 raise ValidationError(_(u'Invalid URL'))
 
+
+def is_url_unique(url):
+    if isinstance(url, basestring):
+        url=urlparse.urlsplit(url)
+    t=list(url)
+    t[2]=''
+    u1=urlparse.urlunsplit(t)
+    t[0]='http' if t[0] == 'https' else 'https'
+    u2=urlparse.urlunsplit(t)
+    if ISP.query.filter(ISP.url.startswith(u1) | ISP.url.startswith(u2)).count() > 0:
+        return False
+    return True
+
 class ProjectJSONForm(Form):
     url = URLField(_(u'base url'), description=['E.g. https://isp.com/', 'A ressource implementing our '+\
                                                 'JSON-Schema specification must exist at path /isp.json'])
+    tech_email = TextField('Email', validators=[Email()], description=[None, 'Technical contact, in case of problems'])
 
     def validate_url(self, field):
         if not field.data.netloc:
@@ -207,4 +221,6 @@ class ProjectJSONForm(Form):
         if field.data.scheme not in ('http', 'https'):
             raise ValidationError(_(u'Invalid URL (must be HTTP(s))'))
 
+        if not is_url_unique(field.data):
+            raise ValidationError(_(u'This URL is already in our database'))
 
