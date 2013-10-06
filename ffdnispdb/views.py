@@ -28,6 +28,32 @@ def home():
 def project_list():
     return render_template('project_list.html', projects=ISP.query.filter_by(is_disabled=False))
 
+# this needs to be cached
+@app.route('/isp/map_data.json', methods=['GET'])
+def isp_map_data():
+    isps=ISP.query.filter_by(is_disabled=False)
+    data=[]
+    for isp in isps:
+        d=dict(isp.json)
+        for k in d.keys():
+            if k not in ('name', 'shortname', 'coordinates'):
+                del d[k]
+
+        d['id']=isp.id
+        d['ffdn_member']=isp.is_ffdn_member
+        d['popup']=render_template('map_popup.html', isp=isp)
+        data.append(d)
+
+    return json.dumps(data)
+
+
+@app.route('/isp/<projectid>/covered_areas.json', methods=['GET'])
+def isp_covered_areas(projectid):
+    p=ISP.query.filter_by(id=projectid, is_disabled=False).first()
+    if not p:
+        abort(404)
+    return json.dumps(p.json['coveredAreas'])
+
 
 @app.route('/isp/<projectid>/')
 def project(projectid):
@@ -271,7 +297,7 @@ def create_project_json_confirm():
         jdict=session['form_json']['jdict']
         isp=ISP()
         isp.name=jdict['name']
-        isp.shotname=jdict['shortname']
+        isp.shortname=jdict['shortname']
         isp.url=session['form_json']['url']
         isp.json=jdict
         del session['form_json']

@@ -1,0 +1,6 @@
+{% if isp.shortname -%}
+<strong>{{ isp.shortname }}</strong><br />
+{{ isp.name }}
+{% else -%}
+<strong>{{ isp.name }}</strong>
+{% endif %}

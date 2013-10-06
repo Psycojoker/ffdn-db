@@ -58,6 +58,31 @@ function init_map() {
             map.removeLayer(hyb);
         }
     });
+
+
+    var icon = L.icon({
+        iconUrl: 'static/img/marker.png',
+
+        iconSize:     [14, 20], // size of the icon
+        shadowSize:   [14, 20], // size of the shadow
+        iconAnchor:   [7, 20], // point of the icon which will correspond to marker's location
+        popupAnchor:  [0, -20] // point from which the popup should open relative to the iconAnchor
+    });
+    var icon_ffdn = $.extend(true, {}, icon);
+    icon_ffdn['options']['iconUrl'] = 'static/img/marker_ffdn.png';
+
+    $.getJSON('/isp/map_data.json', function(data) {
+        $.each(data, function(k, isp) {
+            var marker = L.marker([isp['coordinates']['latitude'], isp['coordinates']['longitude']],
+                                  {'icon': isp.ffdn_member ? icon_ffdn : icon});
+
+            marker./*on('click', function() {
+                $.getJSON('/isp/'+isp.id+'/covered_areas.json', function(data) {
+                    alert(data);
+                });
+            }).*/bindPopup(isp.popup).addTo(map);
+        });
+    });
 }
 
 function change_input_num(li, new_num, reset=false) {
