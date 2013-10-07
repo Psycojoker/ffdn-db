@@ -1,6 +1,17 @@
+{% macro field(name) -%}
+<strong>{{ name|capitalize }}</strong>
+{%- endmacro %}
 {% if isp.shortname -%}
-<strong>{{ isp.shortname }}</strong><br />
+<a href="{{ url_for('project', projectid=isp.id) }}"><strong>{{ isp.shortname }}</strong></a><br />
 {{ isp.name }}
 {% else -%}
-<strong>{{ isp.name }}</strong>
+<a href="{{ url_for('project', projectid=isp.id) }}"><strong>{{ isp.name }}</strong></a>
 {% endif %}
+<ul style="margin: 10px 0 10px 5px; list-style-type: none;">
+{%- if isp.json.memberCount %}
+<li>{{ field(_("members")) }}: {{ isp.json.memberCount }}</li>
+{%- endif %}
+{%- if isp.json.subscriberCount %}
+<li>{{ field(_("subscribers")) }}: {{ isp.json.subscriberCount }}</li>
+{%- endif %}
+</ul>

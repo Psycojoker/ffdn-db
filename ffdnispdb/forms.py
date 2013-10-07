@@ -1,6 +1,7 @@
 from functools import partial
 import itertools
 import urlparse
+from datetime import datetime
 from flask.ext.wtf import Form
 from wtforms import Form as InsecureForm
 from wtforms import (TextField, DateField, DecimalField, IntegerField, SelectField,
@@ -142,10 +143,10 @@ class ProjectForm(Form):
         optstr('description', self.description.data)
         optstr('logoURL', self.logo_url.data)
         optstr('website', self.website.data)
-        optstr('otherWebsites', dict(((w['name'], w['url']) for w in self.other_websites.data)))
+        optstr('otherWebsites', dict(((w['name'], w['url']) for w in self.other_websites.data if w['name'])))
         optstr('email', self.contact_email.data)
         optstr('mainMailingList', self.main_ml.data)
-        optstr('creationDate', self.creation_date.data)
+        optstr('creationDate', self.creation_date.data.isoformat())
         optstr('progressStatus', self.step.data)
         optstr('memberCount', self.member_count.data)
         optstr('subscriberCount', self.subscriber_count.data)
@@ -171,6 +172,8 @@ class ProjectForm(Form):
         set_attr('contact_email', 'email')
         set_attr('main_ml', 'mainMailingList')
         set_attr('creation_date', 'creationDate')
+        if hasattr(obj, 'creation_date'):
+            obj.creation_date=datetime.strptime(obj.creation_date, '%Y-%m-%d')
         set_attr('step', 'progressStatus')
         set_attr('member_count', 'memberCount')
         set_attr('subscriber_count', 'subscriberCount')
