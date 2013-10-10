@@ -8,6 +8,12 @@
 <a href="{{ url_for('project', projectid=isp.id) }}"><strong>{{ isp.name }}</strong></a>
 {% endif %}
 <ul style="margin: 10px 0 10px 5px; list-style-type: none;">
+{%- if isp.json.website %}
+<li>{{ field(_("website")) }}: <a href="{{ isp.json.website }}">{{ isp.json.website }}</a></li>
+{%- endif %}
+{%- if isp.json.email %}
+<li>{{ field(_("email")) }}: <a href="mailto:{{ isp.json.email }}"><i class="icon-envelope"></i> {{ isp.json.email }}</a></li>
+{%- endif %}
 {%- if isp.json.memberCount %}
 <li>{{ field(_("members")) }}: {{ isp.json.memberCount }}</li>
 {%- endif %}
