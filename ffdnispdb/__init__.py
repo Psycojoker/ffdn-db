@@ -2,7 +2,7 @@
 
 from flask import Flask, g
 from flask.ext.babel import Babel
-from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.sqlalchemy import SQLAlchemy, event
 from .sessions import MySessionInterface
 
 
@@ -11,6 +11,12 @@ app.config.from_object('config')
 babel = Babel(app)
 db = SQLAlchemy(app)
 app.session_interface = MySessionInterface(db.engine, db.metadata)
+
+@event.listens_for(db.engine, "connect")
+def connect(sqlite, connection_rec):
+    sqlite.enable_load_extension(True)
+    sqlite.execute('select load_extension("libspatialite.so")')
+    sqlite.enable_load_extension(False)
 
 from . import views
 from . import models
