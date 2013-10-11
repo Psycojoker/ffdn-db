@@ -19,6 +19,33 @@ $(function () {
     init_map();
 });
 
+window.isps_covered_areas={};
+function get_covered_areas(isp_id, cb) {
+    if(isp_id in window.isps_covered_areas) {
+        cb(window.isps_covered_areas[isp_id]);
+        return;
+    } else {
+        window.isps_covered_areas[isp_id]=[];
+    }
+
+    $.getJSON('/isp/'+isp_id+'/covered_areas.json', function(data) {
+        $.each(data, function(k, covered_area) {
+            if(!('area' in covered_area))
+                return;
+            window.isps_covered_areas[isp_id].push(
+                L.geoJson(covered_area['area'], {
+                    style: {
+                        "color": "#ff7800",
+                        "weight": 5,
+                        "opacity": 0.65
+                    }
+                })
+            );
+        });
+        cb(window.isps_covered_areas[isp_id]);
+    });
+}
+
 function init_map() {
     var mapquest=L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.jpg', {
         attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, '+
@@ -73,14 +100,25 @@ function init_map() {
 
     $.getJSON('/isp/map_data.json', function(data) {
         $.each(data, function(k, isp) {
+            if(!('coordinates' in isp))
+                return; // cannot display an ISP without coordinates
+
             var marker = L.marker([isp['coordinates']['latitude'], isp['coordinates']['longitude']],
                                   {'icon': isp.ffdn_member ? icon_ffdn : icon});
 
-            marker./*on('click', function() {
-                $.getJSON('/isp/'+isp.id+'/covered_areas.json', function(data) {
-                    alert(data);
+            marker.on('click', function() {
+                get_covered_areas(isp.id, function(items) {
+                    $.each(items, function(k, ca) {
+                        ca.addTo(map);
+                    });
                 });
-            }).*/bindPopup(isp.popup).addTo(map);
+            }).bindPopup(isp.popup);
+            marker._popup.on('close', function() {
+                $.each(window.isps_covered_areas[isp.id], function(k, ca) {
+                    map.removeLayer(ca);
+                });
+            });
+            marker.addTo(map);
         });
     });
 }
