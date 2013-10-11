@@ -153,9 +153,11 @@ class Crawler(object):
         if 'shortname' in jdict and jdict['shortname']:
             where |= (ISP.shortname == jdict.get('shortname'))
         if ISP.query.filter(where).count() > 0:
-            yield self.info('An ISP named %s already exist'%esc(
+            yield self.err('An ISP named "%s" already exist'%esc(
                 jdict['name']+(' ('+jdict['shortname']+')' if jdict.get('shortname') else '')
             ))
+            yield self.abort('The name of your ISP must be unique')
+            return
 
         yield (self.m('<br />== <span style="color: forestgreen">All good ! You can click on Confirm now</span>')+
                self.m(json.dumps({'passed': 1}), 'control'))
