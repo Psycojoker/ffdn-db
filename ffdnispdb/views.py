@@ -12,7 +12,7 @@ from time import time
 
 from . import forms
 from .constants import *
-from . import app, db
+from . import app, db, cache
 from .models import ISP
 from .crawler import PrettyValidator
 

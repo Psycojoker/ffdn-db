@@ -4,7 +4,7 @@ from flask import escape, json
 import requests
 import io
 
-from .schemavalidator import validate_isp
+from ispformat.validator import validate_isp
 from .models import ISP
 
 
