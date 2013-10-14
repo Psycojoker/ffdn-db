@@ -12,6 +12,7 @@ import locale
 locale.setlocale(locale.LC_ALL, '')
 import string
 from time import time
+import os.path
 
 from . import forms
 from .constants import *
@@ -171,6 +172,7 @@ def format():
             'initial_header_level' : 3,
         }
         parts = docutils.core.publish_parts(spec,
+                    source_path=os.path.dirname(ispformat.specs.versions[0.1]),
                     destination_path=None, writer_name='html',
                     settings_overrides=overrides)
         cache.set('format-spec', parts, timeout=60*60*24)
