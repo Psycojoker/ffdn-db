@@ -146,7 +146,7 @@ class ProjectForm(Form):
         optstr('otherWebsites', dict(((w['name'], w['url']) for w in self.other_websites.data if w['name'])))
         optstr('email', self.contact_email.data)
         optstr('mainMailingList', self.main_ml.data)
-        optstr('creationDate', self.creation_date.data.isoformat())
+        optstr('creationDate', self.creation_date.data.isoformat() if self.creation_date.data else None)
         optstr('progressStatus', self.step.data)
         optstr('memberCount', self.member_count.data)
         optstr('subscriberCount', self.subscriber_count.data)
