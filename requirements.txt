@@ -13,3 +13,4 @@ requests==2.0.0
 # ndg & pyasn required for SNI
 ndg-httpsclient==0.3.2
 pyasn1==0.1.7
+docutils==0.11

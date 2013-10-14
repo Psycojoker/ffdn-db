@@ -167,3 +167,32 @@ input#search-input {
 .form-horizontal .help-block {
     margin-top: 0 !important;
 }
+
+/**
+ * Schema Spec / RST
+ */
+
+#schema_spec {
+    margin-bottom: 30px;
+}
+
+.rst .docinfo-name {
+    text-align: left;
+    padding-right: 7px;
+}
+
+.rst .title {
+    font-size: 2.2em;
+    line-height: normal;
+    margin: 0;
+}
+
+.rst .subtitle {
+    font-size: 1.5em;
+    line-height: normal;
+    margin: 0 0 25px 0;
+}
+
+.rst .section > :first-child {
+    margin-top: 15px;
+}

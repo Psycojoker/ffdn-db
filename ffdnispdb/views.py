@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from flask import request, g, redirect, url_for, abort, \
-    render_template, flash, json, session, Response
+    render_template, flash, json, session, Response, Markup
 from flask.ext.babel import gettext as _
+import docutils.core
+import ispformat.specs
+
 from datetime import date, time, timedelta, datetime
 from urlparse import urlunsplit
 import locale
@@ -157,6 +160,21 @@ def search():
     if request.method == 'POST':
         pass
     return render_template('search.html')
+
+
+@app.route('/format', methods=['GET'])
+def format():
+    parts = cache.get('format-spec')
+    if parts is None:
+        spec=open(ispformat.specs.versions[0.1]).read()
+        overrides = {
+            'initial_header_level' : 3,
+        }
+        parts = docutils.core.publish_parts(spec,
+                    destination_path=None, writer_name='html',
+                    settings_overrides=overrides)
+        cache.set('format-spec', parts, timeout=60*60*24)
+    return render_template('format_spec.html', spec=Markup(parts['html_body']))
 
 
 #------
