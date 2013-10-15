@@ -66,8 +66,8 @@ class Crawler(object):
         try:
             r.raise_for_status()
         except requests.exceptions.HTTPError as e:
-            yield cls.err('Response code indicates an error')
-            yield cls.abort('Invalid response code')
+            yield self.err('Response code indicates an error')
+            yield self.abort('Invalid response code')
             return
 
         yield self.info('Content type: <strong>%s</strong>'%(esc(r.headers.get('content-type', 'not defined'))))
