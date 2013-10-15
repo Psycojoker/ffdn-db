@@ -123,11 +123,11 @@ function init_map() {
     });
 }
 
-function change_input_num(li, new_num, reset=false) {
+function change_input_num(li, new_num, reset) {
     li.find('input,select').each(function() {
         var id = $(this).attr('id').replace(/^(.*)-\d{1,4}/, '$1-'+new_num);
         $(this).attr({'name': id, 'id': id});
-        if(reset)
+        if(!!reset)
             $(this).val('').removeAttr('checked');
     });
 }
