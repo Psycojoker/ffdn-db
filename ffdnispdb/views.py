@@ -143,7 +143,8 @@ def create_project_json_confirm():
         jdict=session['form_json']['jdict']
         isp=ISP()
         isp.name=jdict['name']
-        isp.shortname=jdict['shortname']
+        if 'shortname' in jdict:
+            isp.shortname=jdict['shortname']
         isp.url=session['form_json']['url']
         isp.json=jdict
         del session['form_json']
