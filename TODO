@@ -1,6 +1,17 @@
-* Carte sur chaque FAI où il y a des coordonnées GPS
-* Moteur de recherche
-* include drupal
-* include wiki
-* Gérer et afficher les logos
 
+
+- Crawler:
+* i18n
+* http cache support
+* write a "cron task" to periodically update the data
+
+- Manual ISp insertion form:
+* date picker
+* geo coordinates picker
+
+- Misc:
+* Rest API
+* geo stuff with spatialite (e.g find an ISP near you)
+* Full-text search engine based on woosh
+* Access-control on the edit feature
+* separate config for prod/dev, email admin on error for prod
