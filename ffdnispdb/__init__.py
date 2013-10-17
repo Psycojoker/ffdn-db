@@ -11,7 +11,7 @@ app = Flask(__name__)
 app.config.from_object('config')
 babel = Babel(app)
 db = SQLAlchemy(app)
-app.session_interface = MySessionInterface(db.engine, db.metadata)
+app.session_interface = MySessionInterface(db)
 cache = NullCache()
 
 @event.listens_for(db.engine, "connect")

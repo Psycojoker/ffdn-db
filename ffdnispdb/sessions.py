@@ -45,10 +45,10 @@ class SQLSession(CallbackDict, SessionMixin):
 
 
 class MySessionInterface(SessionInterface):
-    def __init__(self, engine, metadata):
-        self.engine = engine
+    def __init__(self, db):
+        self.db = db
 
-        self.table = Table('flask_sessions', metadata,
+        self.table = Table('flask_sessions', db.metadata,
             Column('session_id', String(32), primary_key=True),
             Column('expire', DateTime, index=True),
             Column('value', LargeBinary, nullable=False)
@@ -57,18 +57,18 @@ class MySessionInterface(SessionInterface):
     def open_session(self, app, request):
         sid = request.cookies.get(app.session_cookie_name)
         if sid:
-            res=self.engine.execute(select([self.table.c.value], (self.table.c.session_id == sid) &
+            res=self.db.engine.execute(select([self.table.c.value], (self.table.c.session_id == sid) &
                                                                  (self.table.c.expire > datetime.now()))).first()
             if res:
-                return SQLSession(sid, self.engine, self.table, False, cPickle.loads(res[0]))
+                return SQLSession(sid, self.db.engine, self.table, False, cPickle.loads(res[0]))
 
         while True:
             sid=''.join(random.choice(string.ascii_letters+string.digits) for i in range(32))
-            res=self.engine.execute(select([self.table.c.value], self.table.c.session_id == sid)).first()
+            res=self.db.engine.execute(select([self.table.c.value], self.table.c.session_id == sid)).first()
             if not res:
                 break
 
-        return SQLSession(sid, self.engine, self.table, True)
+        return SQLSession(sid, self.db.engine, self.table, True)
 
     def save_session(self, app, session, response):
         if session.modified:
@@ -76,7 +76,7 @@ class MySessionInterface(SessionInterface):
 
         # remove expired sessions.. or maybe not
         if randrange(20) % 20 == 0:
-            self.engine.execute(self.table.delete(self.table.c.expire <= datetime.now()))
+            self.db.engine.execute(self.table.delete(self.table.c.expire <= datetime.now()))
 
         response.set_cookie(app.session_cookie_name, session.sid,
                             expires=self.get_expiration_time(app, session),
