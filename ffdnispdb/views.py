@@ -130,7 +130,7 @@ def create_project_json():
         u=list(form.url.data)
         u[2]='/isp.json' # new path
         url=urlunsplit(u)
-        session['form_json'] = {'url': url}
+        session['form_json'] = {'url': url, 'tech_email': form.tech_email.data}
         return render_template('project_json_validator.html')
     return render_template('project_json_form.html', form=form)
 
@@ -147,6 +147,7 @@ def create_project_json_confirm():
             isp.shortname=jdict['shortname']
         isp.url=session['form_json']['url']
         isp.json=jdict
+        isp.tech_email=session['form_json']['tech_email']
         del session['form_json']
 
         db.session.add(isp)
