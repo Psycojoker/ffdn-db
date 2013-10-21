@@ -191,23 +191,7 @@ def step_to_label(step):
     else:
         return u'-'
 
-@app.template_filter('member_to_label')
-def member_to_label(is_member):
-    if is_member:
-        return u'<a href="#" rel="tooltip" data-placement="right" title="Membre de la Fédération FDN"><span class="label label-success">FFDN</span></a>'
-    return ''
-
 @app.template_filter('stepname')
 def stepname(step):
     return STEPS[step]
-
-@app.template_filter('gpspart')
-def gpspart(gps, part):
-    parts = gps.split(':');
-    if part == 1:
-        return parts[0]
-    elif part == 2:
-        return parts[1]
-    return "";
-
 
