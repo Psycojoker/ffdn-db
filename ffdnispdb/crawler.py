@@ -3,9 +3,17 @@
 from flask import escape, json
 import requests
 import io
+import cgi
 
 from ispformat.validator import validate_isp
 from .models import ISP
+
+
+def get_encoding(content_type):
+    content_type, params = cgi.parse_header(content_type)
+
+    if 'charset' in params:
+        return params['charset'].strip("'\"")
 
 
 class Crawler(object):
@@ -77,7 +85,8 @@ class Crawler(object):
         elif r.headers.get('content-type').lower() != 'application/json':
             yield self.warn('Content-type <em>SHOULD</em> be application/json')
 
-        if not r.encoding:
+        encoding=get_encoding(r.headers.get('content-type'))
+        if not encoding:
             yield self.warn('Encoding not set. Assuming it\'s unicode, as per RFC4627 section 3')
 
         yield self.info('Content length: <strong>%s</strong>'%(esc(r.headers.get('content-length', 'not set'))))
@@ -100,7 +109,7 @@ class Crawler(object):
         yield self.info('Successfully read %d bytes'%len(r.content))
 
         yield self.m('<br>* Parsing the JSON file')
-        if not r.encoding:
+        if not encoding:
             charset=requests.utils.guess_json_utf(r.content)
             if not charset:
                 yield self.err('Unable to guess unicode charset')
@@ -110,8 +119,8 @@ class Crawler(object):
             yield self.info('Guessed charset: <strong>%s</strong>'%charset)
 
         try:
-            txt=r.content.decode(r.encoding or charset)
-            yield self.info('Successfully decoded file as %s'%esc(r.encoding or charset))
+            txt=r.content.decode(encoding or charset)
+            yield self.info('Successfully decoded file as %s'%esc(encoding or charset))
         except LookupError as e:
             yield self.err('Invalid/unknown charset: %s'%esc(e))
             yield self.abort('Charset error, Cannot continue')
