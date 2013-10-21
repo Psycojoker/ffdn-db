@@ -3,6 +3,7 @@
 from decimal import Decimal
 import json
 from . import db
+from datetime import datetime
 from sqlalchemy.types import TypeDecorator, VARCHAR
 from sqlalchemy.ext.mutable import MutableDict
 
@@ -53,6 +54,24 @@ class ISP(db.Model):
     def __init__(self, *args, **kwargs):
         super(ISP, self).__init__(*args, **kwargs)
         self.json={}
+
+    def covered_areas_names(self):
+        return [c['name'] for c in self.json.get('coveredAreas', [])]
+
+    @staticmethod
+    def str2date(_str):
+        d=None
+        try:
+            d=datetime.strptime(_str, '%Y-%m-%d')
+        except ValueError:
+            pass
+
+        if d is None:
+            try:
+                d=datetime.strptime(_str, '%Y-%m')
+            except ValueError:
+                pass
+        return d
 
     def __repr__(self):
         return '<ISP %r>' % (self.shortname if self.shortname else self.name,)

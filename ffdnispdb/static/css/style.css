@@ -91,6 +91,11 @@ input#search-input {
     }
 }
 
+.project-list .btn-small {
+    padding-right: 6px;
+    padding-left: 6px;
+}
+
 .project-choice {
     padding: 30px;
     background-color: #dddddd;

@@ -2,7 +2,7 @@
 {% block page_title %}{{ _("Project List") }}{% endblock %}
 {% block body %}
 <div>
-<table class="table table-condensed table-striped table-hover">
+<table class="project-list table table-condensed table-striped table-hover">
   <thead>
     <tr>
       <th>{{ _("Name") }}</th>
@@ -14,13 +14,15 @@
   <tbody>
     {% for project in projects -%}
     <tr>
-      <td>{% autoescape false %}{{ project.isFFDNMember | member_to_label }}{% endautoescape %} &nbsp;
-        <a href="{{ url_for('project', projectid=project.id) }}">{{ project.name }}</a></td>
-      <td>{{ project.zone }}</td>
-      {% autoescape false -%}
-      <td>{{ project.json.progressStatus|step_to_label }}</td>
-      {%- endautoescape %}
-      <td><a class="pull-right btn btn-small" href="{{ url_for('project', projectid=project.id) }}"><i class="icon-search"></i></a>
+      <td><a href="{{ url_for('project', projectid=project.id) }}">{{ project.name }}</a></td>
+      <td>{{ ', '.join(project.covered_areas_names())|truncate(30) }}</td>
+      <td>
+        {{ project.json.progressStatus|step_to_label|safe }}
+        {%- if project.is_ffdn_member %}
+        &thinsp;<a href="#" rel="tooltip" data-placement="right" title="{{ _("Member of the FDN Federation") }}"><span class="label label-info">FFDN</span></a>
+        {%- endif %}
+      </td>
+      <td><a class="pull-right btn btn-small" title="{{ _("Examine") }}" href="{{ url_for('project', projectid=project.id) }}"><i class="icon-search"></i></a>
     </tr>
     {% endfor -%}
   </tbody>

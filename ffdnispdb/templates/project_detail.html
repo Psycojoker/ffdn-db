@@ -58,6 +58,16 @@
         {{ field(_("step")) }}
           <dd>{{ project.progressStatus|step_to_label|safe }}</dd>
         {%- endif %}
+        {%- if project_row.is_ffdn_member %}
+        <dt>{{ _("FFDN Member") }}</dt>
+          <dd>
+          {%- if project.ffdnMemberSince -%}
+            {% trans date=project_row.str2date(project.ffdnMemberSince)|dateformat('medium') %}Yes, since {{ date }}{% endtrans %}
+          {%- else -%}
+            {{ _("Yes") }}
+          {%- endif -%}
+          </dd>
+        {%- endif %}
         {%- if project.memberCount %}
         {{ field(_("members")) }}
           <dd>{{ project.memberCount }}</dd>

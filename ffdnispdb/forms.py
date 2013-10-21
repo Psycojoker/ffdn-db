@@ -1,7 +1,6 @@
 from functools import partial
 import itertools
 import urlparse
-from datetime import datetime
 from flask.ext.wtf import Form
 from wtforms import Form as InsecureForm
 from wtforms import (TextField, DateField, DecimalField, IntegerField, SelectField,
@@ -173,7 +172,7 @@ class ProjectForm(Form):
         set_attr('main_ml', 'mainMailingList')
         set_attr('creation_date', 'creationDate')
         if hasattr(obj, 'creation_date'):
-            obj.creation_date=datetime.strptime(obj.creation_date, '%Y-%m-%d')
+            obj.creation_date=ISP.str2date(obj.creation_date)
         set_attr('step', 'progressStatus')
         set_attr('member_count', 'memberCount')
         set_attr('subscriber_count', 'subscriberCount')
