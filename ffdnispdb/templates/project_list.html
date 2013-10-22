@@ -1,32 +1,9 @@
 {% extends "layout.html" %}
+{% from 'project_list_macro.html' import project_list %}
 {% block page_title %}{{ _("Project List") }}{% endblock %}
 {% block body %}
 <div>
-<table class="project-list table table-condensed table-striped table-hover">
-  <thead>
-    <tr>
-      <th>{{ _("Name") }}</th>
-      <th>{{ _("Areas") }}</th>
-      <th>{{ _("Step")}}</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for project in projects -%}
-    <tr>
-      <td><a href="{{ url_for('project', projectid=project.id) }}">{{ project.name }}</a></td>
-      <td>{{ ', '.join(project.covered_areas_names())|truncate(30) }}</td>
-      <td>
-        {{ project.json.progressStatus|step_to_label|safe }}
-        {%- if project.is_ffdn_member %}
-        &thinsp;<a href="#" rel="tooltip" data-placement="right" title="{{ _("Member of the FDN Federation") }}"><span class="label label-info">FFDN</span></a>
-        {%- endif %}
-      </td>
-      <td><a class="pull-right btn btn-small" title="{{ _("Examine") }}" href="{{ url_for('project', projectid=project.id) }}"><i class="icon-search"></i></a>
-    </tr>
-    {% endfor -%}
-  </tbody>
-</table>
-<a class="pull-right btn btn-primary btn-small" href="{{ url_for('add_project') }}">{{ _("Add my project") }}</a>
+{{ project_list(projects) }}
+  <a class="pull-right btn btn-primary btn-small" href="{{ url_for('add_project') }}">{{ _("Add my project") }}</a>
 </div>
 {% endblock %}
