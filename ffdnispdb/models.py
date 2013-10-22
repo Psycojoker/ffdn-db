@@ -2,10 +2,14 @@
 
 from decimal import Decimal
 import json
-from . import db
+import os
 from datetime import datetime
+from . import db, app
+import flask_sqlalchemy
 from sqlalchemy.types import TypeDecorator, VARCHAR
 from sqlalchemy.ext.mutable import MutableDict
+import whoosh
+from whoosh import fields, index, qparser
 
 
 class fakefloat(float):
@@ -76,4 +80,98 @@ class ISP(db.Model):
     def __repr__(self):
         return '<ISP %r>' % (self.shortname if self.shortname else self.name,)
 
+
+class ISPWhoosh(object):
+    """
+    Helper class to index the ISP model with Whoosh to allow full-text search
+    """
+    schema = fields.Schema(
+        id=fields.ID(unique=True, stored=True),
+        is_ffdn_member=fields.BOOLEAN(),
+        is_disabled=fields.BOOLEAN(),
+        name=fields.TEXT(),
+        shortname=fields.TEXT(),
+        description=fields.TEXT(),
+        covered_areas=fields.KEYWORD(scorable=True, commas=True, lowercase=True),
+        step=fields.NUMERIC(signed=False),
+    )
+
+    primary_key=schema._fields['id']
+
+    @staticmethod
+    def get_index_dir():
+        return app.config.get('WHOOSH_INDEX_DIR', 'whoosh')
+
+    @classmethod
+    def get_index(cls):
+        idxdir=cls.get_index_dir()
+        if index.exists_in(idxdir):
+            idx = index.open_dir(idxdir)
+        else:
+            if not os.path.exists(idxdir):
+                os.makedirs(idxdir)
+            idx = index.create_in(idxdir, cls.schema)
+        return idx
+
+    @classmethod
+    def _search(cls, s, terms):
+        return s.search(qparser.MultifieldParser([
+            'name', 'shortname', 'description', 'covered_areas'
+        ], schema=cls.schema).parse(terms),
+           mask=whoosh.query.Term('is_disabled', True))
+
+    @classmethod
+    def search(cls, terms):
+        with ISPWhoosh.get_index().searcher() as s:
+            sres=cls._search(s, terms)
+            ranks={}
+            for rank, r in enumerate(sres):
+                ranks[r['id']]=rank
+
+            if not len(ranks):
+                return []
+
+            _res=ISP.query.filter(ISP.id.in_(ranks.keys()))
+            res=[None]*_res.count()
+            for isp in _res:
+                res[ranks[isp.id]]=isp
+
+        return res
+
+    @classmethod
+    def update_document(cls, writer, model):
+        kw={
+            'id': unicode(model.id),
+            '_stored_id': model.id,
+            'is_ffdn_member': model.is_ffdn_member,
+            'is_disabled': model.is_disabled,
+            'name': model.name,
+            'shortname': model.shortname,
+            'description': model.json.get('description'),
+            'covered_areas': model.covered_areas_names(),
+            'step': model.json.get('progressStatus')
+        }
+        writer.update_document(**kw)
+
+    @classmethod
+    def _after_flush(cls, app, changes):
+        isp_changes = []
+        for change in changes:
+            if change[0].__class__ == ISP:
+                update = change[1] in ('update', 'insert')
+                isp_changes.append((update, change[0]))
+
+        if not len(changes):
+            return
+
+        idx=cls.get_index()
+        with idx.writer() as writer:
+            for update, model in isp_changes:
+                if update:
+                    cls.update_document(writer, model)
+                else:
+                    writer.delete_by_term(cls.primary_key, model.id)
+
+
+flask_sqlalchemy.models_committed.connect(ISPWhoosh._after_flush)
 
