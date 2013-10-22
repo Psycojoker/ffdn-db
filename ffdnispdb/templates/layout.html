@@ -31,8 +31,8 @@
       </a>
       <a class="brand" href="/"><span id="ffdn-header"><span>F</span><span>F</span><span>D</span><span>N</span></span> Database</a>
       <div class="nav-collapse collapse">
-        <form class="navbar-search pull-right">
-          <input type="text" id="search-input" class="search-query input-medium" placeholder="{{ _("Search") }}"/>
+        <form method="get" action="/search" class="navbar-search pull-right">
+          <input type="text" id="search-input" class="search-query input-medium" name="q" placeholder="{{ _("Search") }}" />
         </form>
         <ul class="nav pull-right">
           {{ menu_item(_("Home"), 'home') }}

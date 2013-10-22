@@ -17,7 +17,7 @@ import os.path
 from . import forms
 from .constants import *
 from . import app, db, cache
-from .models import ISP
+from .models import ISP, ISPWhoosh
 from .crawler import PrettyValidator
 
 
@@ -160,9 +160,12 @@ def create_project_json_confirm():
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
-    if request.method == 'POST':
-        pass
-    return render_template('search.html')
+    terms=request.args.get('q')
+    if not terms:
+        return redirect(url_for('home'))
+
+    res=ISPWhoosh.search(terms)
+    return render_template('search_results.html', results=res, search_terms=terms)
 
 
 @app.route('/format', methods=['GET'])

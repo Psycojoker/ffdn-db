@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% from 'project_list_macro.html' import project_list %}
+{% block container %}
+<div style="margin-top: 25px;">
+  <form>
+    <div class="input-append">
+      <input class="input-xxlarge" name="q" type="text" value="{{ search_terms }}">
+      <button type="submit" class="btn">{{ _("Search") }}</button>
+    </div>
+  </form>
+{% if results -%}
+{{ project_list(results) }}
+{%- else -%}
+  {{ _("No ISP matching your query was found :-(") }}
+{%- endif %}
+</div>
+{% endblock %}
