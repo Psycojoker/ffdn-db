@@ -5,13 +5,14 @@
 * http cache support
 * write a "cron task" to periodically update the data
 
-- Manual ISp insertion form:
+- Manual ISP insertion form:
 * date picker
 * geo coordinates picker
 
 - Misc:
 * Rest API
 * geo stuff with spatialite (e.g find an ISP near you)
-* Full-text search engine based on woosh
+X Full-text search engine based on woosh 
 * Access-control on the edit feature
 * separate config for prod/dev, email admin on error for prod
+* write unit-test
