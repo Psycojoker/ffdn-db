@@ -20,11 +20,13 @@ class Crawler(object):
 
     MAX_JSON_SIZE=1*1024*1024
 
-    format_validation_errors=unicode
-    escape=lambda x:x
+    escape=staticmethod(lambda x:x)
 
     def m(self, msg, evt=None):
-        return u'%sdata: %s\n\n'%(u'event: %s\n'%evt if evt else '', msg)
+        if not evt:
+            return u'%s\n'%msg
+        else:
+            return u''
 
     def err(self, msg, *args):
         return self.m(u'! %s'%msg, *args)
@@ -36,8 +38,26 @@ class Crawler(object):
         return self.m(u'\u2013 %s'%msg)
 
     def abort(self, msg):
-        return (self.m('<br />== <span style="color: crimson">%s</span>'%msg)+
-                self.m(json.dumps({'closed': 1}), 'control'))
+        raise NotImplemented
+
+    def color(self, color, msg):
+        return msg
+
+    def bold(self, msg):
+        return msg
+
+    def italics(self, msg):
+        return msg
+
+    def nl(self):
+        return self.m('')
+
+    def format_validation_errors(self, errs):
+        r=[]
+        for e in errs:
+            r.append(u'    %s: %s'%('.'.join(list(e.schema_path)[1:]), e.message))
+
+        return u'\n'.join(r)
 
     def done_cb(self):
         pass
@@ -47,14 +67,14 @@ class Crawler(object):
         yield self.m('Starting the validation process...')
         r=None
         try:
-            yield self.m('* Attempting to retreive <strong>%s</strong>'%url)
+            yield self.m('* Attempting to retreive %s'%self.bold(url))
             r=requests.get(url, verify='/etc/ssl/certs/ca-certificates.crt',
                            headers={'User-Agent': 'FFDN DB validator'},
                            stream=True, timeout=10)
         except requests.exceptions.SSLError as e:
-            yield self.err('Unable to connect, SSL Error: <code style="color: #dd1144;">%s</code>'%esc(e))
+            yield self.err('Unable to connect, SSL Error: '+self.color('#dd1144', esc(e)))
         except requests.exceptions.ConnectionError as e:
-            yield self.err('Unable to connect: <code style="color: #dd1144;">%s</code>'%e)
+            yield self.err('Unable to connect: '+self.color('#dd1144', esc(e)))
         except requests.exceptions.Timeout as e:
             yield self.err('Connection timeout')
         except requests.exceptions.TooManyRedirects as e:
@@ -70,7 +90,7 @@ class Crawler(object):
 
         yield self.info('Connection established')
 
-        yield self.info('Response code: <strong>%s %s</strong>'%(esc(r.status_code), esc(r.reason)))
+        yield self.info('Response code: '+self.bold(str(r.status_code)+' '+esc(r.reason)))
         try:
             r.raise_for_status()
         except requests.exceptions.HTTPError as e:
@@ -78,18 +98,18 @@ class Crawler(object):
             yield self.abort('Invalid response code')
             return
 
-        yield self.info('Content type: <strong>%s</strong>'%(esc(r.headers.get('content-type', 'not defined'))))
+        yield self.info('Content type: '+self.bold(esc(r.headers.get('content-type', 'not defined'))))
         if not r.headers.get('content-type'):
-            yield self.error('Content-type <strong>MUST</strong> be defined')
+            yield self.error('Content-type '+self.bold('MUST')+' be defined')
             yield self.abort('The file must have a proper content-type to continue')
         elif r.headers.get('content-type').lower() != 'application/json':
-            yield self.warn('Content-type <em>SHOULD</em> be application/json')
+            yield self.warn('Content-type '+self.italics('SHOULD')+' be application/json')
 
         encoding=get_encoding(r.headers.get('content-type'))
         if not encoding:
             yield self.warn('Encoding not set. Assuming it\'s unicode, as per RFC4627 section 3')
 
-        yield self.info('Content length: <strong>%s</strong>'%(esc(r.headers.get('content-length', 'not set'))))
+        yield self.info('Content length: %s'%(self.bold(esc(r.headers.get('content-length', 'not set')))))
 
         cl=r.headers.get('content-length')
         if not cl:
@@ -108,7 +128,7 @@ class Crawler(object):
         del b
         yield self.info('Successfully read %d bytes'%len(r.content))
 
-        yield self.m('<br>* Parsing the JSON file')
+        yield self.nl()+self.m('* Parsing the JSON file')
         if not encoding:
             charset=requests.utils.guess_json_utf(r.content)
             if not charset:
@@ -116,7 +136,7 @@ class Crawler(object):
                 yield self.abort('The file MUST be unicode-encoded when no explicit charset is in the content-type')
                 return
 
-            yield self.info('Guessed charset: <strong>%s</strong>'%charset)
+            yield self.info('Guessed charset: '+self.bold(charset))
 
         try:
             txt=r.content.decode(encoding or charset)
@@ -147,11 +167,11 @@ class Crawler(object):
 
         yield self.info('JSON parsed successfully')
 
-        yield self.m('<br />* Validating the JSON against the schema')
+        yield self.nl()+self.m('* Validating the JSON against the schema')
 
         v=list(validate_isp(jdict))
         if v:
-            yield self.err('Validation errors:<br />%s'%esc(self.format_validation_errors(v)))
+            yield self.err('Validation errors:')+self.format_validation_errors(v)
             yield self.abort('Your JSON file does not follow the schema, please fix it')
             return
         else:
@@ -168,7 +188,7 @@ class Crawler(object):
             yield self.abort('The name of your ISP must be unique')
             return
 
-        yield (self.m('<br />== <span style="color: forestgreen">All good ! You can click on Confirm now</span>')+
+        yield (self.nl()+self.m('== '+self.color('forestgreen', 'All good ! You can click on Confirm now'))+
                self.m(json.dumps({'passed': 1}), 'control'))
 
         self.jdict=jdict
@@ -183,6 +203,9 @@ class PrettyValidator(Crawler):
         self.session=session
         self.escape=escape
 
+    def m(self, msg, evt=None):
+        return u'%sdata: %s\n\n'%(u'event: %s\n'%evt if evt else '', msg)
+
     def err(self, msg, *args):
         return self.m(u'<strong style="color: crimson">!</strong> %s'%msg, *args)
 
@@ -196,14 +219,31 @@ class PrettyValidator(Crawler):
         return (self.m(u'<br />== <span style="color: crimson">%s</span>'%msg)+
                 self.m(json.dumps({'closed': 1}), 'control'))
 
-    def format_validation_errors(self, errs):
-        r=[]
-        for e in errs:
-            r.append(u'    %s: %s'%('.'.join(list(e.schema_path)[1:]), str(e)))
+    def bold(self, msg):
+        return u'<strong>%s</strong>'%msg
 
-        return '\n'.join(r)
+    def italics(self, msg):
+        return u'<em>%s</em>'%msg
+
+    def color(self, color, msg):
+        return u'<span style="color: %s">%s</span>'%(color, msg)
+
+    def format_validation_errors(self, errs):
+        lns=super(PrettyValidator, self).format_validation_errors(errs)
+        buf=u''
+        for l in lns.split('\n'):
+            buf+=self.m(self.escape(l))
+        return buf
 
     def done_cb(self):
         self.session['form_json']['validated']=True
         self.session['form_json']['jdict']=self.jdict
         self.session.save()
+
+
+class TextValidator(Crawler):
+    def abort(self, msg):
+        res=u'ABORTED: %s\n'%msg
+        pad=u'='*(len(res)-1)+'\n'
+        return self.m(pad+res+pad)
+
