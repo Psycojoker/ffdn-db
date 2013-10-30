@@ -3,11 +3,13 @@
 from decimal import Decimal
 import json
 import os
+import itertools
 from datetime import datetime
 from . import db, app
 import flask_sqlalchemy
 from sqlalchemy.types import TypeDecorator, VARCHAR
 from sqlalchemy.ext.mutable import MutableDict
+from sqlalchemy import event
 import whoosh
 from whoosh import fields, index, qparser
 
@@ -47,7 +49,7 @@ class ISP(db.Model):
     shortname = db.Column(db.String(12), index=True, unique=True)
     is_ffdn_member = db.Column(db.Boolean, default=False)
     is_disabled = db.Column(db.Boolean, default=False) # True = ISP will not appear
-    url = db.Column(db.String)
+    json_url = db.Column(db.String)
     last_update_success = db.Column(db.DateTime)
     last_update_attempt = db.Column(db.DateTime)
     is_updatable = db.Column(db.Boolean, default=True) # set to False to disable JSON-URL updates
@@ -58,6 +60,13 @@ class ISP(db.Model):
     def __init__(self, *args, **kwargs):
         super(ISP, self).__init__(*args, **kwargs)
         self.json={}
+
+    def pre_save(self, *args):
+        if 'name' in self.json:
+            assert self.name == self.json['name']
+
+        if 'shortname' in self.json:
+            assert self.shortname == self.json['shortname']
 
     def covered_areas_names(self):
         return [c['name'] for c in self.json.get('coveredAreas', [])]
@@ -79,6 +88,12 @@ class ISP(db.Model):
 
     def __repr__(self):
         return '<ISP %r>' % (self.shortname if self.shortname else self.name,)
+
+
+def pre_save_hook(sess):
+    for v in itertools.chain(sess.new, sess.dirty):
+        if hasattr(v, 'pre_save') and hasattr(v.pre_save, '__call__'):
+            v.pre_save(sess)
 
 
 class ISPWhoosh(object):
@@ -174,4 +189,5 @@ class ISPWhoosh(object):
 
 
 flask_sqlalchemy.models_committed.connect(ISPWhoosh._after_flush)
+event.listen(flask_sqlalchemy.Session, 'before_commit', pre_save_hook)
 
