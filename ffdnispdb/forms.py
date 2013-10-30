@@ -207,7 +207,7 @@ def is_url_unique(url):
     u1=urlparse.urlunsplit(t)
     t[0]='http' if t[0] == 'https' else 'https'
     u2=urlparse.urlunsplit(t)
-    if ISP.query.filter(ISP.url.startswith(u1) | ISP.url.startswith(u2)).count() > 0:
+    if ISP.query.filter(ISP.json_url.startswith(u1) | ISP.json_url.startswith(u2)).count() > 0:
         return False
     return True
 

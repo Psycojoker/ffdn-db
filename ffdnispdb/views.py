@@ -18,7 +18,7 @@ from . import forms
 from .constants import *
 from . import app, db, cache
 from .models import ISP, ISPWhoosh
-from .crawler import PrettyValidator
+from .crawler import WebValidator
 
 
 @app.route('/')
@@ -118,7 +118,7 @@ def json_url_validator():
     else:
         session['form_json']['validator']=time()
 
-    validator=PrettyValidator(session=session._get_current_object())
+    validator=WebValidator(session=session._get_current_object())
     return Response(validator(session['form_json']['url']),
                     mimetype="text/event-stream")
 
@@ -145,7 +145,7 @@ def create_project_json_confirm():
         isp.name=jdict['name']
         if 'shortname' in jdict:
             isp.shortname=jdict['shortname']
-        isp.url=session['form_json']['url']
+        isp.json_url=session['form_json']['url']
         isp.json=jdict
         isp.tech_email=session['form_json']['tech_email']
         del session['form_json']

@@ -59,6 +59,9 @@ class Crawler(object):
 
         return u'\n'.join(r)
 
+    def pre_done_cb(self, *args):
+        pass
+
     def done_cb(self):
         pass
 
@@ -177,15 +180,9 @@ class Crawler(object):
         else:
             yield self.info('Done. No errors encountered \o')
 
-        # check name uniqueness
-        where = (ISP.name == jdict['name'])
-        if 'shortname' in jdict and jdict['shortname']:
-            where |= (ISP.shortname == jdict.get('shortname'))
-        if ISP.query.filter(where).count() > 0:
-            yield self.err('An ISP named "%s" already exist'%esc(
-                jdict['name']+(' ('+jdict['shortname']+')' if jdict.get('shortname') else '')
-            ))
-            yield self.abort('The name of your ISP must be unique')
+        ret=self.pre_done_cb(jdict)
+        if ret:
+            yield ret
             return
 
         yield (self.nl()+self.m('== '+self.color('forestgreen', 'All good ! You can click on Confirm now'))+
@@ -241,9 +238,24 @@ class PrettyValidator(Crawler):
         self.session.save()
 
 
+class WebValidator(PrettyValidator):
+    def pre_done_cb(self, jdict):
+        # check name uniqueness
+        where = (ISP.name == jdict['name'])
+        if 'shortname' in jdict and jdict['shortname']:
+            where |= (ISP.shortname == jdict.get('shortname'))
+        if ISP.query.filter(where).count() > 0:
+            ret = self.nl()
+            ret += self.err('An ISP named "%s" already exist in our database'%self.escape(
+                jdict['name']+(' ('+jdict['shortname']+')' if jdict.get('shortname') else '')
+            ))
+            ret += self.abort('The name of your ISP must be unique')
+            return ret
+
+
 class TextValidator(Crawler):
     def abort(self, msg):
-        res=u'ABORTED: %s\n'%msg
+        res=u'FATAL ERROR: %s\n'%msg
         pad=u'='*(len(res)-1)+'\n'
         return self.m(pad+res+pad)
 
