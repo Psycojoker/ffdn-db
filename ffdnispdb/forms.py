@@ -112,6 +112,9 @@ class ProjectForm(Form):
     subscriber_count = IntegerField(_(u'subscribers'), validators=[Optional(), NumberRange(min=0)],
                                     description=[None, _('Number of subscribers to an internet access')])
 
+    tech_email = TextField(_('Email'), validators=[Email(), DataRequired()], description=[None,
+                            _('Technical contact, in case of problems with your submission')])
+
     def validate(self, *args, **kwargs):
         r=super(ProjectForm, self).validate(*args, **kwargs)
         if (self.latitude.data is None) != (self.longitude.data is None):
@@ -214,7 +217,8 @@ def is_url_unique(url):
 class ProjectJSONForm(Form):
     url = URLField(_(u'base url'), description=['E.g. https://isp.com/', 'A ressource implementing our '+\
                                                 'JSON-Schema specification must exist at path /isp.json'])
-    tech_email = TextField('Email', validators=[Email()], description=[None, 'Technical contact, in case of problems'])
+    tech_email = TextField(_(u'Email'), validators=[Email()], description=[None,
+                           _(u'Technical contact, in case of problems')])
 
     def validate_url(self, field):
         if not field.data.netloc:

@@ -95,6 +95,7 @@ def create_project_form():
         isp=ISP()
         isp.name = form.name.data
         isp.shortname = form.shortname.data or None
+        isp.tech_email = form.tech_email.data
         isp.json=form.to_json(isp.json)
 
         db.session.add(isp)

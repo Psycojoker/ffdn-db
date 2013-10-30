@@ -7,6 +7,8 @@
       {{ form.csrf_token }}
       <fieldset>
         <legend>{{ _("Add a new project") }}</legend>
+        {{ fm.render_field(form.tech_email) }}
+        <hr />
         {{ fm.render_field(form.name) }}
         {{ fm.render_field(form.shortname) }}
         {{ fm.render_field(form.description) }}
