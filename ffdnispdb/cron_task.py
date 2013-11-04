@@ -96,7 +96,7 @@ try:
             log=''.join(validator(isp.json_url))
             if not validator.success: # handle error
                 isp.update_error_strike += 1
-                #isp.next_update = bla
+                isp.next_update = datetime.now()+timedelta(seconds=validator.jdict_max_age)
                 db.session.add(isp)
                 db.session.commit()
                 print u'%s: Error while updating:'%(datetime.now())
@@ -110,7 +110,7 @@ try:
             isp.json = validator.jdict
             isp.last_update_success = isp.last_update_attempt
             isp.update_error_strike = 0
-            #isp.next_update = bla
+            isp.next_update = datetime.now()+timedelta(seconds=validator.jdict_max_age)
             db.session.add(isp)
             db.session.commit()
 

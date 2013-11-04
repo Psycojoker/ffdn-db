@@ -10,6 +10,7 @@ import requests
 
 from ispformat.validator import validate_isp
 from .models import ISP
+from . import app
 
 
 def get_encoding(content_type):
