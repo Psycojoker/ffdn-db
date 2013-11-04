@@ -71,6 +71,13 @@ class ISP(db.Model):
     def covered_areas_names(self):
         return [c['name'] for c in self.json.get('coveredAreas', [])]
 
+    @property
+    def complete_name(self):
+        if 'shortname' in self.json:
+            return u'%s (%s)'%(self.json['shortname'], self.json['name'])
+        else:
+            return u'%s'%self.json['name']
+
     @staticmethod
     def str2date(_str):
         d=None

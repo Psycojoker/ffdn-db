@@ -5,9 +5,11 @@ import signal
 import traceback
 from sys import stderr
 from datetime import datetime, timedelta
+from flask.ext.mail import Message
+from flask import url_for
 from ffdnispdb.crawler import TextValidator
 from ffdnispdb.models import ISP
-from ffdnispdb import db
+from ffdnispdb import app, db, mail
 
 
 MAX_RUNTIME=15*60
@@ -32,8 +34,6 @@ def timeout_handler(signum, frame):
     if last_isp == isp.id:
         strike += 1
         if strike > 2:
-            # three strikes, you're out.
-            print "you're out", isp
             signal.alarm(6)
             raise Timeout
     else:
@@ -45,6 +45,35 @@ def timeout_handler(signum, frame):
 signal.signal(signal.SIGALRM, timeout_handler)
 signal.alarm(6)
 
+
+def send_warning_email(isp, debug_msg):
+    msg=Message(u"Problem while updating your ISP's data", sender=('FFDN DB <cron@db.ffdn.org>'))
+    msg.body = """
+Hello,
+
+You are receiving this mail because your ISP, %s, is registered on the FFDN ISP Database.
+
+Our automatic update script could not access or process your ISP's data located at %s.
+
+Automatic updates of your ISP were disabled until you fix the problem.
+
+Here is some debug output to help you locate the issue:
+
+%s
+
+---
+When the issue is resolved, please click on the link below to reactivate automatic updates on your ISP:
+%s
+
+Thanks,
+The FFDN ISP Database team
+    """.strip()%(isp.complete_name, isp.json_url, debug_msg.strip(), url_for('home'))
+    msg.add_recipient(isp.tech_email)
+    mail.send(msg)
+
+
+app.config['SERVER_NAME'] = 'db.ffdn.org'
+app.app_context().push()
 
 try:
     for isp in ISP.query.filter(ISP.is_disabled == False,
@@ -72,7 +101,7 @@ try:
                 db.session.commit()
                 print u'%s: Error while updating:'%(datetime.now())
                 if isp.update_error_strike >= 3:
-                    # send email
+                    send_warning_email(isp, log)
                     print u'    three strikes, you\'re out'
 
                 print log.rstrip()+'\n'
@@ -94,7 +123,8 @@ try:
             db.session.add(isp)
             db.session.commit()
             if isp.update_error_strike >= 3:
-                # send email
+                send_warning_email(isp, 'Your ISP took more then 18 seconds to process. '
+                                        'Having problems with your webserver ?')
                 print u'    three strikes, you\'re out'
             print traceback.format_exc()
 
