@@ -1,9 +1,12 @@
 
 
-from flask import escape, json
-import requests
 import io
 import cgi
+import pytz
+from datetime import datetime, timedelta
+from werkzeug.http import parse_date
+from flask import escape, json
+import requests
 
 from ispformat.validator import validate_isp
 from .models import ISP
@@ -20,7 +23,7 @@ class Crawler(object):
 
     MAX_JSON_SIZE=1*1024*1024
 
-    escape=staticmethod(lambda x: unicode(str(x), 'utf8'))
+    escape=staticmethod(lambda x: unicode(str(x), 'utf8') if type(x) != unicode else x)
 
     def __init__(self):
         self.success=False
@@ -68,6 +71,24 @@ class Crawler(object):
 
     def done_cb(self):
         pass
+
+    def config(self, name):
+        return app.config.get('CRAWLER_'+name)
+
+    def parse_cache_control(self, _cachectl):
+        cachectl={}
+        for cc in _cachectl.split(','):
+            cc=cc.strip()
+            if not cc:
+                continue
+            cc=cc.split('=')
+            if cc[0] not in ('max-age', 's-maxage'):
+                continue
+            try:
+                cachectl[cc[0]]=cc[1]
+            except IndexError:
+                cachectl[cc[0]]=True
+        return cachectl
 
     def __call__(self, url):
         esc=self.escape
@@ -123,6 +144,54 @@ class Crawler(object):
             yield self.warn('No content-length. Note that we will not process a file whose size exceed 1MiB')
         elif int(cl) > self.MAX_JSON_SIZE:
             yield self.abort('File too big ! File size must be less then 1MiB')
+
+
+        _cachecontrol=r.headers.get('cache-control')
+        cachecontrol=self.parse_cache_control(_cachecontrol) if _cachecontrol else None
+        max_age=None
+        if cachecontrol:
+            try:
+                _maxage=cachecontrol.get('max-age')
+                _maxage=cachecontrol.get('s-maxage', _maxage) # s-maxage takes precedence
+                max_age=int(_maxage)
+            except ValueError:
+                yield self.warn('Invalid max-age '+esc(_maxage))
+
+            yield self.info('Cache control: '+self.bold(esc(
+                ', '.join([k+'='+v if type(v) != bool else k for k, v in cachecontrol.iteritems()]))
+            ))
+
+        _expires=r.headers.get('expires')
+        expires=parse_date(_expires)
+        if expires:
+            _now=r.headers.get('date')
+            if _now: # use server date when possible
+                now=parse_date(_now)
+            else:
+                now=datetime.utcnow()
+
+            if expires > now:
+                expires=(expires-now).total_seconds()
+                yield self.info('Expires: '+self.bold(esc(_expires)))
+            else:
+                yield self.warn('Invalid Expires header. Expiry date must be in the future.')
+                expires=None
+        else:
+            yield self.warn('Invalid Expires header %r'%esc(_expires))
+
+        if not max_age and not expires:
+            yield self.warn('No valid expiration time provided ! Please provide it either '
+                             'with a Cache-Control or Expires header.')
+            max_age=self.config('DEFAULT_CACHE_TIME')
+            yield self.info('Using default expiration time of %d seconds'%(max_age))
+
+        self.jdict_max_age = max_age if max_age else expires
+        self.jdict_max_age = min(
+            self.config('MAX_CACHE_TIME'),
+            max(self.config('MIN_CACHE_TIME'), self.jdict_max_age)
+        )
+        yield self.info('Next update will be in %s'%(timedelta(seconds=self.jdict_max_age)))
+
 
         yield self.info('Reading response into memory...')
         b=io.BytesIO()
@@ -203,7 +272,7 @@ class PrettyValidator(Crawler):
     def __init__(self, session=None, *args, **kwargs):
         super(PrettyValidator, self).__init__(*args, **kwargs)
         self.session=session
-        self.escape=lambda x: escape(unicode(str(x), 'utf8'))
+        self.escape=lambda x: escape(unicode(str(x), 'utf8') if type(x) != unicode else x)
 
     def m(self, msg, evt=None):
         return u'%sdata: %s\n\n'%(u'event: %s\n'%evt if evt else '', msg)

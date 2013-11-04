@@ -93,7 +93,7 @@ try:
             db.session.commit()
 
             validator=TextValidator()
-            log=''.join(validator(isp.json_url+'ab'))
+            log=''.join(validator(isp.json_url))
             if not validator.success: # handle error
                 isp.update_error_strike += 1
                 #isp.next_update = bla
