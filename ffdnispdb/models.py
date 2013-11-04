@@ -52,9 +52,9 @@ class ISP(db.Model):
     json_url = db.Column(db.String)
     last_update_success = db.Column(db.DateTime)
     last_update_attempt = db.Column(db.DateTime)
-    is_updatable = db.Column(db.Boolean, default=True) # set to False to disable JSON-URL updates
+    update_error_strike = db.Column(db.Integer, default=0) # if >= 3; then updates are disabled
+    next_update = db.Column(db.DateTime, default=datetime.now())
     tech_email = db.Column(db.String)
-    cache_info = db.Column(db.Text)
     json = db.Column(MutableDict.as_mutable(JSONEncodedDict))
 
     def __init__(self, *args, **kwargs):
@@ -87,7 +87,7 @@ class ISP(db.Model):
         return d
 
     def __repr__(self):
-        return '<ISP %r>' % (self.shortname if self.shortname else self.name,)
+        return u'<ISP %r>' % (self.shortname if self.shortname else self.name,)
 
 
 def pre_save_hook(sess):

@@ -20,7 +20,11 @@ class Crawler(object):
 
     MAX_JSON_SIZE=1*1024*1024
 
-    escape=staticmethod(lambda x:x)
+    escape=staticmethod(lambda x: unicode(str(x), 'utf8'))
+
+    def __init__(self):
+        self.success=False
+        self.jdict={}
 
     def m(self, msg, evt=None):
         if not evt:
@@ -84,8 +88,8 @@ class Crawler(object):
             yield self.err('Too many redirects')
         except requests.exceptions.RequestException as e:
             yield self.err('Internal request exception')
-        except Exception as e:
-            yield self.err('Unexpected request exception')
+#        except Exception as e:
+#            yield self.err('Unexpected request exception')
 
         if r is None:
             yield self.abort('Connection could not be established, aborting')
@@ -189,6 +193,7 @@ class Crawler(object):
                self.m(json.dumps({'passed': 1}), 'control'))
 
         self.jdict=jdict
+        self.success=True
         self.done_cb()
 
 
@@ -198,7 +203,7 @@ class PrettyValidator(Crawler):
     def __init__(self, session=None, *args, **kwargs):
         super(PrettyValidator, self).__init__(*args, **kwargs)
         self.session=session
-        self.escape=escape
+        self.escape=lambda x: escape(unicode(str(x), 'utf8'))
 
     def m(self, msg, evt=None):
         return u'%sdata: %s\n\n'%(u'event: %s\n'%evt if evt else '', msg)
