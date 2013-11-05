@@ -7,6 +7,8 @@ from sys import stderr
 from datetime import datetime, timedelta
 from flask.ext.mail import Message
 from flask import url_for
+import itsdangerous
+
 from ffdnispdb.crawler import TextValidator
 from ffdnispdb.models import ISP
 from ffdnispdb import app, db, mail
@@ -46,6 +48,15 @@ signal.signal(signal.SIGALRM, timeout_handler)
 signal.alarm(6)
 
 
+def gen_reactivate_key(isp):
+    s=itsdangerous.URLSafeSerializer(app.secret_key,
+                                     salt='reactivate')
+    return s.dumps([
+        isp.id,
+        str(isp.last_update_attempt)
+    ])
+
+
 def send_warning_email(isp, debug_msg):
     msg=Message(u"Problem while updating your ISP's data", sender=('FFDN DB <cron@db.ffdn.org>'))
     msg.body = """
@@ -63,12 +74,14 @@ Here is some debug output to help you locate the issue:
 
 ---
 When the issue is resolved, please click on the link below to reactivate automatic updates on your ISP:
-%s
+%s?key=%s
 
 Thanks,
 The FFDN ISP Database team
-    """.strip()%(isp.complete_name, isp.json_url, debug_msg.strip(), url_for('home'))
+    """.strip()%(isp.complete_name, isp.json_url, debug_msg.strip(),
+                 url_for('reactivate_isp', projectid=isp.id), gen_reactivate_key(isp))
     msg.add_recipient(isp.tech_email)
+    print u'    Sending notification email to %s'%(isp.tech_email)
     mail.send(msg)
 
 
@@ -103,8 +116,8 @@ try:
                 db.session.commit()
                 print u'%s: Error while updating:'%(datetime.now())
                 if isp.update_error_strike >= 3:
-                    send_warning_email(isp, log)
                     print u'    three strikes, you\'re out'
+                    send_warning_email(isp, log)
 
                 print log.rstrip()+'\n'
                 continue

@@ -2,8 +2,8 @@
 
 - Crawler:
 * i18n
-* http cache support
-* write a "cron task" to periodically update the data
+X http cache support
+X write a "cron task" to periodically update the data
 
 - Manual ISP insertion form:
 * date picker

@@ -3,6 +3,7 @@
 from flask import request, g, redirect, url_for, abort, \
     render_template, flash, json, session, Response, Markup
 from flask.ext.babel import gettext as _
+import itsdangerous
 import docutils.core
 import ispformat.specs
 
@@ -10,7 +11,6 @@ from datetime import date, time, timedelta, datetime
 from urlparse import urlunsplit
 import locale
 locale.setlocale(locale.LC_ALL, '')
-import string
 from time import time
 import os.path
 
@@ -18,7 +18,7 @@ from . import forms
 from .constants import *
 from . import app, db, cache
 from .models import ISP, ISPWhoosh
-from .crawler import WebValidator
+from .crawler import WebValidator, PrettyValidator
 
 
 @app.route('/')
@@ -119,7 +119,7 @@ def json_url_validator():
     else:
         session['form_json']['validator']=time()
 
-    validator=WebValidator(session=session._get_current_object())
+    validator=WebValidator(session._get_current_object(), 'form_json')
     return Response(validator(session['form_json']['url']),
                     mimetype="text/event-stream")
 
@@ -157,6 +157,70 @@ def create_project_json_confirm():
         return redirect(url_for('project', projectid=isp.id))
     else:
         return redirect(url_for('create_project_json'))
+
+
+@app.route('/isp/reactivate-validator', methods=['GET'])
+def reactivate_validator():
+    if 'form_reactivate' not in session or \
+       session['form_reactivate'].get('validated', False):
+        abort(403)
+
+    p=ISP.query.get(session['form_reactivate']['isp_id'])
+    if not p:
+        abort(403)
+
+    v=session['form_reactivate'].get('validator')
+
+    if v is not None:
+        if v > time()-5:
+            abort(429)
+    else:
+        session['form_reactivate']['validator']=time()
+
+    validator=PrettyValidator(session._get_current_object(), 'form_reactivate')
+    return Response(validator(p.json_url, p.cache_info or {}),
+                    mimetype="text/event-stream")
+
+
+@app.route('/isp/<projectid>/reactivate',  methods=['GET', 'POST'])
+def reactivate_isp(projectid):
+    """
+    Allow to reactivate an ISP after it has been disabled
+    because of problems with the JSON file.
+    """
+    p=ISP.query.filter(ISP.id==projectid, ISP.is_disabled==False,
+                       ISP.update_error_strike>=3).first_or_404()
+    if request.method == 'GET':
+        key = request.args.get('key')
+        try:
+            s=itsdangerous.URLSafeSerializer(app.secret_key,
+                                             salt='reactivate')
+            d=s.loads(key)
+        except Exception as e:
+            abort(403)
+
+        if (len(d) != 2 or d[0] != p.id or
+            d[1] != str(p.last_update_attempt)):
+            abort(403)
+
+        session['form_reactivate'] = {'isp_id': p.id}
+        return render_template('reactivate_validator.html', isp=p)
+    else:
+        if 'form_reactivate' not in session or \
+           not session['form_reactivate'].get('validated', False):
+            abort(409)
+
+        p=ISP.query.get(session['form_reactivate']['isp_id'])
+        p.json=session['form_reactivate']['jdict']
+        p.cache_info=session['form_reactivate']['cache_info']
+        p.last_update_attempt=datetime.now()
+        p.last_update_success=p.last_update_attempt
+
+        db.session.add(p)
+        db.session.commit()
+
+        flash(_(u'Automatic updates activated'), 'info')
+        return redirect(url_for('project', projectid=p.id))
 
 
 @app.route('/search', methods=['GET', 'POST'])

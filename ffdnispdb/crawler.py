@@ -299,9 +299,10 @@ class Crawler(object):
 
 class PrettyValidator(Crawler):
 
-    def __init__(self, session=None, *args, **kwargs):
+    def __init__(self, session=None, sesskey=None, *args, **kwargs):
         super(PrettyValidator, self).__init__(*args, **kwargs)
         self.session=session
+        self.sesskey=sesskey
         self.escape=lambda x: escape(unicode(str(x), 'utf8') if type(x) != unicode else x)
 
     def m(self, msg, evt=None):
@@ -337,8 +338,9 @@ class PrettyValidator(Crawler):
         return buf
 
     def done_cb(self):
-        self.session['form_json']['validated']=True
-        self.session['form_json']['jdict']=self.jdict
+        self.session[self.sesskey]['validated']=True
+        self.session[self.sesskey]['jdict']=self.jdict
+        self.session[self.sesskey]['cache_info']=self.cache_info
         self.session.save()
 
 

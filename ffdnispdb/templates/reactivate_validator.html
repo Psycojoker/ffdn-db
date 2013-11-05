@@ -1,0 +1,4 @@
+{% set page_title = _("Reactivating updates on your project") %}
+{% set validator_url = url_for('reactivate_validator') %}
+{% set confirm_url = url_for('reactivate_isp', projectid=isp.id) %}
+{% include 'validator_generic.html' with context %}
