@@ -28,7 +28,10 @@ class Crawler(object):
 
     def __init__(self):
         self.success=False
+        self.modified=True
         self.jdict={}
+        self.cache_info=None
+        self.jdict_max_age=self.config('DEFAULT_CACHE_TIME')
 
     def m(self, msg, evt=None):
         if not evt:
@@ -91,15 +94,19 @@ class Crawler(object):
                 cachectl[cc[0]]=True
         return cachectl
 
-    def __call__(self, url):
+    def __call__(self, url, cache_info={}):
         esc=self.escape
         yield self.m('Starting the validation process...')
         r=None
         try:
             yield self.m('* Attempting to retreive %s'%self.bold(url))
+            headers={'User-Agent': 'FFDN DB validator'}
+            if cache_info.get('etag'):
+                headers['If-None-Match'] = cache_info['etag']
+            if cache_info.get('last-modified'):
+                headers['If-Modified-Since'] = cache_info['last-modified']
             r=requests.get(url, verify='/etc/ssl/certs/ca-certificates.crt',
-                           headers={'User-Agent': 'FFDN DB validator'},
-                           stream=True, timeout=10)
+                           headers=headers, stream=True, timeout=10)
         except requests.exceptions.SSLError as e:
             yield self.err('Unable to connect, SSL Error: '+self.color('#dd1144', esc(e)))
         except requests.exceptions.ConnectionError as e:
@@ -126,26 +133,6 @@ class Crawler(object):
             yield self.err('Response code indicates an error')
             yield self.abort('Invalid response code')
             return
-
-        yield self.info('Content type: '+self.bold(esc(r.headers.get('content-type', 'not defined'))))
-        if not r.headers.get('content-type'):
-            yield self.error('Content-type '+self.bold('MUST')+' be defined')
-            yield self.abort('The file must have a proper content-type to continue')
-        elif r.headers.get('content-type').lower() != 'application/json':
-            yield self.warn('Content-type '+self.italics('SHOULD')+' be application/json')
-
-        encoding=get_encoding(r.headers.get('content-type'))
-        if not encoding:
-            yield self.warn('Encoding not set. Assuming it\'s unicode, as per RFC4627 section 3')
-
-        yield self.info('Content length: %s'%(self.bold(esc(r.headers.get('content-length', 'not set')))))
-
-        cl=r.headers.get('content-length')
-        if not cl:
-            yield self.warn('No content-length. Note that we will not process a file whose size exceed 1MiB')
-        elif int(cl) > self.MAX_JSON_SIZE:
-            yield self.abort('File too big ! File size must be less then 1MiB')
-
 
         _cachecontrol=r.headers.get('cache-control')
         cachecontrol=self.parse_cache_control(_cachecontrol) if _cachecontrol else None
@@ -177,7 +164,7 @@ class Crawler(object):
             else:
                 yield self.warn('Invalid Expires header. Expiry date must be in the future.')
                 expires=None
-        else:
+        elif _expires and not expires:
             yield self.warn('Invalid Expires header %r'%esc(_expires))
 
         if not max_age and not expires:
@@ -192,6 +179,48 @@ class Crawler(object):
             max(self.config('MIN_CACHE_TIME'), self.jdict_max_age)
         )
         yield self.info('Next update will be in %s'%(timedelta(seconds=self.jdict_max_age)))
+
+
+        etag=r.headers.get('etag')
+        last_modified=r.headers.get('last-modified')
+        if not etag and not last_modified:
+            yield self.warn('Please, provide at an ETag or Last-Modified header for '
+                            'conditional requests')
+
+        self.cache_info={}
+        if etag:
+            self.cache_info['etag']=etag
+        if last_modified:
+            self.cache_info['last-modified']=last_modified
+
+        if cache_info and r.status_code == 304: # not modified
+            self.m('== '+self.color('forestgreen', 'Response not modified. All good !'))
+            self.modified=False
+            self.success=True
+            self.done_cb()
+            return
+
+
+        yield self.info('Content type: '+self.bold(esc(r.headers.get('content-type', 'not defined'))))
+        if not r.headers.get('content-type'):
+            yield self.err('Content-type '+self.bold('MUST')+' be defined')
+            yield self.abort('The file must have a proper content-type to continue')
+            return
+        elif r.headers.get('content-type').lower() != 'application/json':
+            yield self.warn('Content-type '+self.italics('SHOULD')+' be application/json')
+
+        encoding=get_encoding(r.headers.get('content-type'))
+        if not encoding:
+            yield self.warn('Encoding not set. Assuming it\'s unicode, as per RFC4627 section 3')
+
+        yield self.info('Content length: %s'%(self.bold(esc(r.headers.get('content-length', 'not set')))))
+
+        cl=r.headers.get('content-length')
+        if not cl:
+            yield self.warn('No content-length. Note that we will not process a file whose size exceed 1MiB')
+        elif int(cl) > self.MAX_JSON_SIZE:
+            yield self.abort('File too big ! File size must be less then 1MiB')
+            return
 
 
         yield self.info('Reading response into memory...')

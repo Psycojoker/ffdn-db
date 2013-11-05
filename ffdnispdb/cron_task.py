@@ -93,9 +93,11 @@ try:
             db.session.commit()
 
             validator=TextValidator()
-            log=''.join(validator(isp.json_url))
+            log=''.join(validator(isp.json_url, isp.cache_info or {}))
             if not validator.success: # handle error
                 isp.update_error_strike += 1
+                if isp.cache_info:
+                    isp.cache_info = validator.cache_info
                 isp.next_update = datetime.now()+timedelta(seconds=validator.jdict_max_age)
                 db.session.add(isp)
                 db.session.commit()
@@ -107,7 +109,9 @@ try:
                 print log.rstrip()+'\n'
                 continue
 
-            isp.json = validator.jdict
+            if validator.modified:
+                isp.json = validator.jdict
+            isp.cache_info = validator.cache_info
             isp.last_update_success = isp.last_update_attempt
             isp.update_error_strike = 0
             isp.next_update = datetime.now()+timedelta(seconds=validator.jdict_max_age)
