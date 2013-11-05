@@ -26,7 +26,7 @@ def home():
     return render_template('index.html', active_button="home")
 
 
-@app.route('/projects')
+@app.route('/isp/')
 def project_list():
     return render_template('project_list.html', projects=ISP.query.filter_by(is_disabled=False))
 
@@ -88,7 +88,7 @@ def add_project():
     return render_template('add_project.html')
 
 
-@app.route('/create/form', methods=['GET', 'POST'])
+@app.route('/isp/create/form', methods=['GET', 'POST'])
 def create_project_form():
     form = forms.ProjectForm()
     if form.validate_on_submit():
@@ -105,7 +105,7 @@ def create_project_form():
     return render_template('project_form.html', form=form)
 
 
-@app.route('/create/json-url/validator', methods=['GET'])
+@app.route('/isp/create/validator', methods=['GET'])
 def json_url_validator():
     if 'form_json' not in session or \
        session['form_json'].get('validated', False):
@@ -124,7 +124,7 @@ def json_url_validator():
                     mimetype="text/event-stream")
 
 
-@app.route('/create/json-url', methods=['GET', 'POST'])
+@app.route('/isp/create', methods=['GET', 'POST'])
 def create_project_json():
     form = forms.ProjectJSONForm()
     if form.validate_on_submit():
@@ -136,7 +136,7 @@ def create_project_json():
     return render_template('project_json_form.html', form=form)
 
 
-@app.route('/create/json-url/confirm', methods=['POST'])
+@app.route('/isp/create/confirm', methods=['POST'])
 def create_project_json_confirm():
     if 'form_json' in session and session['form_json'].get('validated', False):
         if not forms.is_url_unique(session['form_json']['url']):
