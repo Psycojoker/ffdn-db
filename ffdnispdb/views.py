@@ -3,6 +3,7 @@
 from flask import request, g, redirect, url_for, abort, \
     render_template, flash, json, session, Response, Markup
 from flask.ext.babel import gettext as _
+from flask.ext.mail import Message
 import itsdangerous
 import docutils.core
 import ispformat.specs
@@ -16,7 +17,7 @@ import os.path
 
 from . import forms
 from .constants import *
-from . import app, db, cache
+from . import app, db, cache, mail
 from .models import ISP, ISPWhoosh
 from .crawler import WebValidator, PrettyValidator
 
@@ -67,20 +68,93 @@ def project(projectid):
 
 @app.route('/isp/<projectid>/edit', methods=['GET', 'POST'])
 def edit_project(projectid):
-    isp=ISP.query.filter_by(id=projectid, is_disabled=False).first()
-    if not isp:
-        abort(404)
-    form = forms.ProjectForm.edit_json(isp.json)
-    if form.validate_on_submit():
-        isp.name = form.name.data
-        isp.shortname = form.shortname.data or None
-        isp.json=form.to_json(isp.json)
+    MAX_TOKEN_AGE=3600
+    isp=ISP.query.filter_by(id=projectid, is_disabled=False).first_or_404()
+    sess_token=session.get('edit_tokens', {}).get(isp.id)
 
-        db.session.add(isp)
-        db.session.commit()
-        flash(_(u'Project modified'), 'info')
+    if 'token' in request.args:
+        print session
+        s = itsdangerous.URLSafeTimedSerializer(app.secret_key, salt='edit')
+        try:
+            r = s.loads(request.args['token'], max_age=MAX_TOKEN_AGE,
+                        return_timestamp=True)
+        except:
+            abort(403)
+
+        if r[0] != isp.id:
+            abort(403)
+
+        tokens = session.setdefault('edit_tokens', {})
+        tokens[r[0]] = r[1]
+        # refresh page, without the token in the url
+        return redirect(url_for('edit_project', projectid=r[0]))
+    elif (sess_token is None or (datetime.utcnow()-sess_token).total_seconds() > MAX_TOKEN_AGE):
+        return redirect(url_for('gen_edit_token', projectid=isp.id))
+
+    if isp.is_local:
+        form = forms.ProjectForm.edit_json(isp)
+        if form.validate_on_submit():
+            isp.name = form.name.data
+            isp.shortname = form.shortname.data or None
+            isp.json = form.to_json(isp.json)
+            isp.tech_email = form.tech_email.data
+
+            db.session.add(isp)
+            db.session.commit()
+            flash(_(u'Project modified'), 'info')
+            return redirect(url_for('project', projectid=isp.id))
+        return render_template('edit_project_form.html', form=form)
+    else:
+        form = forms.ProjectJSONForm(obj=isp)
+        if form.validate_on_submit():
+            isp.tech_email = form.tech_email.data
+            u = list(form.json_url.data)
+            u[2]='/isp.json' # new path
+            url=urlunsplit(u)
+            isp.json_url = url
+
+            db.session.add(isp)
+            db.session.commit()
+            flash(_(u'Project modified'), 'info')
+            return redirect(url_for('project', projectid=isp.id))
+        return render_template('edit_project_json_form.html', form=form)
+
+
+@app.route('/isp/<projectid>/gen_edit_token', methods=['GET', 'POST'])
+def gen_edit_token(projectid):
+    isp=ISP.query.filter_by(id=projectid, is_disabled=False).first_or_404()
+    form = forms.RequestEditToken()
+    if form.validate_on_submit(): # validated
+        if form.tech_email.data == isp.tech_email:
+            s = itsdangerous.URLSafeTimedSerializer(app.secret_key, salt='edit')
+            token = s.dumps(isp.id)
+            msg = Message("Edit request of your ISP", sender=app.config['EMAIL_SENDER'])
+            msg.body="""
+Hello,
+You are receiving this message because your are listed as technical contact for "%s" on the FFDN ISP database.
+
+Someone asked to edit your ISP's data in our database. If it's not you, please ignore this message.
+
+To proceed to the editing form, please click on the following link:
+%s?token=%s
+
+Note: the link is only valid for one hour from the moment we send you this email.
+
+Thanks,
+The FFDN ISP Database team
+https://db.ffdn.org
+            """.strip() % (isp.complete_name,
+                           url_for('edit_project', projectid=isp.id, _external=True),
+                           token)
+            msg.add_recipient(isp.tech_email)
+            mail.send(msg)
+
+        # if the email provided is not the correct one, we still redirect
+        flash(_(u'If you provided the correct email adress, '
+                 'you must will receive a message shortly (check your spam folder)'), 'info')
         return redirect(url_for('project', projectid=isp.id))
-    return render_template('project_form.html', form=form, project=isp)
+
+    return render_template('gen_edit_token.html', form=form)
 
 
 @app.route('/add-a-project', methods=['GET'])

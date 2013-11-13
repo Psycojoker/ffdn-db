@@ -73,6 +73,10 @@ class ISP(db.Model):
         return [c['name'] for c in self.json.get('coveredAreas', [])]
 
     @property
+    def is_local(self):
+        return self.json_url is None
+
+    @property
     def complete_name(self):
         if 'shortname' in self.json:
             return u'%s (%s)'%(self.json['shortname'], self.json['name'])

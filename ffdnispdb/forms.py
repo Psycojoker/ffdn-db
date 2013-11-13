@@ -159,7 +159,8 @@ class ProjectForm(Form):
         return json
 
     @classmethod
-    def edit_json(cls, json):
+    def edit_json(cls, isp):
+        json=isp.json
         obj=type('abject', (object,), {})()
         def set_attr(attr, itemk=None, d=json):
             if itemk is None:
@@ -186,12 +187,18 @@ class ProjectForm(Form):
         if 'otherWebsites' in json:
             setattr(obj, 'other_websites', [{'name': n, 'url': w} for n, w in json['otherWebsites'].iteritems()])
         set_attr('covered_areas', 'coveredAreas')
+        obj.tech_email=isp.tech_email
         return cls(obj=obj)
 
 
 class URLField(TextField):
     def _value(self):
-        return urlparse.urlunsplit(self.data) if self.data is not None else ''
+        if isinstance(self.data, basestring):
+            return self.data
+        elif self.data is None:
+            return ''
+        else:
+            return urlparse.urlunsplit(self.data)
 
     def process_formdata(self, valuelist):
         if valuelist:
@@ -215,18 +222,24 @@ def is_url_unique(url):
     return True
 
 class ProjectJSONForm(Form):
-    url = URLField(_(u'base url'), description=['E.g. https://isp.com/', 'A ressource implementing our '+\
-                                                'JSON-Schema specification must exist at path /isp.json'])
+    json_url = URLField(_(u'base url'), description=[_(u'E.g. https://isp.com/'),
+                            _(u'A ressource implementing our JSON-Schema specification '+
+                               'must exist at path /isp.json')])
     tech_email = TextField(_(u'Email'), validators=[Email()], description=[None,
                            _(u'Technical contact, in case of problems')])
 
-    def validate_url(self, field):
+    def validate_json_url(self, field):
         if not field.data.netloc:
             raise ValidationError(_(u'Invalid URL'))
 
         if field.data.scheme not in ('http', 'https'):
             raise ValidationError(_(u'Invalid URL (must be HTTP(s))'))
 
-        if not is_url_unique(field.data):
+        if not field.object_data and not is_url_unique(field.data):
             raise ValidationError(_(u'This URL is already in our database'))
+
+
+class RequestEditToken(Form):
+    tech_email = TextField(_(u'Tech Email'), validators=[Email()], description=[None,
+                           _(u'The Technical contact you provided while registering')])
 
