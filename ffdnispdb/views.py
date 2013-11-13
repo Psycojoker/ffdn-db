@@ -102,7 +102,7 @@ def create_project_form():
         db.session.commit()
         flash(_(u'Project created'), 'info')
         return redirect(url_for('project', projectid=isp.id))
-    return render_template('project_form.html', form=form)
+    return render_template('add_project_form.html', form=form)
 
 
 @app.route('/isp/create/validator', methods=['GET'])
@@ -133,7 +133,7 @@ def create_project_json():
         url=urlunsplit(u)
         session['form_json'] = {'url': url, 'tech_email': form.tech_email.data}
         return render_template('project_json_validator.html')
-    return render_template('project_json_form.html', form=form)
+    return render_template('add_project_json_form.html', form=form)
 
 
 @app.route('/isp/create/confirm', methods=['POST'])
