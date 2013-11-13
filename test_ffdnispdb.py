@@ -21,7 +21,8 @@ class TestCase(unittest.TestCase):
         db.drop_all()
 
     def test_projectform(self):
-        resp = self.app.post('/create/form', data={
+        resp = self.app.post('/isp/create/form', data={
+            'tech_email': 'admin@isp.com',
             'name': 'Test',
             'step': '1',
             'covered_areas-0-name': 'Somewhere over the rainbow',
