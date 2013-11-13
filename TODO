@@ -13,6 +13,12 @@ X write a "cron task" to periodically update the data
 * Rest API
 * geo stuff with spatialite (e.g find an ISP near you)
 X Full-text search engine based on woosh 
-* Access-control on the edit feature
+X Access-control on the edit feature
 * separate config for prod/dev, email admin on error for prod
-* write unit-test
+~ write unit-test
+
+
+Legend:
+* : TODO
+~ : WIP
+X : DONE
