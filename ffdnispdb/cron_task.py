@@ -58,11 +58,11 @@ def gen_reactivate_key(isp):
 
 
 def send_warning_email(isp, debug_msg):
-    msg=Message(u"Problem while updating your ISP's data", sender=('FFDN DB <cron@db.ffdn.org>'))
+    msg=Message(u"Problem while updating your ISP's data", sender=app.config['EMAIL_SENDER'])
     msg.body = """
 Hello,
 
-You are receiving this mail because your ISP, %s, is registered on the FFDN ISP Database.
+You are receiving this message because your are listed as technical contact for "%s" on the FFDN ISP database.
 
 Our automatic update script could not access or process your ISP's data located at %s.
 
@@ -78,6 +78,7 @@ When the issue is resolved, please click on the link below to reactivate automat
 
 Thanks,
 The FFDN ISP Database team
+https://db.ffdn.org
     """.strip()%(isp.complete_name, isp.json_url, debug_msg.strip(),
                  url_for('reactivate_isp', projectid=isp.id), gen_reactivate_key(isp))
     msg.add_recipient(isp.tech_email)
