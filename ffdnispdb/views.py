@@ -202,7 +202,7 @@ def json_url_validator():
 def create_project_json():
     form = forms.ProjectJSONForm()
     if form.validate_on_submit():
-        u=list(form.url.data)
+        u=list(form.json_url.data)
         u[2]='/isp.json' # new path
         url=urlunsplit(u)
         session['form_json'] = {'url': url, 'tech_email': form.tech_email.data}
