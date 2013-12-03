@@ -223,6 +223,9 @@ def create_project_json_confirm():
         isp.json_url=session['form_json']['url']
         isp.json=jdict
         isp.tech_email=session['form_json']['tech_email']
+        isp.last_update_success=session['form_json']['last_update']
+        isp.next_update=session['form_json']['next_update']
+        isp.cache_info=session['form_json']['cache_info']
         del session['form_json']
 
         db.session.add(isp)

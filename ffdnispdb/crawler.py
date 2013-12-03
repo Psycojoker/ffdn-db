@@ -341,6 +341,8 @@ class PrettyValidator(Crawler):
         self.session[self.sesskey]['validated']=True
         self.session[self.sesskey]['jdict']=self.jdict
         self.session[self.sesskey]['cache_info']=self.cache_info
+        self.session[self.sesskey]['last_update']=datetime.now()
+        self.session[self.sesskey]['next_update']=datetime.now()+timedelta(seconds=self.jdict_max_age)
         self.session.save()
 
 
