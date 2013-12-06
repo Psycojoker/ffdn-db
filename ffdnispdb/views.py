@@ -18,7 +18,7 @@ import os.path
 from . import forms
 from .constants import *
 from . import app, db, cache, mail
-from .models import ISP, ISPWhoosh
+from .models import ISP, ISPWhoosh, CoveredArea, RegisteredOffice
 from .crawler import WebValidator, PrettyValidator
 
 
@@ -50,12 +50,57 @@ def isp_map_data():
     return Response(json.dumps(data), mimetype='application/json')
 
 
+@app.route('/isp/find_near.json', methods=['GET'])
+def isp_find_near():
+    lat=request.args.get('lat')
+    lon=request.args.get('lon')
+    try:
+        lat=float(lat)
+        lon=float(lon)
+    except (ValueError, TypeError):
+        abort(400)
+
+    q=CoveredArea.containing((lat,lon))\
+                 .options(db.joinedload('isp'))
+    res=[[{
+        'isp_id': ca.isp_id,
+        'area': {
+            'id': ca.id,
+            'name': ca.name,
+        }
+    } for ca in q]]
+
+    d=RegisteredOffice.point.distance(db.func.MakePoint(lon, lat), 1).label('distance')
+    q=db.session.query(RegisteredOffice, d)\
+                .options(db.joinedload('isp'))\
+                .order_by('distance ASC')\
+                .limit(2)
+
+    res.append([{
+        'distance': d,
+        'isp_id': r.isp.id,
+    } for r, d in q])
+
+    return Response(json.dumps(res))
+
+
 @app.route('/isp/<projectid>/covered_areas.json', methods=['GET'])
 def isp_covered_areas(projectid):
-    p=ISP.query.filter_by(id=projectid, is_disabled=False).first()
+    p=ISP.query.filter_by(id=projectid, is_disabled=False)\
+               .options(db.joinedload('covered_areas'),
+                        db.defer('covered_areas.area'),
+                        db.undefer('covered_areas.area_geojson'))\
+               .scalar()
     if not p:
         abort(404)
-    return Response(json.dumps(p.json['coveredAreas']), mimetype='application/json')
+    cas=[]
+    for ca in p.covered_areas:
+        cas.append({
+            'id': ca.id,
+            'name': ca.name,
+            'area': json.loads(ca.area_geojson) if ca.area_geojson else None
+        })
+    return Response(json.dumps(cas), mimetype='application/json')
 
 
 @app.route('/isp/<projectid>/')

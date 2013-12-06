@@ -76,6 +76,10 @@ input#search-input {
     height: 600px;
 }
 
+.leaflet-popup-content {
+    margin: 8px 10px 6px 10px;
+}
+
 @media (min-width: 768px) and (max-width: 979px) {
     #map {
         height: 500px;

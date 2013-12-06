@@ -7,7 +7,7 @@
 {% else -%}
 <a href="{{ url_for('project', projectid=isp.id) }}"><strong>{{ isp.name }}</strong></a>
 {% endif %}
-<ul style="margin: 10px 0 10px 5px; list-style-type: none;">
+<ul style="margin: 10px 0 5px 5px; list-style-type: none;">
 {%- if isp.json.website %}
 <li>{{ field(_("website")) }}: <a href="{{ isp.json.website }}">{{ isp.json.website }}</a></li>
 {%- endif %}
