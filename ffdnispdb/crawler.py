@@ -10,7 +10,8 @@ import requests
 
 from ispformat.validator import validate_isp
 from .models import ISP
-from . import app
+from .utils import dict_to_geojson
+from . import app, db
 
 
 def get_encoding(content_type):
@@ -68,7 +69,7 @@ class Crawler(object):
         for e in errs:
             r.append(u'    %s: %s'%('.'.join(list(e.schema_path)[1:]), e.message))
 
-        return u'\n'.join(r)
+        return u'\n'.join(r)+'\n'
 
     def pre_done_cb(self, *args):
         pass
@@ -282,6 +283,17 @@ class Crawler(object):
             return
         else:
             yield self.info('Done. No errors encountered \o')
+
+        for ca in jdict.get('coveredAreas', []):
+            if not 'area' in ca:
+                continue
+            gjson=dict_to_geojson(ca['area'])
+            is_valid=bool(db.session.query(db.func.GeomFromGeoJSON(gjson) != None).first()[0])
+            if not is_valid:
+                yield self.err('GeoJSON data for covered area "%s" cannot '
+                               'be handled by our database'%esc(ca['name']))
+                yield self.abort('Please fix your GeoJSON')
+                return
 
         ret=self.pre_done_cb(jdict)
         if ret:

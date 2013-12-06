@@ -6,10 +6,12 @@ import os
 import itertools
 from datetime import datetime
 from . import db, app
+from .utils import dict_to_geojson
 import flask_sqlalchemy
 from sqlalchemy.types import TypeDecorator, VARCHAR
 from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy import event
+import geoalchemy as geo
 import whoosh
 from whoosh import fields, index, qparser
 
@@ -44,6 +46,7 @@ class JSONEncodedDict(TypeDecorator):
 
 
 class ISP(db.Model):
+    __tablename__ = 'isp'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False, index=True, unique=True)
     shortname = db.Column(db.String(12), index=True, unique=True)
@@ -57,6 +60,9 @@ class ISP(db.Model):
     tech_email = db.Column(db.String)
     cache_info = db.Column(MutableDict.as_mutable(JSONEncodedDict))
     json = db.Column(MutableDict.as_mutable(JSONEncodedDict))
+    covered_areas = db.relationship('CoveredArea', backref='isp')
+#    covered_areas_query = db.relationship('CoveredArea', lazy='dynamic')
+    registered_office = db.relationship('RegisteredOffice', uselist=False, backref='isp')
 
     def __init__(self, *args, **kwargs):
         super(ISP, self).__init__(*args, **kwargs)
@@ -68,6 +74,34 @@ class ISP(db.Model):
 
         if 'shortname' in self.json:
             assert self.shortname == self.json['shortname']
+
+        if db.inspect(self).attrs.json.history.has_changes():
+            self._sync_covered_areas()
+
+    def _sync_covered_areas(self):
+        """
+        Called to synchronise between json['coveredAreas'] and the
+        covered_areas table, when json was modified.
+        """
+        # delete current covered areas
+        self.covered_areas.delete()
+        RegisteredOffice.query.filter_by(isp_id=self.id).delete()
+
+        for ca_js in self.json.get('coveredAreas', []):
+            ca=CoveredArea()
+            ca.name=ca_js['name']
+            area=ca_js.get('area')
+            ca.area=db.func.CastToMultiPolygon(
+                db.func.GeomFromGeoJSON(dict_to_geojson(area))
+            ) if area else None
+            self.covered_areas.append(ca)
+
+        coords=self.json.get('coordinates')
+        if coords:
+            self.registered_office=RegisteredOffice(
+                point=db.func.MakePoint(coords['longitude'], coords['latitude'], 4326)
+            )
+
 
     def covered_areas_names(self):
         return [c['name'] for c in self.json.get('coveredAreas', [])]
@@ -100,6 +134,43 @@ class ISP(db.Model):
 
     def __repr__(self):
         return u'<ISP %r>' % (self.shortname if self.shortname else self.name,)
+
+
+class CoveredArea(db.Model):
+    __tablename__ = 'covered_areas'
+    id = db.Column(db.Integer, primary_key=True)
+    isp_id = db.Column(db.Integer, db.ForeignKey('isp.id'))
+    name = db.Column(db.String)
+    area = geo.GeometryColumn(geo.MultiPolygon(2))
+    area_geojson = db.column_property(db.func.AsGeoJSON(db.literal_column('area')), deferred=True)
+
+    @classmethod
+    def containing(cls, coords):
+        """
+        Return CoveredAreas containing point (lat,lon)
+        """
+        return cls.query.filter(
+            cls.area != None,
+            cls.area.gcontains(db.func.MakePoint(coords[1], coords[0])) == 1
+        )
+
+    def __repr__(self):
+        return u'<CoveredArea %r>' % (self.name,)
+
+geo.GeometryDDL(CoveredArea.__table__)
+
+
+class RegisteredOffice(db.Model):
+    __tablename__ = 'registered_offices'
+    id = db.Column(db.Integer, primary_key=True)
+    isp_id = db.Column(db.Integer, db.ForeignKey('isp.id'))
+    point = geo.GeometryColumn(geo.Point(0))
+
+geo.GeometryDDL(RegisteredOffice.__table__)
+
+@event.listens_for(db.metadata, 'before_create')
+def init_spatialite_metadata(target, conn, **kwargs):
+    conn.execute('SELECT InitSpatialMetaData(1)')
 
 
 def pre_save_hook(sess):
