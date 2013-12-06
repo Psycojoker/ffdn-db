@@ -110,8 +110,8 @@ try:
             log=''.join(validator(isp.json_url, isp.cache_info or {}))
             if not validator.success: # handle error
                 isp.update_error_strike += 1
-                if isp.cache_info:
-                    isp.cache_info = validator.cache_info
+                # reset cache info (to force refetch next time)
+                isp.cache_info = {}
                 isp.next_update = datetime.now()+timedelta(seconds=validator.jdict_max_age)
                 db.session.add(isp)
                 db.session.commit()
