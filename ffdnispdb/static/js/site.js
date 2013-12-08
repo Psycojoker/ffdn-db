@@ -131,33 +131,35 @@ L.Control.Pinpoint = L.Control.extend({
                 $.when.apply(this, defered).done(function() {
                     $.each(data[0], function(k, match) {
                         var isp=window.isp_list[match['isp_id']];
-                        var c=isp['marker'].getLatLng();
+                        var ispc=isp['marker'].getLatLng();
                         var matching=null;
                         $.each(isp['areas'], function(j, a) {
                             if(a['id'] == match['area']['id'])
                                 matching = a;
                         });
-                        bnds.extend([c['lat'], c['lng']]);
+                        bnds.extend([ispc['lat'], ispc['lng']]);
                         isp['marker'].openPopup();
                         if(matching !== null) {
                             bnds.extend(matching['layer'].getBounds());
                             matching['layer'].addTo(map);
                         }
                     });
+                    bnds.extend(c);
                     bnds=bnds.pad(0.3);
                     map.fitBounds(bnds, {paddingTopLeft: [20, 20]});
                 });
             } else {
                 var r=$.map(data[1], function(match, k) {
                     var m=window.isp_list[match['isp_id']]['marker'];
-                    var c=m.getLatLng();
+                    var ispc=m.getLatLng();
                     if(k == 0) {
                         map.closePopup();
                         m.openPopup();
                     }
 
-                    return [[c['lat'], c['lng']]];
+                    return [[ispc.lat, ispc.lng]];
                 });
+                r.push([c.lat, c.lng])
                 bnds=new L.LatLngBounds(r);
                 bnds=bnds.pad(0.3);
                 map.fitBounds(bnds, {paddingTopLeft: [20, 20]});
