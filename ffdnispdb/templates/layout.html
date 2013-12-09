@@ -1,6 +1,6 @@
 {% macro menu_item(name, endpoint=None) -%}
 <li{% if request.endpoint == endpoint %} class="active"{% endif %}><a href="{{ url_for(endpoint) if endpoint else "#" }}">{{ name }}</a></li>
-{%- endmacro %}
+{%- endmacro -%}
 <!doctype html>
 <html lang="fr">
   <head>
@@ -21,55 +21,66 @@
     {%- endblock %}
   </head>
 <body>
-
-<div class="navbar navbar-static-top">
-  <div class="navbar-inner">
-    <div class="container">
-      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </a>
-      <a class="brand" href="/"><span id="ffdn-header"><span>F</span><span>F</span><span>D</span><span>N</span></span> Database</a>
-      <div class="nav-collapse collapse">
-        <form method="get" action="/search" class="navbar-search pull-right">
-          <input type="text" id="search-input" class="search-query input-medium" name="q" placeholder="{{ _("Search") }}" />
-        </form>
-        <ul class="nav pull-right">
-          {{ menu_item(_("Home"), 'home') }}
-          {{ menu_item(_("Project List"), 'project_list') }}
-          {{ menu_item(_("Format"), 'format') }}
-          {{ menu_item(_("API")) }}
-          <li class="divider-vertical"></li>
-        </ul>
+<div id="wrap">
+  <div class="navbar navbar-static-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </a>
+        <a class="brand" href="/"><span id="ffdn-header"><span>F</span><span>F</span><span>D</span><span>N</span></span> Database</a>
+        <div class="nav-collapse collapse">
+          <form method="get" action="/search" class="navbar-search pull-right">
+            <input type="text" id="search-input" class="search-query input-medium" name="q" placeholder="{{ _("Search") }}" />
+          </form>
+          <ul class="nav pull-right">
+            {{ menu_item(_("Home"), 'home') }}
+            {{ menu_item(_("Project List"), 'project_list') }}
+            {{ menu_item(_("Format"), 'format') }}
+            {{ menu_item(_("API")) }}
+            <li class="divider-vertical"></li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<div id="main-container" class="container">
-{% with messages = get_flashed_messages(with_categories="true") %}
-  {% if messages %}
-    {% for category, message in messages %}
+  <div id="main-container" class="container">
+    {%- with messages = get_flashed_messages(with_categories="true") -%}
+    {%- if messages -%}
+    {%- for category, message in messages %}
     <div class="alert alert-{{ category }} fade in">
       <button class="close" data-dismiss="alert">×</button>
       {{ message }}
     </div>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
-{%- block container %}
-<div class="page-header">
-  {% block page_header -%}
-  <h2>{% block page_title %}{% endblock %}</h2>
-  {%- endblock %}
-</div>
-<div class="container">
-{% block body %}{% endblock %}
+    {%- endfor -%}
+    {%- endif -%}
+    {% endwith %}
+    {%- block container %}
+    <div class="page-header">
+      {% block page_header -%}
+      <h2>{% block page_title %}{% endblock %}</h2>
+      {%- endblock %}
+    </div>
+    <div class="container">
+    {%- block body %}{% endblock %}
+    </div>
+    {%- endblock container %}
+  </div>
+
+  <div id="push"></div>
 </div>
 
-{% endblock container %}
-</div>
+<footer>
+  <div class="container">
+    <div class="bracket"></div>
+    <p class="credit">Developped for the <a href="//ffdn.org">FDN Federation</a> by <a href="http://gu1.aeroxteam.fr">Gu1</a>@<a href="https://www.cafai.fr">CAFAI</a> and <a href="/humans.txt">Many contributors</a>.</p>
+    <p class="license"><a href="https://dev.cafai.fr/gitweb/?p=ffdn-db.git">Source code</a> licensed under the <a href="http://opensource.org/licenses/BSD-3-Clause">3-clause BSD license</a>.</p>
+    <p class="contact">You can contact us at <a href="mailto:contact@db.ffdn.org">contact@db.ffdn.org</a>.</p>
+  </div>
+</footer>
 
 {% block script -%}
 <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.js') }}"></script>

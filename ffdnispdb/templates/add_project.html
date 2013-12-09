@@ -2,23 +2,23 @@
 
 {% block page_title %}{{ _("Add a project") }}{% endblock %}
 {% block body %}
-<div class="row-fluid">
-  <div class="span5 offset1 project-choice">
-    <h3>{{ _("Automatically from a JSON file") }}</h3>
-    <p>{% trans format_spec=url_for('format') %}You only have to give us the link to the hostname where you implement the <a href="{{ format_spec }}">ISP Format</a>, and we will crawl it periodicaly to update your informations.{% endtrans %}</p>
-    <br />
-    <br />
-    <p class="text-center">
-      <a class="btn btn-large btn-primary" href="{{ url_for('create_project_json') }}">{{ _("Heck yeah") }}</a>
-    </p>
-  </div>
-  <div class="span5 project-choice">
-    <h3>{{ _("Manually by filling a form") }}</h3>
-    <p>{% trans %}Don't have the ressources or time to host an <em>ISP Format</em> JSON file ? Don't worry, you can also fill our simple form to give us the informations about your local ISP. Only problem, you'll have to come back here if you want to update it.{% endtrans %}</p>
-    <br />
-    <p class="text-center">
-      <a class="btn btn-large btn-primary" href="{{ url_for('create_project_form') }}">{{ _("That JSON thing is too cool for me") }}</a>
-    </p>
-  </div>
-</div>
+      <div class="row-fluid">
+        <div class="span5 offset1 project-choice">
+          <h3>{{ _("Automatically from a JSON file") }}</h3>
+          <p>{% trans format_spec=url_for('format') %}You only have to give us the link to the hostname where you implement the <a href="{{ format_spec }}">ISP Format</a>, and we will crawl it periodicaly to update your informations.{% endtrans %}</p>
+          <br />
+          <br />
+          <p class="text-center">
+            <a class="btn btn-large btn-primary" href="{{ url_for('create_project_json') }}">{{ _("Heck yeah") }}</a>
+          </p>
+        </div>
+        <div class="span5 project-choice">
+          <h3>{{ _("Manually by filling a form") }}</h3>
+          <p>{% trans %}Don't have the ressources or time to host an <em>ISP Format</em> JSON file ? Don't worry, you can also fill our simple form to give us the informations about your local ISP. Only problem, you'll have to come back here if you want to update it.{% endtrans %}</p>
+          <br />
+          <p class="text-center">
+            <a class="btn btn-large btn-primary" href="{{ url_for('create_project_form') }}">{{ _("That JSON thing is too cool for me") }}</a>
+          </p>
+        </div>
+      </div>
 {% endblock %}
