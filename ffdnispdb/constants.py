@@ -1,4 +1,23 @@
 # -*- coding: utf-8 -*-
 
-STEPS = {1:u'Projet envisagé', 2:u'Porteurs du projet identifiés', 3:u'Structure en cours de création', 4:u'Structure constituée', 5:u'Outils de base créés (compte en banque, premiers adhérents)', 6:u'FAI opérationnel partiellement (premiers accès ouverts, p-e en mode dégradé)', 7:u'FAI pleinement opérationnel'}
-STEPS_LABELS = {1:'', 2:'info', 3:'info', 4:'important', 5:'important', 6:'warning', 7:'success'}
+from flask.ext.babel import gettext as _
+
+STEPS = {
+    1: _(u'Project considered'),
+    2: _(u'Primary members found'),
+    3: _(u'Legal structure being created'),
+    4: _(u'Legal structure created'),
+    5: _(u'Base tools created (bank account, first members)'),
+    6: _(u'ISP partially functional (first subscribers, maybe in degraded mode)'),
+    7: _(u'ISP fully working')
+}
+
+STEPS_LABELS = {
+    1: '',
+    2: 'info',
+    3: 'info',
+    4: 'important',
+    5: 'important',
+    6: 'warning',
+    7: 'success'
+}
