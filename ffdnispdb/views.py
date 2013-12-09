@@ -371,6 +371,13 @@ def format():
     return render_template('format_spec.html', spec=Markup(parts['html_body']))
 
 
+@app.route('/humans.txt', methods=['GET'])
+def humans():
+    import os.path
+    authors_file=os.path.join(os.path.dirname(__file__), '../AUTHORS')
+    return Response(open(authors_file), mimetype='text/plain; charset=utf-8')
+
+
 #------
 # Filters
 
