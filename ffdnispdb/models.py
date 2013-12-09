@@ -230,11 +230,8 @@ class ISPWhoosh(object):
                 return []
 
             _res=ISP.query.filter(ISP.id.in_(ranks.keys()))
-            res=[None]*_res.count()
-            for isp in _res:
-                res[ranks[isp.id]]=isp
 
-        return res
+        return sorted(_res, key=lambda r: ranks[r.id])
 
     @classmethod
     def update_document(cls, writer, model):
