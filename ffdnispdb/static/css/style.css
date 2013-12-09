@@ -162,8 +162,8 @@ input#search-input {
 }
 
 .brand:hover #ffdn-header {
-    animation-duration: 0.6s;
-    animation-name: lulz1;
+    -webkit-animation: lulz1 0.6s;
+    animation: lulz1 0.6s;
 }
 
 @keyframes lulz1 {
@@ -173,6 +173,16 @@ input#search-input {
     }
     50% {
         transform: scaleX(1.5);
+    }
+}
+
+@-webkit-keyframes lulz1 {
+    0% {
+        -webkit-transform: scaleX(1);
+        -webkit-transform: scaleY(0.5);
+    }
+    50% {
+        -webkit-transform: scaleX(1.5);
     }
 }
 
