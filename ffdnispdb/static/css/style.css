@@ -1,4 +1,8 @@
 
+/*
+ * Fonts
+ */
+
 @font-face {
     font-family: 'ffdn';
     src: url('../fonts/ffdn.eot');
@@ -10,7 +14,8 @@
 }
 
 @font-face {
-    font-family: 'inconsolata';
+    font-family: 'Inconsolata';
+    src: local('Inconsolata');
     src: url('../fonts/inconsolata.eot');
     src: url('../fonts/inconsolata.eot?#iefix') format('embedded-opentype'),
          url('../fonts/inconsolata.woff') format('woff'),
@@ -19,22 +24,105 @@
     font-style: normal;
 }
 
-#main-container {
-    margin-top: 25px;
+@font-face {
+    font-family: 'DejaVu Sans';
+    src: local('DejaVu Sans');
+    src: url('../fonts/dejavusans.eot');
+    src: url('../fonts/dejavusans.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/dejavusans.woff') format('woff'),
+         url('../fonts/dejavusans.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
 }
 
-#main-container .page-header {
-    margin-top: 0;
+@font-face {
+    font-family: 'DejaVu Sans';
+    src: local('DejaVu Sans Bold');
+    src: url('../fonts/dejavusans-bold.eot');
+    src: url('../fonts/dejavusans-bold.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/dejavusans-bold.woff') format('woff'),
+         url('../fonts/dejavusans-bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
 }
 
-#main-container .page-header h2 {
-    margin: 0;
-    display: inline;
+@font-face {
+    font-family: 'DejaVu Sans';
+    src: local('DejaVu Sans Oblique');
+    src: url('../fonts/dejavusans-oblique.eot');
+    src: url('../fonts/dejavusans-oblique.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/dejavusans-oblique.woff') format('woff'),
+         url('../fonts/dejavusans-oblique.ttf') format('truetype');
+    font-weight: normal;
+    font-style: oblique;
 }
 
-#main-container .span3 {
-    margin-left: 15px;
+@font-face {
+    font-family: 'DejaVu Sans';
+    src: local('DejaVu Sans Bold Oblique');
+    src: url('../fonts/dejavusans-boldoblique.eot');
+    src: url('../fonts/dejavusans-boldoblique.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/dejavusans-boldoblique.woff') format('woff'),
+         url('../fonts/dejavusans-boldoblique.ttf') format('truetype');
+    font-weight: bold;
+    font-style: oblique;
 }
+
+/*
+ * Global
+ */
+
+html, body {
+    height: 100%;
+    font-family: 'DejaVu Sans';
+    font-size: 13px;
+    font-weight: normal;
+    font-style: normal;
+}
+
+h1 {
+    font-size: 34px;
+}
+
+h2 {
+    font-size: 28px;
+}
+
+h3 {
+    font-size: 22px;
+}
+
+h4 {
+    font-size: 17px;
+}
+
+h5 {
+    font-size: 14px;
+}
+
+h6 {
+    font-size: 11.9px;
+}
+
+h1 small {
+    font-size: 22px;
+}
+
+h2 small {
+    font-size: 17px;
+}
+
+h3 small {
+    font-size: 14px;
+}
+
+h4 small {
+    font-size: 14px;
+}
+
+/*
+ * Navbar
+ */
 
 input#search-input {
     position: relative;
@@ -53,6 +141,12 @@ input#search-input {
     left: 8px;
     z-index:99;
     opacity: 0.5;
+}
+
+.navbar .brand {
+    font-weight: normal !important;
+    padding: 10px 20px 0 20px;
+    line-height: 22px;
 }
 
 #ffdn-header {
@@ -80,6 +174,29 @@ input#search-input {
     50% {
         transform: scaleX(1.5);
     }
+}
+
+
+/*
+ * Main
+ */
+
+#main-container {
+    margin-top: 25px;
+}
+
+#main-container .page-header {
+    margin-top: 0;
+    padding-bottom: 4px;
+}
+
+#main-container .page-header h3 {
+    margin: 0;
+    display: inline;
+}
+
+#main-container #homepage .span3 {
+    margin-left: 15px;
 }
 
 #map {
