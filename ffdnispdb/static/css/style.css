@@ -9,6 +9,16 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'inconsolata';
+    src: url('../fonts/inconsolata.eot');
+    src: url('../fonts/inconsolata.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/inconsolata.woff') format('woff'),
+         url('../fonts/inconsolata.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 #main-container {
     margin-top: 25px;
 }
@@ -175,6 +185,16 @@ input#search-input {
 
 .form-horizontal .help-block {
     margin-top: 0 !important;
+}
+
+pre#validator {
+    height: 500px;
+    background-color: white;
+    overflow-x: auto;
+    font-family: inconsolata, monospace;
+    font-size: 13px;
+    background-color: #333333;
+    color: #ffffff;
 }
 
 /**
