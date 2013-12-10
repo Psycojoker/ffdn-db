@@ -83,8 +83,8 @@ class ISP(db.Model):
         Called to synchronise between json['coveredAreas'] and the
         covered_areas table, when json was modified.
         """
-        # delete current covered areas
-        self.covered_areas.delete()
+        # delete current covered areas & registered office
+        CoveredArea.query.filter_by(isp_id=self.id).delete()
         RegisteredOffice.query.filter_by(isp_id=self.id).delete()
 
         for ca_js in self.json.get('coveredAreas', []):
