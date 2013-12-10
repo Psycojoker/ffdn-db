@@ -1,4 +1,4 @@
 {% set page_title = _("Validating the JSON URL") %}
-{% set validator_url = url_for('json_url_validator') %}
-{% set confirm_url = url_for('create_project_json_confirm') %}
+{% set validator_url = url_for('.json_url_validator') %}
+{% set confirm_url = url_for('.create_project_json_confirm') %}
 {% include 'validator_generic.html' with context %}

@@ -11,7 +11,7 @@
     <tbody>
       {% for project in projects -%}
       <tr>
-        <td><a href="{{ url_for('project', projectid=project.id) }}">{{ project.name|truncate(60, True) }}</a></td>
+        <td><a href="{{ url_for('.project', projectid=project.id) }}">{{ project.name|truncate(60, True) }}</a></td>
         <td>{{ ', '.join(project.covered_areas_names())|truncate(30) }}</td>
         <td>
           {{ project.json.progressStatus|step_to_label|safe }}
@@ -19,7 +19,7 @@
           &thinsp;<a href="#" rel="tooltip" data-placement="right" title="{{ _("Member of the FDN Federation") }}"><span class="label label-info">FFDN</span></a>
           {%- endif %}
         </td>
-        <td><a class="pull-right btn btn-small" title="{{ _("Examine") }}" href="{{ url_for('project', projectid=project.id) }}"><i class="icon-search"></i></a>
+        <td><a class="pull-right btn btn-small" title="{{ _("Examine") }}" href="{{ url_for('.project', projectid=project.id) }}"><i class="icon-search"></i></a>
       </tr>
       {% endfor -%}
     </tbody>

@@ -5,13 +5,13 @@ import cgi
 import pytz
 from datetime import datetime, timedelta
 from werkzeug.http import parse_date
-from flask import escape, json
+from flask import escape, json, current_app
 import requests
 
 from ispformat.validator import validate_isp
 from .models import ISP
 from .utils import dict_to_geojson
-from . import app, db
+from . import db
 
 
 def get_encoding(content_type):
@@ -78,7 +78,7 @@ class Crawler(object):
         pass
 
     def config(self, name):
-        return app.config.get('CRAWLER_'+name)
+        return current_app.config.get('CRAWLER_'+name)
 
     def parse_cache_control(self, _cachectl):
         cachectl={}

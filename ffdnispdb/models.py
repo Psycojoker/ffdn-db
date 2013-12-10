@@ -5,8 +5,9 @@ import json
 import os
 import itertools
 from datetime import datetime
-from . import db, app
+from . import db
 from .utils import dict_to_geojson
+from flask import current_app
 import flask_sqlalchemy
 from sqlalchemy.types import TypeDecorator, VARCHAR
 from sqlalchemy.ext.mutable import MutableDict
@@ -198,7 +199,7 @@ class ISPWhoosh(object):
 
     @staticmethod
     def get_index_dir():
-        return app.config.get('WHOOSH_INDEX_DIR', 'whoosh')
+        return current_app.config.get('WHOOSH_INDEX_DIR', 'whoosh')
 
     @classmethod
     def get_index(cls):

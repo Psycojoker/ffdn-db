@@ -11,8 +11,12 @@ import itsdangerous
 
 from ffdnispdb.crawler import TextValidator
 from ffdnispdb.models import ISP
-from ffdnispdb import app, db, mail
+from ffdnispdb import create_app, db, mail
 
+
+app=create_app({
+    'SERVER_NAME': 'db.ffdn.org',
+})
 
 MAX_RUNTIME=15*60
 
@@ -86,7 +90,6 @@ https://db.ffdn.org
     mail.send(msg)
 
 
-app.config['SERVER_NAME'] = 'db.ffdn.org'
 app.app_context().push()
 
 try:

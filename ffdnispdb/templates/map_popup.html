@@ -2,10 +2,10 @@
 <strong>{{ name|capitalize }}</strong>
 {%- endmacro %}
 {% if isp.shortname -%}
-<a href="{{ url_for('project', projectid=isp.id) }}"><strong>{{ isp.shortname }}</strong></a><br />
+<a href="{{ url_for('.project', projectid=isp.id) }}"><strong>{{ isp.shortname }}</strong></a><br />
 {{ isp.name }}
 {% else -%}
-<a href="{{ url_for('project', projectid=isp.id) }}"><strong>{{ isp.name }}</strong></a>
+<a href="{{ url_for('.project', projectid=isp.id) }}"><strong>{{ isp.name }}</strong></a>
 {% endif %}
 <ul style="margin: 10px 0 5px 5px; list-style-type: none;">
 {%- if isp.json.website %}

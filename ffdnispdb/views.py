@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from flask import request, g, redirect, url_for, abort, \
-    render_template, flash, json, session, Response, Markup
+    render_template, flash, json, session, Response, Markup, \
+    stream_with_context, current_app, Blueprint
 from flask.ext.babel import gettext as _
 from flask.ext.mail import Message
 import itsdangerous
@@ -17,22 +18,25 @@ import os.path
 
 from . import forms
 from .constants import *
-from . import app, db, cache, mail
+from . import db, cache, mail
 from .models import ISP, ISPWhoosh, CoveredArea, RegisteredOffice
 from .crawler import WebValidator, PrettyValidator
 
 
-@app.route('/')
+ispdb = Blueprint('ispdb', __name__)
+
+
+@ispdb.route('/')
 def home():
     return render_template('index.html', active_button="home")
 
 
-@app.route('/isp/')
+@ispdb.route('/isp/')
 def project_list():
     return render_template('project_list.html', projects=ISP.query.filter_by(is_disabled=False))
 
 # this needs to be cached
-@app.route('/isp/map_data.json', methods=['GET'])
+@ispdb.route('/isp/map_data.json', methods=['GET'])
 def isp_map_data():
     isps=ISP.query.filter_by(is_disabled=False)
     data=[]
@@ -50,7 +54,7 @@ def isp_map_data():
     return Response(json.dumps(data), mimetype='application/json')
 
 
-@app.route('/isp/find_near.json', methods=['GET'])
+@ispdb.route('/isp/find_near.json', methods=['GET'])
 def isp_find_near():
     lat=request.args.get('lat')
     lon=request.args.get('lon')
@@ -84,7 +88,7 @@ def isp_find_near():
     return Response(json.dumps(res))
 
 
-@app.route('/isp/<projectid>/covered_areas.json', methods=['GET'])
+@ispdb.route('/isp/<projectid>/covered_areas.json', methods=['GET'])
 def isp_covered_areas(projectid):
     p=ISP.query.filter_by(id=projectid, is_disabled=False)\
                .options(db.joinedload('covered_areas'),
@@ -103,7 +107,7 @@ def isp_covered_areas(projectid):
     return Response(json.dumps(cas), mimetype='application/json')
 
 
-@app.route('/isp/<projectid>/')
+@ispdb.route('/isp/<projectid>/')
 def project(projectid):
     p=ISP.query.filter_by(id=projectid, is_disabled=False).first()
     if not p:
@@ -111,7 +115,7 @@ def project(projectid):
     return render_template('project_detail.html', project_row=p, project=p.json)
 
 
-@app.route('/isp/<projectid>/edit', methods=['GET', 'POST'])
+@ispdb.route('/isp/<projectid>/edit', methods=['GET', 'POST'])
 def edit_project(projectid):
     MAX_TOKEN_AGE=3600
     isp=ISP.query.filter_by(id=projectid, is_disabled=False).first_or_404()
@@ -119,7 +123,7 @@ def edit_project(projectid):
 
     if 'token' in request.args:
         print session
-        s = itsdangerous.URLSafeTimedSerializer(app.secret_key, salt='edit')
+        s = itsdangerous.URLSafeTimedSerializer(current_app.secret_key, salt='edit')
         try:
             r = s.loads(request.args['token'], max_age=MAX_TOKEN_AGE,
                         return_timestamp=True)
@@ -132,9 +136,9 @@ def edit_project(projectid):
         tokens = session.setdefault('edit_tokens', {})
         tokens[r[0]] = r[1]
         # refresh page, without the token in the url
-        return redirect(url_for('edit_project', projectid=r[0]))
+        return redirect(url_for('.edit_project', projectid=r[0]))
     elif (sess_token is None or (datetime.utcnow()-sess_token).total_seconds() > MAX_TOKEN_AGE):
-        return redirect(url_for('gen_edit_token', projectid=isp.id))
+        return redirect(url_for('.gen_edit_token', projectid=isp.id))
 
     if isp.is_local:
         form = forms.ProjectForm.edit_json(isp)
@@ -147,7 +151,7 @@ def edit_project(projectid):
             db.session.add(isp)
             db.session.commit()
             flash(_(u'Project modified'), 'info')
-            return redirect(url_for('project', projectid=isp.id))
+            return redirect(url_for('.project', projectid=isp.id))
         return render_template('edit_project_form.html', form=form)
     else:
         form = forms.ProjectJSONForm(obj=isp)
@@ -161,11 +165,11 @@ def edit_project(projectid):
             db.session.add(isp)
             db.session.commit()
             flash(_(u'Project modified'), 'info')
-            return redirect(url_for('project', projectid=isp.id))
+            return redirect(url_for('.project', projectid=isp.id))
         return render_template('edit_project_json_form.html', form=form)
 
 
-@app.route('/isp/<projectid>/gen_edit_token', methods=['GET', 'POST'])
+@ispdb.route('/isp/<projectid>/gen_edit_token', methods=['GET', 'POST'])
 def gen_edit_token(projectid):
     isp=ISP.query.filter_by(id=projectid, is_disabled=False).first_or_404()
     form = forms.RequestEditToken()
@@ -173,7 +177,7 @@ def gen_edit_token(projectid):
         if form.tech_email.data == isp.tech_email:
             s = itsdangerous.URLSafeTimedSerializer(app.secret_key, salt='edit')
             token = s.dumps(isp.id)
-            msg = Message("Edit request of your ISP", sender=app.config['EMAIL_SENDER'])
+            msg = Message("Edit request of your ISP", sender=current_app.config['EMAIL_SENDER'])
             msg.body="""
 Hello,
 You are receiving this message because your are listed as technical contact for "%s" on the FFDN ISP database.
@@ -189,7 +193,7 @@ Thanks,
 The FFDN ISP Database team
 https://db.ffdn.org
             """.strip() % (isp.complete_name,
-                           url_for('edit_project', projectid=isp.id, _external=True),
+                           url_for('.edit_project', projectid=isp.id, _external=True),
                            token)
             msg.add_recipient(isp.tech_email)
             mail.send(msg)
@@ -197,17 +201,17 @@ https://db.ffdn.org
         # if the email provided is not the correct one, we still redirect
         flash(_(u'If you provided the correct email adress, '
                  'you must will receive a message shortly (check your spam folder)'), 'info')
-        return redirect(url_for('project', projectid=isp.id))
+        return redirect(url_for('.project', projectid=isp.id))
 
     return render_template('gen_edit_token.html', form=form)
 
 
-@app.route('/add-a-project', methods=['GET'])
+@ispdb.route('/add-a-project', methods=['GET'])
 def add_project():
     return render_template('add_project.html')
 
 
-@app.route('/isp/create/form', methods=['GET', 'POST'])
+@ispdb.route('/isp/create/form', methods=['GET', 'POST'])
 def create_project_form():
     form = forms.ProjectForm()
     if form.validate_on_submit():
@@ -220,11 +224,11 @@ def create_project_form():
         db.session.add(isp)
         db.session.commit()
         flash(_(u'Project created'), 'info')
-        return redirect(url_for('project', projectid=isp.id))
+        return redirect(url_for('.project', projectid=isp.id))
     return render_template('add_project_form.html', form=form)
 
 
-@app.route('/isp/create/validator', methods=['GET'])
+@ispdb.route('/isp/create/validator', methods=['GET'])
 def json_url_validator():
     if 'form_json' not in session or \
        session['form_json'].get('validated', False):
@@ -239,11 +243,12 @@ def json_url_validator():
         session['form_json']['validator']=time()
 
     validator=WebValidator(session._get_current_object(), 'form_json')
-    return Response(validator(session['form_json']['url']),
-                    mimetype="text/event-stream")
+    return Response(stream_with_context(
+        validator(session['form_json']['url'])
+    ), mimetype="text/event-stream")
 
 
-@app.route('/isp/create', methods=['GET', 'POST'])
+@ispdb.route('/isp/create', methods=['GET', 'POST'])
 def create_project_json():
     form = forms.ProjectJSONForm()
     if form.validate_on_submit():
@@ -255,7 +260,7 @@ def create_project_json():
     return render_template('add_project_json_form.html', form=form)
 
 
-@app.route('/isp/create/confirm', methods=['POST'])
+@ispdb.route('/isp/create/confirm', methods=['POST'])
 def create_project_json_confirm():
     if 'form_json' in session and session['form_json'].get('validated', False):
         if not forms.is_url_unique(session['form_json']['url']):
@@ -276,12 +281,12 @@ def create_project_json_confirm():
         db.session.add(isp)
         db.session.commit()
         flash(_(u'Project created'), 'info')
-        return redirect(url_for('project', projectid=isp.id))
+        return redirect(url_for('.project', projectid=isp.id))
     else:
-        return redirect(url_for('create_project_json'))
+        return redirect(url_for('.create_project_json'))
 
 
-@app.route('/isp/reactivate-validator', methods=['GET'])
+@ispdb.route('/isp/reactivate-validator', methods=['GET'])
 def reactivate_validator():
     if 'form_reactivate' not in session or \
        session['form_reactivate'].get('validated', False):
@@ -300,11 +305,12 @@ def reactivate_validator():
         session['form_reactivate']['validator']=time()
 
     validator=PrettyValidator(session._get_current_object(), 'form_reactivate')
-    return Response(validator(p.json_url, p.cache_info or {}),
-                    mimetype="text/event-stream")
+    return Response(stream_with_context(
+        validator(p.json_url, p.cache_info or {})
+    ), mimetype="text/event-stream")
 
 
-@app.route('/isp/<projectid>/reactivate',  methods=['GET', 'POST'])
+@ispdb.route('/isp/<projectid>/reactivate',  methods=['GET', 'POST'])
 def reactivate_isp(projectid):
     """
     Allow to reactivate an ISP after it has been disabled
@@ -315,7 +321,7 @@ def reactivate_isp(projectid):
     if request.method == 'GET':
         key = request.args.get('key')
         try:
-            s=itsdangerous.URLSafeSerializer(app.secret_key,
+            s=itsdangerous.URLSafeSerializer(current_app.secret_key,
                                              salt='reactivate')
             d=s.loads(key)
         except Exception as e:
@@ -342,20 +348,20 @@ def reactivate_isp(projectid):
         db.session.commit()
 
         flash(_(u'Automatic updates activated'), 'info')
-        return redirect(url_for('project', projectid=p.id))
+        return redirect(url_for('.project', projectid=p.id))
 
 
-@app.route('/search', methods=['GET', 'POST'])
+@ispdb.route('/search', methods=['GET', 'POST'])
 def search():
     terms=request.args.get('q')
     if not terms:
-        return redirect(url_for('home'))
+        return redirect(url_for('.home'))
 
     res=ISPWhoosh.search(terms)
     return render_template('search_results.html', results=res, search_terms=terms)
 
 
-@app.route('/format', methods=['GET'])
+@ispdb.route('/format', methods=['GET'])
 def format():
     parts = cache.get('format-spec')
     if parts is None:
@@ -371,7 +377,7 @@ def format():
     return render_template('format_spec.html', spec=Markup(parts['html_body']))
 
 
-@app.route('/humans.txt', methods=['GET'])
+@ispdb.route('/humans.txt', methods=['GET'])
 def humans():
     import os.path
     authors_file=os.path.join(os.path.dirname(__file__), '../AUTHORS')
@@ -381,14 +387,14 @@ def humans():
 #------
 # Filters
 
-@app.template_filter('step_to_label')
+@ispdb.app_template_filter('step_to_label')
 def step_to_label(step):
     if step:
         return u"<a href='#' rel='tooltip' data-placement='right' title='" + STEPS[step] + "'><span class='badge badge-" + STEPS_LABELS[step] + "'>" + str(step) + "</span></a>"
     else:
         return u'-'
 
-@app.template_filter('stepname')
+@ispdb.app_template_filter('stepname')
 def stepname(step):
     return STEPS[step]
 

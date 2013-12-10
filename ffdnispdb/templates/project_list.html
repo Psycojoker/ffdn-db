@@ -4,6 +4,6 @@
 {% block body %}
 <div>
 {{ project_list(projects) }}
-  <a class="pull-right btn btn-primary btn-small" href="{{ url_for('add_project') }}">{{ _("Add my project") }}</a>
+  <a class="pull-right btn btn-primary btn-small" href="{{ url_for('.add_project') }}">{{ _("Add my project") }}</a>
 </div>
 {% endblock %}
