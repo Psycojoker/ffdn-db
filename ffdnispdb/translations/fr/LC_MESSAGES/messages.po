@@ -1,0 +1,503 @@
+# French translations for PROJECT.
+# Copyright (C) 2013 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
+#
+msgid ""
+msgstr ""
+"Report-Msgid-Bugs-To: gu1@cafai.fr\n"
+"POT-Creation-Date: 2013-12-11 03:16+0100\n"
+"PO-Revision-Date: 2013-12-11 03:56+0100\n"
+"Last-Translator: Gu1 <gu1@cafai.fr>\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 1.3\n"
+"Project-Id-Version: \n"
+"Language-Team: \n"
+"X-Generator: Poedit 1.5.7\n"
+
+#: ffdnispdb/constants.py:6
+msgid "Project considered"
+msgstr "Projet envisagé"
+
+#: ffdnispdb/constants.py:7
+msgid "Primary members found"
+msgstr "Porteurs du projet identifiés"
+
+#: ffdnispdb/constants.py:8
+msgid "Legal structure being created"
+msgstr "Structure en cours de création"
+
+#: ffdnispdb/constants.py:9
+msgid "Legal structure created"
+msgstr "Structure constituée"
+
+#: ffdnispdb/constants.py:10
+msgid "Base tools created (bank account, first members)"
+msgstr "Outils de base créés (compte en banque, premiers adhérents)"
+
+#: ffdnispdb/constants.py:11
+msgid "ISP partially functional (first subscribers, maybe in degraded mode)"
+msgstr ""
+"FAI opérationnel partiellement (premiers accès ouverts, p-e en mode dégradé)"
+
+#: ffdnispdb/constants.py:12
+msgid "ISP fully working"
+msgstr "FAI pleinement opérationnel"
+
+#: ffdnispdb/forms.py:46
+msgid "this element already exists"
+msgstr "Cet élément existe déjà"
+
+#: ffdnispdb/forms.py:59
+msgid "FTTH"
+msgstr "FTTH"
+
+#: ffdnispdb/forms.py:60
+msgid "DSL"
+msgstr "DSL"
+
+#: ffdnispdb/forms.py:61
+msgid "Wi-Fi"
+msgstr "Wi-Fi"
+
+#: ffdnispdb/forms.py:64 ffdnispdb/forms.py:78
+#: ffdnispdb/templates/project_detail.html:23
+msgid "name"
+msgstr "nom"
+
+#: ffdnispdb/forms.py:64
+msgid "Area"
+msgstr "Zone"
+
+#: ffdnispdb/forms.py:65
+msgid "technologies"
+msgstr "technologies"
+
+#: ffdnispdb/forms.py:66
+msgid "Technologies deployed"
+msgstr "Technologies déployées"
+
+#: ffdnispdb/forms.py:72 ffdnispdb/forms.py:121
+msgid "You must fill both fields"
+msgstr "Vous devez remplir les deux champs"
+
+#: ffdnispdb/forms.py:78 ffdnispdb/templates/project_list_macro.html:5
+msgid "Name"
+msgstr "Nom"
+
+#: ffdnispdb/forms.py:79
+msgid "url"
+msgstr "url"
+
+#: ffdnispdb/forms.py:79
+msgid "URL"
+msgstr "URL"
+
+#: ffdnispdb/forms.py:84
+msgid "full name"
+msgstr "nom complet"
+
+#: ffdnispdb/forms.py:84
+msgid "E.g. French Data Network"
+msgstr "E.g. French Data Network"
+
+#: ffdnispdb/forms.py:86 ffdnispdb/templates/project_detail.html:26
+msgid "short name"
+msgstr "nom court"
+
+#: ffdnispdb/forms.py:86
+msgid "E.g. FDN"
+msgstr "E.g. FDN"
+
+#: ffdnispdb/forms.py:88 ffdnispdb/templates/project_detail.html:30
+msgid "description"
+msgstr "description"
+
+#: ffdnispdb/forms.py:88
+msgid "Short text describing the project"
+msgstr "Court texte décrivant le projet"
+
+#: ffdnispdb/forms.py:89
+msgid "logo url"
+msgstr "url du logo"
+
+#: ffdnispdb/forms.py:90 ffdnispdb/templates/map_popup.html:12
+#: ffdnispdb/templates/project_detail.html:40
+msgid "website"
+msgstr "site web"
+
+#: ffdnispdb/forms.py:93
+msgid "Additional websites that you host (e.g. wiki, etherpad...)"
+msgstr "Sites web additionnels que vous hébergez (e.g. wiki, etherpad...)"
+
+#: ffdnispdb/forms.py:94
+msgid "contact email"
+msgstr "email de contact"
+
+#: ffdnispdb/forms.py:95
+msgid "General contact email address"
+msgstr "Adresse email de contact généraliste"
+
+#: ffdnispdb/forms.py:96 ffdnispdb/templates/project_detail.html:54
+msgid "main mailing list"
+msgstr "liste de diffusion principale"
+
+#: ffdnispdb/forms.py:98
+msgid "creation date"
+msgstr "date de création"
+
+#: ffdnispdb/forms.py:100 ffdnispdb/templates/project_detail.html:80
+msgid "chatrooms"
+msgstr "salons de discussion"
+
+#: ffdnispdb/forms.py:101
+msgid ""
+"In URI form, e.g. <code>irc://irc.isp.net/#isp</code> or <code>xmpp:isp@chat."
+"isp.net?join</code>"
+msgstr ""
+"Sous la forme d'une URI, e.g. <code>irc://irc.isp.net/#isp</code> ou "
+"<code>xmpp:isp@chat.isp.net?join</code>"
+
+#: ffdnispdb/forms.py:105
+msgid "Descriptive name of the covered areas and technologies deployed"
+msgstr "Nom descriptif de la zone couverte et technologies déployées"
+
+#: ffdnispdb/forms.py:106
+msgid "latitude"
+msgstr "latitude"
+
+#: ffdnispdb/forms.py:107
+msgid ""
+"Geographical coordinates of your registered office or usual meeting location."
+msgstr "Coordonées géographiques de votre siège ou lieu habituel de rencontre."
+
+#: ffdnispdb/forms.py:108
+msgid "longitude"
+msgstr "longitude"
+
+#: ffdnispdb/forms.py:109
+msgid "progress step"
+msgstr "étape de progression"
+
+#: ffdnispdb/forms.py:110 ffdnispdb/templates/map_popup.html:18
+#: ffdnispdb/templates/project_detail.html:72
+msgid "members"
+msgstr "membres"
+
+#: ffdnispdb/forms.py:111
+msgid "Number of members"
+msgstr "Nombre de membres"
+
+#: ffdnispdb/forms.py:112 ffdnispdb/templates/map_popup.html:21
+#: ffdnispdb/templates/project_detail.html:76
+msgid "subscribers"
+msgstr "abonnées"
+
+#: ffdnispdb/forms.py:113
+msgid "Number of subscribers to an internet access"
+msgstr "Nombre d'abonnées à un accès à Internet"
+
+#: ffdnispdb/forms.py:115 ffdnispdb/forms.py:228
+msgid "Email"
+msgstr "Email"
+
+#: ffdnispdb/forms.py:116
+msgid "Technical contact, in case of problems with your submission"
+msgstr "Contact technique, en cas de problème"
+
+#: ffdnispdb/forms.py:128
+msgid "You must specify at least one area"
+msgstr "Vous devez spécifier au moins une zone"
+
+#: ffdnispdb/forms.py:209 ffdnispdb/forms.py:233
+msgid "Invalid URL"
+msgstr "URL invalide"
+
+#: ffdnispdb/forms.py:225
+msgid "base url"
+msgstr "url de base"
+
+#: ffdnispdb/forms.py:225
+msgid "E.g. https://isp.com/"
+msgstr "E.g. https://isp.com/"
+
+#: ffdnispdb/forms.py:226
+msgid ""
+"A ressource implementing our JSON-Schema specification must exist at path /"
+"isp.json"
+msgstr ""
+"Une ressource implémentant notre spécification JSON-Schema doit exister au "
+"chemin /isp.json"
+
+#: ffdnispdb/forms.py:229
+msgid "Technical contact, in case of problems"
+msgstr "Contact technique, en cas de problèmes"
+
+#: ffdnispdb/forms.py:236
+msgid "Invalid URL (must be HTTP(S))"
+msgstr "URL invalide (doit être HTTP(S))"
+
+#: ffdnispdb/forms.py:239
+msgid "This URL is already in our database"
+msgstr "Cette URL est déjà dans notre base de données"
+
+#: ffdnispdb/forms.py:243
+msgid "Tech Email"
+msgstr "Email Technique"
+
+#: ffdnispdb/forms.py:244
+msgid "The Technical contact you provided while registering"
+msgstr "Le contact technique que vous avez fourni lors de l'enregistrement"
+
+#: ffdnispdb/views.py:195 ffdnispdb/views.py:209
+msgid "Project modified"
+msgstr "Projet modifié"
+
+#: ffdnispdb/views.py:244
+msgid ""
+"If you provided the correct email adress, you must will receive a message "
+"shortly (check your spam folder)"
+msgstr ""
+"Si vous avez fourni l'adresse correcte, vous allez recevoir un message sous "
+"peu (regardez dans votre dossier spam)"
+
+#: ffdnispdb/views.py:268 ffdnispdb/views.py:325
+msgid "Project created"
+msgstr "Projet créé"
+
+#: ffdnispdb/views.py:392
+msgid "Automatic updates activated"
+msgstr "Mises à jour automatiques activées"
+
+#: ffdnispdb/templates/add_project.html:3
+msgid "Add a project"
+msgstr "Ajouter un projet"
+
+#: ffdnispdb/templates/add_project.html:7
+msgid "Automatically from a JSON file"
+msgstr "Depuis un fichier JSON"
+
+#: ffdnispdb/templates/add_project.html:8
+#, python-format
+msgid ""
+"You only have to give us the link to the hostname where you implement the <a "
+"href=\"%(format_spec)s\">ISP Format</a>, and we will crawl it periodicaly to "
+"update your informations."
+msgstr ""
+"Vous devez simplement nous donner le lien vers le nom de domaine où vous "
+"implémentez le <a href=\"%(format_spec)s\">Format ISP</a> et nous le "
+"revisiterons périodiquement pour mettre à jour vos informations."
+
+#: ffdnispdb/templates/add_project.html:12
+msgid "Heck yeah"
+msgstr "Ouais, carrément !"
+
+#: ffdnispdb/templates/add_project.html:16
+msgid "Manually by filling a form"
+msgstr "Manuellement par formulaire"
+
+#: ffdnispdb/templates/add_project.html:17
+msgid ""
+"Don't have the ressources or time to host an <em>ISP Format</em> JSON file ? "
+"Don't worry, you can also fill our simple form to give us the informations "
+"about your local ISP. Only problem, you'll have to come back here if you "
+"want to update it."
+msgstr ""
+"Vous n'avez pas le temps ou les ressources pour héberger un fichier JSON "
+"implémentant le <em>Format ISP</em> ? Pas de problème, vous pouvez aussi "
+"remplir un formulaire pour nous donner les informations sur votre FAI local. "
+"Par contre, vous devrez revenir sur ce site pour mettre à jour vos "
+"informations manuellement."
+
+#: ffdnispdb/templates/add_project.html:20
+msgid "That JSON thing is too cool for me"
+msgstr "Le JSON c'est trop fort pour moi"
+
+#: ffdnispdb/templates/add_project_form.html:1
+msgid "Add a new project"
+msgstr "Ajouter un nouveau projet"
+
+#: ffdnispdb/templates/add_project_json_form.html:1
+msgid "Add a new project from a JSON URL"
+msgstr "Ajouter un nouveau projet depuis une URL JSON"
+
+#: ffdnispdb/templates/edit_project_form.html:1
+msgid "Edit your project"
+msgstr "Éditer votre projet"
+
+#: ffdnispdb/templates/edit_project_json_form.html:1
+#: ffdnispdb/templates/gen_edit_token.html:9
+msgid "Edit your ISP"
+msgstr "Éditer votre FAI"
+
+#: ffdnispdb/templates/form_macros.html:4
+msgid "Error:"
+msgid_plural "Errors:"
+msgstr[0] "Erreur:"
+msgstr[1] "Erreurs:"
+
+#: ffdnispdb/templates/gen_edit_token.html:13
+#: ffdnispdb/templates/project_form_generic.html:65
+msgid "Submit"
+msgstr "Valider"
+
+#: ffdnispdb/templates/gen_edit_token.html:14
+#: ffdnispdb/templates/project_form_generic.html:66
+#: ffdnispdb/templates/project_json_form_generic.html:14
+msgid "Cancel"
+msgstr "Annuler"
+
+#: ffdnispdb/templates/index.html:9
+msgid "About the database"
+msgstr "À propos de la base de données"
+
+#: ffdnispdb/templates/index.html:10
+msgid ""
+"This page was created by the <a href=\"http://www.ffdn.org/en/\">FDN "
+"Federation</a> in an effort to gather information about ISPs sharing its "
+"values around the world. The FDN Federation unite more than 20 non-profit "
+"ISPs in France, all of which respect and promote <a href=\"https://en."
+"wikipedia.org/wiki/Network_neutrality\">Net Neutrality</a> and are volunteer-"
+"based. You can learn more about what we stand for on <a href=\"http://www."
+"ffdn.org/en/principles\">our website</a>."
+msgstr ""
+"Cette page a été créée par la <a href=\"http://www.ffdn.org/\">Fédération "
+"FDN</a> dans le but de rassembler et mettre en valeur les informations sur "
+"les FAIs autour du monde partageant ses valeurs. La Fédération FDN rassemble "
+"plus de 20 Fournisseurs d'Accès à Internet en France, tous respectent et "
+"promeuvent la <a href=\"https://fr.wikipedia.org/wiki/Neutralit%%C3%%A9_du_r%"
+"%C3%%A9seau\">Neutralité du Net</a> et sont gérés par des bénévoles. Pour en "
+"apprendre plus sur nos valeurs, rendez-vous <a href=\"http://www.ffdn.org/fr/"
+"principes-fondateurs\">sur notre site internet</a>."
+
+#: ffdnispdb/templates/index.html:11
+msgid ""
+"We hope that this page help you find an ISP near you. If there aren't any, "
+"we encourage you to start your own, and come tell us about it."
+msgstr ""
+"Nous espérons que cette page vous aidera à trouver un FAI près de chez vous. "
+"Si il n'y en a pas, vous pouvez toujours créer le votre et venir nous parler "
+"de votre projet."
+
+#: ffdnispdb/templates/index.html:12
+msgid ""
+"If you are member of an ISP sharing our values and are interested in "
+"appearing on this page, just follow the guide:"
+msgstr ""
+"Si vous êtes membre d'un FAI partageant nos valeurs et souhaitez apparaître "
+"sur cette page, suivez le guide:"
+
+#: ffdnispdb/templates/index.html:13 ffdnispdb/templates/project_list.html:7
+msgid "Add my project"
+msgstr "Ajouter mon projet"
+
+#: ffdnispdb/templates/layout.html:36
+#: ffdnispdb/templates/search_results.html:8
+msgid "Search"
+msgstr "Chercher"
+
+#: ffdnispdb/templates/layout.html:39
+msgid "Home"
+msgstr "Accueil"
+
+#: ffdnispdb/templates/layout.html:40 ffdnispdb/templates/project_list.html:3
+msgid "Project List"
+msgstr "Liste des projet"
+
+#: ffdnispdb/templates/layout.html:41
+msgid "Format"
+msgstr "Format"
+
+#: ffdnispdb/templates/layout.html:42
+msgid "API"
+msgstr "API"
+
+#: ffdnispdb/templates/map_popup.html:15
+#: ffdnispdb/templates/project_detail.html:50
+msgid "email"
+msgstr "email"
+
+#: ffdnispdb/templates/project_detail.html:6
+#, python-format
+msgid "<small>Project:</small> %(project_name)s"
+msgstr "<small>Projet:</small> %(project_name)s"
+
+#: ffdnispdb/templates/project_detail.html:12
+msgid "Edit"
+msgstr "Éditer"
+
+#: ffdnispdb/templates/project_detail.html:34
+msgid "covered areas"
+msgstr "zones couvertes"
+
+#: ffdnispdb/templates/project_detail.html:44
+msgid "other websites"
+msgstr "autres sites web"
+
+#: ffdnispdb/templates/project_detail.html:58
+msgid "step"
+msgstr "étape"
+
+#: ffdnispdb/templates/project_detail.html:62
+msgid "FFDN Member"
+msgstr "Membre FFDN"
+
+#: ffdnispdb/templates/project_detail.html:65
+#, python-format
+msgid "Yes, since %(date)s"
+msgstr "Oui, depuis le %(date)s"
+
+#: ffdnispdb/templates/project_detail.html:67
+msgid "Yes"
+msgstr "Oui"
+
+#: ffdnispdb/templates/project_detail.html:86
+msgid "coordinates"
+msgstr "coordonées"
+
+#: ffdnispdb/templates/project_form_generic.html:51
+msgid "Coordinates"
+msgstr "Coordonnées"
+
+#: ffdnispdb/templates/project_json_form_generic.html:13
+msgid "Next"
+msgstr "Suivant"
+
+#: ffdnispdb/templates/project_json_validator.html:1
+msgid "Validating the JSON URL"
+msgstr "Validation de l'URL JSON"
+
+#: ffdnispdb/templates/project_list_macro.html:6
+msgid "Areas"
+msgstr "Zones"
+
+#: ffdnispdb/templates/project_list_macro.html:7
+msgid "Step"
+msgstr "Étape"
+
+#: ffdnispdb/templates/project_list_macro.html:19
+msgid "Member of the FDN Federation"
+msgstr "Membre de la Fédération FDN"
+
+#: ffdnispdb/templates/project_list_macro.html:22
+msgid "Examine"
+msgstr "Éxaminer"
+
+#: ffdnispdb/templates/reactivate_validator.html:1
+msgid "Reactivating updates on your project"
+msgstr "Réactivation des mises à jour de votre projet"
+
+#: ffdnispdb/templates/search_results.html:14
+msgid "No ISP matching your query was found :-("
+msgstr "Aucun FAI corresponsant à votre requête n'a été trouvé :-("
+
+#: ffdnispdb/templates/validator_generic.html:81
+msgid "Retry"
+msgstr "Réessayer"
+
+#: ffdnispdb/templates/validator_generic.html:82
+msgid "Confirm"
+msgstr "Confirmer"

@@ -7,7 +7,7 @@ from wtforms import (TextField, DateField, DecimalField, IntegerField, SelectFie
                      SelectMultipleField, FieldList, FormField)
 from wtforms.widgets import TextInput, ListWidget, html_params, HTMLString, CheckboxInput, Select
 from wtforms.validators import DataRequired, Optional, URL, Email, Length, NumberRange, ValidationError
-from flask.ext.babel import Babel, gettext as _
+from flask.ext.babel import Babel, lazy_gettext as _
 from .constants import STEPS
 from .models import ISP
 
@@ -233,7 +233,7 @@ class ProjectJSONForm(Form):
             raise ValidationError(_(u'Invalid URL'))
 
         if field.data.scheme not in ('http', 'https'):
-            raise ValidationError(_(u'Invalid URL (must be HTTP(s))'))
+            raise ValidationError(_(u'Invalid URL (must be HTTP(S))'))
 
         if not field.object_data and not is_url_unique(field.data):
             raise ValidationError(_(u'This URL is already in our database'))
