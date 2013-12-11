@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, g
+from flask import Flask, g, current_app, request
 from flask.ext.babel import Babel
 from flask.ext.sqlalchemy import SQLAlchemy, event
 from flask.ext.mail import Mail
@@ -14,6 +14,9 @@ sess = MySessionInterface(db)
 cache = NullCache()
 mail = Mail()
 
+def get_locale():
+    return request.accept_languages.best_match(current_app.config['LANGUAGES'].keys())
+
 
 def create_app(config={}):
     global babel, db, mail, sess
@@ -25,6 +28,7 @@ def create_app(config={}):
     else:
         app.config.from_object(config)
     babel.init_app(app)
+    babel.localeselector(get_locale)
     db.init_app(app)
 
     with app.app_context():
