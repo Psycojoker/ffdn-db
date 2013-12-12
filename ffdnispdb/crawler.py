@@ -15,6 +15,10 @@ from . import db
 
 
 def get_encoding(content_type):
+    """
+    >>> get_encoding('wat/ever; charset=hey')
+    'hey'
+    """
     content_type, params = cgi.parse_header(content_type)
 
     if 'charset' in params:

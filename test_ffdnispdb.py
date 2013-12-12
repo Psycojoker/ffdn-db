@@ -4,6 +4,7 @@ from ffdnispdb.models import ISP
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 import unittest
+import doctest
 import os
 
 
@@ -31,8 +32,15 @@ class TestCase(unittest.TestCase):
         db.drop_all()
         self._ctx.pop()
 
+    def assertStatus(self, response, status_code):
+        self.assertEqual(response.status_code, status_code)
+
 
 class TestForm(TestCase):
+
+    def test_index(self):
+        self.assertStatus(self.client.get('/'), 200)
+        self.assertStatus(self.client.get('/isp/map_data.json'), 200)
 
     def test_projectform(self):
         resp = self.client.post('/isp/create/form', data={
@@ -45,6 +53,16 @@ class TestForm(TestCase):
         })
         self.assertNotEqual(resp.location, None)
         self.assertEqual(ISP.query.filter_by(name='Test').count(), 1)
+
+
+def load_tests(loader, tests, ignore):
+    from ffdnispdb import views, models, utils, forms, crawler, sessions
+    tests.addTests(doctest.DocTestSuite(views))
+    tests.addTests(doctest.DocTestSuite(models))
+    tests.addTests(doctest.DocTestSuite(utils))
+    tests.addTests(doctest.DocTestSuite(forms))
+    tests.addTests(doctest.DocTestSuite(crawler))
+    return tests
 
 
 if __name__ == '__main__':

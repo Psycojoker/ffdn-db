@@ -7,7 +7,8 @@ import werkzeug.serving
 from werkzeug.debug import DebuggedApplication
 
 import os; os.environ.setdefault('FFDNISPDB_SETTINGS', '../settings_dev.py')
-from flask.ext.script import Shell, Server, Manager
+from flask.ext.script import (Shell, Server, Manager, Command, Option,
+                              prompt, prompt_bool, prompt_pass)
 import ffdnispdb
 
 
@@ -23,7 +24,8 @@ def create():
 @database_manager.command
 def drop():
     "Drop existing tables"
-    ffdnispdb.db.drop_all()
+    if prompt_bool("Are you sure you wish to destroy existing database"):
+        ffdnispdb.db.drop_all()
 
 
 index_manager = Manager(usage=u'Manage the Whoosh index')
@@ -59,11 +61,26 @@ def shell_context():
     return ffdnispdb.__dict__
 
 
+class RunTests(Command):
+    "Run unit-tests"
+    option_list = (
+        Option('--verbose', '-v', action='store_true', default=False),
+        Option('--failfast', '-f', action='store_true', default=False),
+    )
+
+    def run(self, verbose, failfast):
+        import unittest
+        import test_ffdnispdb
+        test=unittest.defaultTestLoader.loadTestsFromModule(test_ffdnispdb)
+        unittest.TextTestRunner(verbosity=2 if verbose else 1, failfast=bool(failfast)).run(test)
+
+
 manager = Manager(ffdnispdb.create_app)
 manager.add_command("runserver", Server())
 manager.add_command("shell", Shell(make_context=shell_context))
 manager.add_command("db", database_manager)
 manager.add_command("index", index_manager)
+manager.add_command("test", RunTests())
 
 if __name__ == "__main__":
     manager.run()
