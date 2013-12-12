@@ -20,3 +20,5 @@ pyasn1==0.1.7
 docutils==0.11
 # full-text search
 Whoosh==2.5.4
+# manage.py
+Flask-Script==0.6.6
