@@ -1,7 +1,7 @@
 
 
 - Crawler:
-* i18n
+~ i18n
 X http cache support
 X write a "cron task" to periodically update the data
 
@@ -16,6 +16,7 @@ X Full-text search engine based on woosh
 X Access-control on the edit feature
 * separate config for prod/dev, email admin on error for prod
 ~ write unit-test
+* better cache support
 
 
 Legend:

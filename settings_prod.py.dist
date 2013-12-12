@@ -5,3 +5,4 @@ EMAIL_SENDER='FFDN DB <no-reply@db.ffdn.org>'
 #SERVER_NAME = 'db.ffdn.org'
 DEBUG = False
 SECRET_KEY = None # Generate one
+ADMINS = ('your@email.com',)

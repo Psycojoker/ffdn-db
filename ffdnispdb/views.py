@@ -377,6 +377,11 @@ def format():
     return render_template('format_spec.html', spec=Markup(parts['html_body']))
 
 
+@ispdb.route('/api', methods=['GET'])
+def api():
+    return render_template('api.html')
+
+
 @ispdb.route('/humans.txt', methods=['GET'])
 def humans():
     import os.path
