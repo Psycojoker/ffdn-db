@@ -10,7 +10,7 @@ import requests
 
 from ispformat.validator import validate_isp
 from .models import ISP
-from .utils import dict_to_geojson
+from .utils import dict_to_geojson, utcnow
 from . import db
 
 
@@ -357,8 +357,8 @@ class PrettyValidator(Crawler):
         self.session[self.sesskey]['validated']=True
         self.session[self.sesskey]['jdict']=self.jdict
         self.session[self.sesskey]['cache_info']=self.cache_info
-        self.session[self.sesskey]['last_update']=datetime.now()
-        self.session[self.sesskey]['next_update']=datetime.now()+timedelta(seconds=self.jdict_max_age)
+        self.session[self.sesskey]['last_update']=utcnow()
+        self.session[self.sesskey]['next_update']=utcnow()+timedelta(seconds=self.jdict_max_age)
         self.session.save()
 
 

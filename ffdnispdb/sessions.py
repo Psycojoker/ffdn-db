@@ -30,7 +30,7 @@ class SQLSession(CallbackDict, SessionMixin):
         if self.new:
             self.db.execute(self.table.insert({
                 'session_id': self.sid,
-                'expire': datetime.now()+timedelta(hours=1),
+                'expire': datetime.utcnow()+timedelta(hours=1),
                 'value': cPickle.dumps(dict(self), -1)
             }))
             self.new=False
@@ -38,7 +38,7 @@ class SQLSession(CallbackDict, SessionMixin):
             self.db.execute(self.table.update(
                 self.table.c.session_id == self.sid,
                 {
-                    'expire': datetime.now()+timedelta(hours=1),
+                    'expire': datetime.utcnow()+timedelta(hours=1),
                     'value': cPickle.dumps(dict(self), -1)
                 }
             ))
@@ -58,7 +58,7 @@ class MySessionInterface(SessionInterface):
         sid = request.cookies.get(app.session_cookie_name)
         if sid:
             res=self.db.engine.execute(select([self.table.c.value], (self.table.c.session_id == sid) &
-                                                                 (self.table.c.expire > datetime.now()))).first()
+                                                                 (self.table.c.expire > datetime.utcnow()))).first()
             if res:
                 return SQLSession(sid, self.db.engine, self.table, False, cPickle.loads(res[0]))
 
@@ -76,7 +76,7 @@ class MySessionInterface(SessionInterface):
 
         # remove expired sessions.. or maybe not
         if randrange(20) % 20 == 0:
-            self.db.engine.execute(self.table.delete(self.table.c.expire <= datetime.now()))
+            self.db.engine.execute(self.table.delete(self.table.c.expire <= datetime.utcnow()))
 
         response.set_cookie(app.session_cookie_name, session.sid,
                             expires=self.get_expiration_time(app, session),

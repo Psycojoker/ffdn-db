@@ -5,11 +5,12 @@ import json
 import os
 import itertools
 from datetime import datetime
+import pytz
 from . import db
-from .utils import dict_to_geojson
+from .utils import dict_to_geojson, utcnow
 from flask import current_app
 import flask_sqlalchemy
-from sqlalchemy.types import TypeDecorator, VARCHAR
+from sqlalchemy.types import TypeDecorator, VARCHAR, DateTime
 from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy import event
 import geoalchemy as geo
@@ -46,6 +47,21 @@ class JSONEncodedDict(TypeDecorator):
         return value
 
 
+class UTCDateTime(TypeDecorator):
+
+    impl = DateTime
+
+    def process_bind_param(self, value, engine):
+        if value is not None:
+            return value.astimezone(pytz.utc)
+
+    def process_result_value(self, value, engine):
+        if value is not None:
+            return datetime(value.year, value.month, value.day,
+                            value.hour, value.minute, value.second,
+                            value.microsecond, tzinfo=pytz.utc)
+
+
 class ISP(db.Model):
     __tablename__ = 'isp'
     id = db.Column(db.Integer, primary_key=True)
@@ -54,10 +70,10 @@ class ISP(db.Model):
     is_ffdn_member = db.Column(db.Boolean, default=False)
     is_disabled = db.Column(db.Boolean, default=False) # True = ISP will not appear
     json_url = db.Column(db.String)
-    last_update_success = db.Column(db.DateTime)
-    last_update_attempt = db.Column(db.DateTime)
+    last_update_success = db.Column(UTCDateTime)
+    last_update_attempt = db.Column(UTCDateTime)
     update_error_strike = db.Column(db.Integer, default=0) # if >= 3; then updates are disabled
-    next_update = db.Column(db.DateTime, default=datetime.now())
+    next_update = db.Column(UTCDateTime, default=utcnow)
     tech_email = db.Column(db.String)
     cache_info = db.Column(MutableDict.as_mutable(JSONEncodedDict))
     json = db.Column(MutableDict.as_mutable(JSONEncodedDict))

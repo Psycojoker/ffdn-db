@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
+from flask import current_app
 from collections import OrderedDict
+from datetime import datetime
+import pytz
 import json
 
 
@@ -26,3 +29,16 @@ def dict_to_geojson(d_in):
 
     return json.dumps(d)
 
+
+def utcnow():
+    """
+    Return the current UTC date and time as a datetime object with proper tzinfo.
+    """
+    return datetime.utcnow().replace(tzinfo=pytz.utc)
+
+
+def tosystemtz(d):
+    """
+    Convert the UTC datetime ``d`` to the system time zone as defined in the config
+    """
+    return d.astimezone(pytz.timezone(current_app.config['SYSTEM_TIME_ZONE']))

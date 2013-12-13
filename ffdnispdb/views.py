@@ -122,7 +122,6 @@ def edit_project(projectid):
     sess_token=session.get('edit_tokens', {}).get(isp.id)
 
     if 'token' in request.args:
-        print session
         s = itsdangerous.URLSafeTimedSerializer(current_app.secret_key, salt='edit')
         try:
             r = s.loads(request.args['token'], max_age=MAX_TOKEN_AGE,
@@ -341,7 +340,7 @@ def reactivate_isp(projectid):
         p=ISP.query.get(session['form_reactivate']['isp_id'])
         p.json=session['form_reactivate']['jdict']
         p.cache_info=session['form_reactivate']['cache_info']
-        p.last_update_attempt=datetime.now()
+        p.last_update_attempt=session['form_form_reactivate']['last_update']
         p.last_update_success=p.last_update_attempt
 
         db.session.add(p)

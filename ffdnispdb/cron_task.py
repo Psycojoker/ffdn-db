@@ -11,7 +11,7 @@ import itsdangerous
 
 from ffdnispdb.crawler import TextValidator
 from ffdnispdb.models import ISP
-from ffdnispdb import create_app, db, mail
+from ffdnispdb import create_app, db, mail, utils
 
 
 app=create_app({
@@ -95,17 +95,17 @@ app.app_context().push()
 try:
     for isp in ISP.query.filter(ISP.is_disabled == False,
                                 ISP.json_url != None,
-                                ISP.next_update < datetime.now(),
+                                ISP.next_update < utils.utcnow(),
                                 ISP.update_error_strike < 3)\
                         .order_by(ISP.last_update_success):
         try:
             print u'%s: Attempting to update %s'%(datetime.now(), isp)
-            print u'    last successful update=%s'%(isp.last_update_success)
-            print u'    last update attempt=%s'%(isp.last_update_attempt)
-            print u'    next update was scheduled %s ago'%(datetime.now()-isp.next_update)
+            print u'    last successful update=%s'%(utils.tosystemtz(isp.last_update_success))
+            print u'    last update attempt=%s'%(utils.tosystemtz(isp.last_update_attempt))
+            print u'    next update was scheduled %s ago'%(utils.utcnow()-isp.next_update)
             print u'    strike=%d'%(isp.update_error_strike)
 
-            isp.last_update_attempt=datetime.now()
+            isp.last_update_attempt=utils.utcnow()
             db.session.add(isp)
             db.session.commit()
 
@@ -115,7 +115,7 @@ try:
                 isp.update_error_strike += 1
                 # reset cache info (to force refetch next time)
                 isp.cache_info = {}
-                isp.next_update = datetime.now()+timedelta(seconds=validator.jdict_max_age)
+                isp.next_update = utils.utcnow()+timedelta(seconds=validator.jdict_max_age)
                 db.session.add(isp)
                 db.session.commit()
                 print u'%s: Error while updating:'%(datetime.now())
@@ -131,7 +131,7 @@ try:
             isp.cache_info = validator.cache_info
             isp.last_update_success = isp.last_update_attempt
             isp.update_error_strike = 0
-            isp.next_update = datetime.now()+timedelta(seconds=validator.jdict_max_age)
+            isp.next_update = utils.utcnow()+timedelta(seconds=validator.jdict_max_age)
             db.session.add(isp)
             db.session.commit()
 
