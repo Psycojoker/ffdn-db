@@ -35,6 +35,17 @@ def home():
 def project_list():
     return render_template('project_list.html', projects=ISP.query.filter_by(is_disabled=False))
 
+
+@ispdb.app_errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+
+@ispdb.app_errorhandler(500)
+def page_not_found(e):
+    return render_template('500.html'), 500
+
+
 # this needs to be cached
 @ispdb.route('/isp/map_data.json', methods=['GET'])
 def isp_map_data():
