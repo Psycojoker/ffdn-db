@@ -52,8 +52,11 @@ class MyServer(Server):
                threaded, processes, passthrough_errors):
         if use_debugger:
             app=DebuggedApplication(app, evalex=True)
-        ws = gevent.pywsgi.WSGIServer(('', 5000), app)
-        ws.serve_forever()
+
+        @werkzeug.serving.run_with_reloader
+        def run():
+            ws = gevent.pywsgi.WSGIServer(('', 5000), app)
+            ws.serve_forever()
 
 
 def shell_context():
@@ -76,7 +79,7 @@ class RunTests(Command):
 
 
 manager = Manager(ffdnispdb.create_app)
-manager.add_command("runserver", Server())
+manager.add_command("runserver", MyServer())
 manager.add_command("shell", Shell(make_context=shell_context))
 manager.add_command("db", database_manager)
 manager.add_command("index", index_manager)
