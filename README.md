@@ -8,9 +8,8 @@ ffdnispdb
 Preferably in a virtualenv, run:
 
     pip install -r requirements.txt
-    python shell.py
-    >> db.create_all()
-    python run.py
+    python manage.py db create
+    python manage.py runserver
 
 
 ## How to translate

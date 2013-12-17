@@ -7,19 +7,24 @@ import werkzeug.serving
 from werkzeug.debug import DebuggedApplication
 
 import os; os.environ.setdefault('FFDNISPDB_SETTINGS', '../settings_dev.py')
+import sys
 from flask.ext.script import (Shell, Server, Manager, Command, Option,
                               prompt, prompt_bool, prompt_pass)
 import ffdnispdb
 
 
 
-database_manager = Manager(usage=u'Perform database operations')
-
-@database_manager.command
-def create():
+class CreateDB(Command):
     "Initialize database, create tables"
-    ffdnispdb.db.create_all()
+    def handle(self, app, *args, **kwargs):
+        with app.app_context():
+            return self.run(*args, **kwargs)
 
+    def run(self):
+        ffdnispdb.db.create_all()
+
+database_manager = Manager(usage=u'Perform database operations')
+database_manager.add_command("create", CreateDB)
 
 @database_manager.command
 def drop():
@@ -50,12 +55,15 @@ def rebuild():
 class MyServer(Server):
     def handle(self, app, host, port, use_debugger, use_reloader,
                threaded, processes, passthrough_errors):
+        if os.environ.get('WERKZEUG_RUN_MAIN') != 'true':
+            print >>sys.stderr, ' * Running on http://%s:%d/'%(host, port)
+
         if use_debugger:
             app=DebuggedApplication(app, evalex=True)
 
         @werkzeug.serving.run_with_reloader
         def run():
-            ws = gevent.pywsgi.WSGIServer(('', 5000), app)
+            ws = gevent.pywsgi.WSGIServer((host, port), app)
             ws.serve_forever()
 
 
