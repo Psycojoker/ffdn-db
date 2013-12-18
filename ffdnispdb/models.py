@@ -70,6 +70,7 @@ class ISP(db.Model):
     is_ffdn_member = db.Column(db.Boolean, default=False)
     is_disabled = db.Column(db.Boolean, default=False) # True = ISP will not appear
     json_url = db.Column(db.String)
+    date_added = db.Column(UTCDateTime, default=utcnow)
     last_update_success = db.Column(UTCDateTime)
     last_update_attempt = db.Column(UTCDateTime)
     update_error_strike = db.Column(db.Integer, default=0) # if >= 3; then updates are disabled
