@@ -14,17 +14,6 @@
 }
 
 @font-face {
-    font-family: 'Inconsolata';
-    src: local('Inconsolata');
-    src: url('../fonts/inconsolata.eot');
-    src: url('../fonts/inconsolata.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/inconsolata.woff') format('woff'),
-         url('../fonts/inconsolata.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
     font-family: 'DejaVu Sans';
     src: local('DejaVu Sans');
     src: url('../fonts/dejavusans.eot');
@@ -223,10 +212,10 @@ footer {
 
 footer .bracket:before {
     content: '{';
-    font-family: Inconsolata;
+    font-family: "DejaVu Sans";
     font-size: 60px;
     float: left;
-    margin: 8px 0 0 26px;
+    margin: 11px 0 0 22px;
     color: #cccccc;
     transition-duration: 300ms;
 }
@@ -275,10 +264,10 @@ footer:hover p {
 
 #main-container .page-header {
     margin-top: 0;
-    padding-bottom: 4px;
+    padding-bottom: 2px;
 }
 
-#main-container .page-header h3 {
+#main-container .page-header h2 {
     margin: 0;
     display: inline;
 }
@@ -397,8 +386,7 @@ pre#validator {
     height: 500px;
     background-color: white;
     overflow-x: auto;
-    font-family: inconsolata, monospace;
-    font-size: 13px;
+    font-size: 12px;
     background-color: #333333;
     color: #ffffff;
 }
