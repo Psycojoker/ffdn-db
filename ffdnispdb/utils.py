@@ -39,6 +39,6 @@ def utcnow():
 
 def tosystemtz(d):
     """
-    Convert the UTC datetime ``d`` to the system time zone as defined in the config
+    Convert the UTC datetime ``d`` to the system time zone defined in the settings
     """
     return d.astimezone(pytz.timezone(current_app.config['SYSTEM_TIME_ZONE']))

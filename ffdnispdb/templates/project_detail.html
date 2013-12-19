@@ -9,7 +9,7 @@
 {%- endblock %}
 {% block page_header %}
     {{ super() }}
-    <a class="btn btn-success btn-small pull-right" style="margin: 15px 10px 0;" href="{{ url_for('.edit_project', projectid=project_row.id) }}"><i class="icon-edit icon-white"></i> {{ _("Edit") }}</a>
+    <a class="btn btn-success btn-small pull-right" style="margin: 10px 10px 0;" href="{{ url_for('.edit_project', projectid=project_row.id) }}"><i class="icon-edit icon-white"></i> {{ _("Edit") }}</a>
 {% endblock %}
 {% block body %}
   <div class="row-fluid">
