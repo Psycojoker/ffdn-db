@@ -94,9 +94,9 @@ class ProjectForm(Form):
     contact_email = TextField(_(u'contact email'), validators=[Optional(), Email()],
                               description=[None, _(u'General contact email address')])
     main_ml       = TextField(_(u'main mailing list'), validators=[Optional(), Email()],
-                              description=[None, u'Address of your main mailing list'])
-    creation_date = DateField(_(u'creation date'), validators=[Optional()],
-                              description=[None, u'Date at which the legal structure for your project was created'])
+                              description=[None, _(u'Address of your main mailing list')])
+    creation_date = DateField(_(u'creation date'), validators=[Optional()], widget=partial(TextInput(), placeholder=_(u'YYYY-mm-dd')),
+                              description=[None, _(u'Date at which the legal structure for your project was created')])
     chatrooms     = FieldList(TextField(_(u'chatrooms')), min_entries=1, widget=InputListWidget(),
                               description=[None, _(u'In URI form, e.g. <code>irc://irc.isp.net/#isp</code> or '+
                                                     '<code>xmpp:isp@chat.isp.net?join</code>')])

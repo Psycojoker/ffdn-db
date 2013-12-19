@@ -1,13 +1,13 @@
-# French translations for PROJECT.
+# French translations for ffdnispdb.
 # Copyright (C) 2013 ORGANIZATION
-# This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
+# This file is distributed under the same license as the ffdnispdb project.
+# Gu1 <gu1@cafai.fr>, 2013.
 #
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: gu1@cafai.fr\n"
-"POT-Creation-Date: 2013-12-11 03:16+0100\n"
-"PO-Revision-Date: 2013-12-11 03:56+0100\n"
+"POT-Creation-Date: 2013-12-19 03:42+0100\n"
+"PO-Revision-Date: 2013-12-19 03:46+0100\n"
 "Last-Translator: Gu1 <gu1@cafai.fr>\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "MIME-Version: 1.0\n"
@@ -145,9 +145,21 @@ msgstr "Adresse email de contact généraliste"
 msgid "main mailing list"
 msgstr "liste de diffusion principale"
 
+#: ffdnispdb/forms.py:97
+msgid "Address of your main mailing list"
+msgstr "Adresse de la liste de diffusion principale"
+
 #: ffdnispdb/forms.py:98
 msgid "creation date"
 msgstr "date de création"
+
+#: ffdnispdb/forms.py:98
+msgid "YYYY-mm-dd"
+msgstr "AAAA-mm-jj"
+
+#: ffdnispdb/forms.py:99
+msgid "Date at which the legal structure for your project was created"
+msgstr "Date de création de la structure légale de votre projet"
 
 #: ffdnispdb/forms.py:100 ffdnispdb/templates/project_detail.html:80
 msgid "chatrooms"
@@ -252,11 +264,11 @@ msgstr "Email Technique"
 msgid "The Technical contact you provided while registering"
 msgstr "Le contact technique que vous avez fourni lors de l'enregistrement"
 
-#: ffdnispdb/views.py:195 ffdnispdb/views.py:209
+#: ffdnispdb/views.py:163 ffdnispdb/views.py:177
 msgid "Project modified"
 msgstr "Projet modifié"
 
-#: ffdnispdb/views.py:244
+#: ffdnispdb/views.py:212
 msgid ""
 "If you provided the correct email adress, you must will receive a message "
 "shortly (check your spam folder)"
@@ -264,13 +276,21 @@ msgstr ""
 "Si vous avez fourni l'adresse correcte, vous allez recevoir un message sous "
 "peu (regardez dans votre dossier spam)"
 
-#: ffdnispdb/views.py:268 ffdnispdb/views.py:325
+#: ffdnispdb/views.py:236 ffdnispdb/views.py:293
 msgid "Project created"
 msgstr "Projet créé"
 
-#: ffdnispdb/views.py:392
+#: ffdnispdb/views.py:360
 msgid "Automatic updates activated"
 msgstr "Mises à jour automatiques activées"
+
+#: ffdnispdb/templates/404.html:2
+msgid "Page not found"
+msgstr "Page introuvable"
+
+#: ffdnispdb/templates/500.html:2
+msgid "Internal error"
+msgstr "Erreur interne"
 
 #: ffdnispdb/templates/add_project.html:3
 msgid "Add a project"
@@ -325,9 +345,6 @@ msgid "Add a new project from a JSON URL"
 msgstr "Ajouter un nouveau projet depuis une URL JSON"
 
 #: ffdnispdb/templates/edit_project_form.html:1
-msgid "Edit your project"
-msgstr "Éditer votre projet"
-
 #: ffdnispdb/templates/edit_project_json_form.html:1
 #: ffdnispdb/templates/gen_edit_token.html:9
 msgid "Edit your ISP"
