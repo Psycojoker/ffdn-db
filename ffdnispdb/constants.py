@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask.ext.babel import gettext as _
+from flask.ext.babel import lazy_gettext as _
 
 STEPS = {
     1: _(u'Project considered'),

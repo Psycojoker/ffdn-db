@@ -7,7 +7,8 @@ from wtforms import (TextField, DateField, DecimalField, IntegerField, SelectFie
                      SelectMultipleField, FieldList, FormField)
 from wtforms.widgets import TextInput, ListWidget, html_params, HTMLString, CheckboxInput, Select
 from wtforms.validators import DataRequired, Optional, URL, Email, Length, NumberRange, ValidationError
-from flask.ext.babel import Babel, lazy_gettext as _
+from flask.ext.babel import lazy_gettext as _
+from babel.support import LazyProxy
 from .constants import STEPS
 from .models import ISP
 
@@ -80,6 +81,8 @@ class OtherWebsites(InsecureForm):
                      validators=[Optional(), URL(require_tld=True)])
 
 
+STEP_CHOICES = [(k, LazyProxy(lambda k, s: u'%u - %s' % (k, s), k, STEPS[k], enable_cache=False)) for k in STEPS]
+
 class ProjectForm(Form):
     name          = TextField(_(u'full name'), description=[_(u'E.g. French Data Network')],
                               validators=[DataRequired(), Length(min=2), Unique(ISP, ISP.name)])
@@ -106,7 +109,7 @@ class ProjectForm(Form):
     latitude      = DecimalField(_(u'latitude'), validators=[Optional(), NumberRange(min=-90, max=90)],
                              description=[None, _(u'Geographical coordinates of your registered office or usual meeting location.')])
     longitude     = DecimalField(_(u'longitude'), validators=[Optional(), NumberRange(min=-180, max=180)])
-    step          = SelectField(_(u'progress step'), choices=[(k, u'%u - %s' % (k, STEPS[k])) for k in STEPS], coerce=int)
+    step          = SelectField(_(u'progress step'), choices=STEP_CHOICES, coerce=int)
     member_count     = IntegerField(_(u'members'), validators=[Optional(), NumberRange(min=0)],
                                     description=[None, _('Number of members')])
     subscriber_count = IntegerField(_(u'subscribers'), validators=[Optional(), NumberRange(min=0)],
