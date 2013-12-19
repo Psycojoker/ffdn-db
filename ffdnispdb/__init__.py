@@ -42,7 +42,9 @@ def create_app(config={}):
     mail.init_app(app)
 
     from .views import ispdb
+    from .views_api import ispdbapi
     app.register_blueprint(ispdb)
+    app.register_blueprint(ispdbapi, url_prefix='/api')
     return app
 
 

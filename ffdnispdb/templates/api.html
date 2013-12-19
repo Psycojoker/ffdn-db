@@ -1,4 +1,303 @@
 {% extends "layout.html" %}
-{% block container %}
-<h3>Soon...</h3>
-{% endblock container %}
+{% block page_title %}REST API <small>v1 alpha</small>{% endblock %}
+{% block head -%}
+    {{ super() }}
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/highlight_github.css') }}">
+{%- endblock %}
+{% block script -%}
+{{ super() }}
+<script type="text/javascript" src="{{ url_for('static', filename='js/highlight.pack.js') }}"></script>
+<script type="text/javascript">hljs.initHighlightingOnLoad();</script>
+{%- endblock %}
+{% block body %}
+<link rel=stylesheet type=text/css href="/static/css/highlight_github.css">
+      <p>The API lives at <code>/api/v1/</code>. The format used is JSON.</p>
+      <h3>Collections</h3>
+      <h4>ISPs</h4>
+      <div class="api-collection" id="api-collection-isp">
+        <div class="api-doc-resource">
+          <div class="api-doc-heading">
+            <span class="label label-info" data-toggle="collapse" href="#api-isp-1">GET</span>
+            <a class="path" data-toggle="collapse" href="#api-isp-1">/isp/</a>
+            <a class="description" data-toggle="collapse" href="#api-isp-1">
+              returns all ISPs in database
+            </a>
+          </div>
+          <div id="api-isp-1" class="api-doc-body collapse">
+            <div class="api-doc-inner">
+              <h5>Parameters</h5>
+              <table class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th style="width: 100px;">Name</th>
+                    <th>Value</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>page</code></td>
+                    <td>int</td>
+                    <td>Page number</td>
+                  </tr>
+                  <tr>
+                    <td><code>per_page</code></td>
+                    <td>int</td>
+                    <td>Number of items per page</td>
+                  </tr>
+                  <tr>
+                    <td><code>range</code></td>
+                    <td>int,int</td>
+                    <td>Range to return, in the format offset,value</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5>Output</h5>
+              <p>This resource returns an array of ISP objects.</p>
+              <h5>Sample output</h5>
+              <p>When using pagination (default)&thinsp;:</p>
+              <pre><code>{
+    "total_items": 3, 
+    "page": 1, 
+    "num_pages": 1, 
+    "per_page": 10, 
+    "isps": [
+        /* list of ISP objects */
+    ]
+}</code></pre>
+              <p>When providing a range parameter&thinsp;:</p>
+              <pre><code>{
+    "total_items": 3, 
+    "range": "0,1", 
+    "isps": [
+        /* list of ISP objects */
+    ]
+}</code></pre>
+              <h5>Status code</h5>
+              <p>This resource can return the following status codes: <code>400</code>, <code>500</code>.</p>
+            </div>
+          </div>
+        </div>
+        <div class="api-doc-resource">
+          <div class="api-doc-heading">
+            <span class="label label-info" data-toggle="collapse" href="#api-isp-2">GET</span>
+            <a class="path" data-toggle="collapse" href="#api-isp-2">/isp/&lt;int:isp_id&gt;/</a>
+            <a class="description" data-toggle="collapse" href="#api-isp-2">
+              returns the ISP with id &lt;isp_id&gt;
+            </a>
+          </div>
+          <div id="api-isp-2" class="api-doc-body collapse">
+            <div class="api-doc-inner">
+              <h5>Output</h5>
+              <p>This resource returns an ISP object or an ObjectNotFound error.</p>
+              <h5>Status code</h5>
+              <p>This resource can return the following status codes: <code>404</code>, <code>400</code>, <code>500</code>.</p>
+            </div>
+          </div>
+        </div>
+        <div class="api-doc-resource">
+          <div class="api-doc-heading">
+            <span class="label label-info" data-toggle="collapse" href="#api-isp-3">GET</span>
+            <a class="path" data-toggle="collapse" href="#api-isp-3">/isp/&lt;int:isp_id&gt;/covered_areas/</a>
+            <a class="description" data-toggle="collapse" href="#api-isp-3">
+              returns the covered areas for ISP with id &lt;isp_id&gt;
+            </a>
+          </div>
+          <div id="api-isp-3" class="api-doc-body collapse">
+            <div class="api-doc-inner">
+              <h5>Parameters</h5>
+              <table class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th style="width: 100px;">Name</th>
+                    <th>Value</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>page</code></td>
+                    <td>int</td>
+                    <td>Page number</td>
+                  </tr>
+                  <tr>
+                    <td><code>per_page</code></td>
+                    <td>int</td>
+                    <td>Number of items per page</td>
+                  </tr>
+                  <tr>
+                    <td><code>range</code></td>
+                    <td>int,int</td>
+                    <td>Range to return, in the format offset,value</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5>Output</h5>
+              <p>This resource returns an array of CoveredArea objects belonging to a given ISP. Note that the CoveredArea objects don't have an "isp" attribute since we assume the client will have retrieved informations about the ISP beforehand.</p>
+              <h5>Status code</h5>
+              <p>This resource can return the following status codes: <code>404</code>, <code>400</code>, <code>500</code>.</p>
+            </div>
+          </div>
+        </div>
+        <div class="api-doc-resource">
+          <div class="api-doc-heading">
+            <span class="label label-info" data-toggle="collapse" href="#api-isp-4">GET</span>
+            <a class="path" data-toggle="collapse" href="#api-isp-4">/isp/export_urls/</a>
+            <a class="description" data-toggle="collapse" href="#api-isp-4">
+              returns all isp-format urls
+            </a>
+          </div>
+          <div id="api-isp-4" class="api-doc-body collapse">
+            <div class="api-doc-inner">
+              <h5>Output</h5>
+              <p>This resource returns a list of all ISP Format URLs in database.</p>
+              <h5>Status code</h5>
+              <p>This resource can return the following status codes: <code>500</code>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr style="margin: 15px 0 0 0;" />
+      <h4>Covered Areas<small>&thinsp;: Areas covered by ISPs</small></h4>
+      <div class="api-collection" id="api-collection-isp">
+        <div class="api-doc-resource">
+          <div class="api-doc-heading">
+            <span class="label label-info" data-toggle="collapse" href="#api-area-1">GET</span>
+            <a class="path" data-toggle="collapse" href="#api-area-1">/covered_area/</a>
+            <a class="description" data-toggle="collapse" href="#api-area-1">
+              returns all Covered Areas in database
+            </a>
+          </div>
+          <div id="api-area-1" class="api-doc-body collapse">
+            <div class="api-doc-inner">
+              <h5>Parameters</h5>
+              <table class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th style="width: 100px;">Name</th>
+                    <th>Value</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>page</code></td>
+                    <td>int</td>
+                    <td>Page number</td>
+                  </tr>
+                  <tr>
+                    <td><code>per_page</code></td>
+                    <td>int</td>
+                    <td>Number of items per page</td>
+                  </tr>
+                  <tr>
+                    <td><code>range</code></td>
+                    <td>int,int</td>
+                    <td>Range to return, in the format offset,value</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5>Output</h5>
+              <p>This resource returns an array of CoveredArea objects.</p>
+              <h5>Sample output</h5>
+              <p>When using pagination (default)&thinsp;:</p>
+              <pre><code>{
+    "total_items": 3, 
+    "page": 1, 
+    "num_pages": 1, 
+    "per_page": 10, 
+    "covered_areas": [
+        /* list of CoveredArea objects */
+    ]
+}</code></pre>
+              <p>When providing a range parameter&thinsp;:</p>
+              <pre><code>{
+    "total_items": 3, 
+    "range": "0,1", 
+    "covered_areas": [
+        /* list of CoveredArea objects */
+    ]
+}</code></pre>
+              <h5>Status code</h5>
+              <p>This resource can return the following status codes: <code>404</code>, <code>400</code>, <code>500</code>.</p>
+            </div>
+          </div>
+        </div>
+        <div class="api-doc-resource">
+          <div class="api-doc-heading">
+            <span class="label label-info" data-toggle="collapse" href="#api-area-2">GET</span>
+            <a class="path" data-toggle="collapse" href="#api-area-2">/covered_area/&lt;int:area_id&gt;/</a>
+            <a class="description" data-toggle="collapse" href="#api-area-2">
+              returns the Area with id &lt;area_id&gt;
+            </a>
+          </div>
+          <div id="api-area-2" class="api-doc-body collapse">
+            <div class="api-doc-inner">
+              <h5>Output</h5>
+              <p>This resource returns a CoveredArea object or an ObjectNotFound error.</p>
+              <h5>Status code</h5>
+              <p>This resource can return the following status codes: <code>404</code>, <code>400</code>, <code>500</code>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h3 style="margin-top: 30px;">Objects</h3>
+      <h4>ISP</h4>
+      <pre><code>{
+    "id": "int",
+    "is_ffdn_member": "bool",
+    "json_url": "string:url",
+    "date_added": "string:ISO8601 datetime",
+    "last_update": "string:ISO8601 datetime",
+    "ispformat": "object:ISP Format"
+}</code></pre>
+      <h4>CoveredArea</h4>
+      <pre><code>{
+    "id": "int",
+    "isp": {
+        "id": "int",
+        "name": "string",
+        "shortname": "string|null"
+    },
+    "name": "string",
+    "geojson": "object:GeoJSON"
+}</code></pre>
+      <h3 style="margin-top: 30px;">Errors</h3>
+      <p>A typical error response looks like this:</p>
+      <pre><code>{
+    "error": {
+        "message": "There was an error while processing your request", 
+        "error_type": "ispdb.api.InternalError"
+    }
+}</code></pre>
+      <p>Message is an informative message regarding the error, error_type is an optionnal field containing the error class, which can give machine-readable informations about the error.</p>
+      <p>For now, the following error class are defined:</p>
+      <div class="row">
+        <table class="table table-bordered table-striped span10" style="background-color: #fff">
+          <thead>
+            <tr>
+              <th style="width: 200px;">Error class</th>
+              <th style="width: 100px;">Status code</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>ispdb.api.ObjectNotFound</code></td>
+              <td>404</td>
+              <td>Could not find the item matching the criterias you specified</td>
+            </tr>
+            <tr>
+              <td><code>ispdb.api.BadInput</code></td>
+              <td>400</td>
+              <td>Invalid input</td>
+            </tr>
+            <tr>
+              <td><code>ispdb.api.InternalError</code></td>
+              <td>500</td>
+              <td>Internal server error</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+{%- endblock %}

@@ -387,7 +387,7 @@ def format():
     return render_template('format_spec.html', spec=Markup(parts['html_body']))
 
 
-@ispdb.route('/api', methods=['GET'])
+@ispdb.route('/api/v1/', methods=['GET'])
 def api():
     return render_template('api.html')
 

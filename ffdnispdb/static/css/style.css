@@ -391,6 +391,7 @@ pre#validator {
     color: #ffffff;
 }
 
+
 /**
  * Schema Spec / RST
  */
@@ -419,3 +420,42 @@ pre#validator {
 .rst .section > :first-child {
     margin-top: 15px;
 }
+
+
+/**
+ * API
+ */
+
+.api-collection .api-doc-resource {
+    background-color: #f0f0f0;
+    margin-bottom: 5px;
+    border: 1px #e5e5e5 solid;
+    border-radius: 4px;
+}
+.api-collection .api-doc-heading {
+    background-image: linear-gradient(to bottom, #f0f0f0, #eaeaea);
+    border-radius: 4px 4px 0 0;
+    padding: 6px 0;
+}
+.api-collection .api-doc-heading .path {
+    color: #666666;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+.api-collection .api-doc-body {
+    background-color: #ffffff;
+    border-radius: 0 0 4px 4px;
+}
+.api-collection .api-doc-inner {
+    border-top: 1px #e5e5e5 solid;
+    padding: 9px 15px;
+}
+.api-collection .description {
+    margin-right: 10px;
+    float: right;
+}
+.api-collection .label {
+    margin: 0 5px 0 8px;
+    cursor: pointer;
+}
+
