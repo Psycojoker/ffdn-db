@@ -144,6 +144,7 @@ def edit_project(projectid):
             abort(403)
 
         tokens = session.setdefault('edit_tokens', {})
+        session.modified = True # ITS A TARP
         tokens[r[0]] = r[1]
         # refresh page, without the token in the url
         return redirect(url_for('.edit_project', projectid=r[0]))
