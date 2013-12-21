@@ -77,7 +77,7 @@ class GeoJSONField(TextField):
                 raise StopValidation(_(u'Invalid GeoJSON, please check it'))
             if not check_geojson_spatialite(self.data):
                 # TODO: log this
-                raise StopValidation(_(u'GeoJSON not understood by database'))
+                raise StopValidation(_(u'Unable to store GeoJSON in database'))
 
 
 class Unique(object):

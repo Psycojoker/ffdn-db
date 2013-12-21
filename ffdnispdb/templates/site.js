@@ -66,15 +66,15 @@ $(function () {
         makeModal: function() {
             return $('<div class="modal hide geoinput-modal">'+
                      '<div class="modal-header">'+
-                     '<h3>GeoJSON Input</h3>'+
+                     '<h3>'+{{ _("GeoJSON Input")|js_str }}+'</h3>'+
                      '</div>'+
                      '<div class="modal-body">'+
-                     '<p>Paste your GeoJSON here:</p>'+
+                     '<p>'+{{ _("Paste your GeoJSON here")|js_str }}+'</p>'+
                      '<textarea style="width: 97%; height: 200px"></textarea>'+
                      '</div>'+
                      '<div class="modal-footer">'+
-                     '<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>'+
-                     '<button class="btn btn-primary">Done</button>'+
+                     '<button class="btn" data-dismiss="modal" aria-hidden="true">'+{{ _("Cancel")|js_str }}+'</button>'+
+                     '<button class="btn btn-primary">'+{{ _("Done")|js_str }}+'</button>'+
                      '</div>'+
                      '</div>')
         }
@@ -138,7 +138,7 @@ L.Control.Pinpoint = L.Control.extend({
         this._button.href = '#';
         this._button.innerHTML = '<i class="icon-hand-down"></i>';
         this._button.style = 'cursor: pointer';
-        this._button.title = 'Find ISPs near you';
+        this._button.title = {{ _('Find ISPs near you')|js_str }};
         L.DomEvent
          .addListener(this._button, 'click', L.DomEvent.stop)
          .addListener(this._button, 'click', L.DomEvent.stopPropagation)

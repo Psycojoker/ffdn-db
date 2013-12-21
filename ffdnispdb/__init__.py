@@ -4,14 +4,14 @@ from flask import Flask, g, current_app, request
 from flask.ext.babel import Babel
 from flask.ext.sqlalchemy import SQLAlchemy, event
 from flask.ext.mail import Mail
-from werkzeug.contrib.cache import NullCache
+from flask.ext.cache import Cache
 from .sessions import MySessionInterface
 
 
 babel = Babel()
 db = SQLAlchemy()
 sess = MySessionInterface(db)
-cache = NullCache()
+cache = Cache()
 mail = Mail()
 
 def get_locale():
@@ -40,6 +40,7 @@ def create_app(config={}):
 
     app.session_interface = sess
     mail.init_app(app)
+    cache.init_app(app)
 
     from .views import ispdb
     from .views_api import ispdbapi

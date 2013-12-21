@@ -3,7 +3,7 @@
 from flask import request, g, redirect, url_for, abort, \
     render_template, flash, json, session, Response, Markup, \
     stream_with_context, current_app, Blueprint
-from flask.ext.babel import gettext as _
+from flask.ext.babel import gettext as _, get_locale
 from flask.ext.mail import Message
 import itsdangerous
 import docutils.core
@@ -401,6 +401,22 @@ def humans():
     return Response(open(authors_file), mimetype='text/plain; charset=utf-8')
 
 
+@ispdb.route('/site.js', methods=['GET'])
+def site_js():
+    l = get_locale()
+    js_i18n = cache.get('site_js_%s'%(l,))
+    if not js_i18n:
+        js_i18n = render_template('site.js')
+        cache.set('site_js_%s'%(l,), js_i18n, timeout=60*60)
+    r = Response(js_i18n, headers={
+        'Content-type': 'application/javascript',
+        'Cache-control': 'private, max-age=3600'
+    })
+    r.add_etag()
+    r.make_conditional(request)
+    return r
+
+
 #------
 # Filters
 
@@ -414,4 +430,8 @@ def step_to_label(step):
 @ispdb.app_template_filter('stepname')
 def stepname(step):
     return STEPS[step]
+
+@ispdb.app_template_filter('js_str')
+def json_filter(v):
+    return Markup(json.dumps(unicode(v)))
 
