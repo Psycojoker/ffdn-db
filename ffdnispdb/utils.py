@@ -5,6 +5,7 @@ from collections import OrderedDict
 from datetime import datetime
 import pytz
 import json
+from . import db
 
 
 
@@ -30,6 +31,21 @@ def dict_to_geojson(d_in):
     return json.dumps(d)
 
 
+def check_geojson_spatialite(_gjson):
+    """
+    Checks if a GeoJSON dict is understood by spatialite
+
+    >>> check_geojson_spatialite({'type': 'NOPE', 'coordinates': []})
+    False
+    >>> check_geojson_spatialite({'type': 'Polygon', 'coordinates': [
+    ...    [[0.0, 0.0], [0.0, 1.0], [1.0, 1.0], [1.0, 0.0]]
+    ... ]})
+    True
+    """
+    gjson=dict_to_geojson(_gjson)
+    return bool(db.session.query(db.func.GeomFromGeoJSON(gjson) != None).first()[0])
+
+
 def utcnow():
     """
     Return the current UTC date and time as a datetime object with proper tzinfo.
@@ -42,3 +58,12 @@ def tosystemtz(d):
     Convert the UTC datetime ``d`` to the system time zone defined in the settings
     """
     return d.astimezone(pytz.timezone(current_app.config['SYSTEM_TIME_ZONE']))
+
+
+def filesize_fmt(num):
+    fmt = lambda num, unit: "%s %s" % (format(num, '.2f').rstrip('0').rstrip('.'), unit)
+    for x in ['bytes', 'KiB', 'MiB', 'GiB']:
+        if num < 1024.0:
+            return fmt(num, x)
+        num /= 1024.0
+    return fmt(num, 'TiB')

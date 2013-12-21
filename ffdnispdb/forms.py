@@ -1,16 +1,22 @@
 from functools import partial
 import itertools
 import urlparse
+import json
+import collections
+from flask import current_app
 from flask.ext.wtf import Form
 from wtforms import Form as InsecureForm
 from wtforms import (TextField, DateField, DecimalField, IntegerField, SelectField,
                      SelectMultipleField, FieldList, FormField)
-from wtforms.widgets import TextInput, ListWidget, html_params, HTMLString, CheckboxInput, Select
-from wtforms.validators import DataRequired, Optional, URL, Email, Length, NumberRange, ValidationError
-from flask.ext.babel import lazy_gettext as _
+from wtforms.widgets import TextInput, ListWidget, html_params, HTMLString, CheckboxInput, Select, TextArea
+from wtforms.validators import (DataRequired, Optional, URL, Email, Length,
+                                NumberRange, ValidationError, StopValidation)
+from flask.ext.babel import lazy_gettext as _, gettext
 from babel.support import LazyProxy
+from ispformat.validator import validate_geojson
 from .constants import STEPS
 from .models import ISP
+from .utils import check_geojson_spatialite, filesize_fmt
 
 
 class InputListWidget(ListWidget):
@@ -22,6 +28,7 @@ class InputListWidget(ListWidget):
         html.append('</%s>' % self.html_tag)
         return HTMLString(''.join(html))
 
+
 class MultiCheckboxField(SelectMultipleField):
     """
     A multiple-select, except displays a list of checkboxes.
@@ -32,11 +39,46 @@ class MultiCheckboxField(SelectMultipleField):
     widget = ListWidget(prefix_label=False)
     option_widget = CheckboxInput()
 
+
 class MyFormField(FormField):
 
     @property
     def flattened_errors(self):
         return list(itertools.chain.from_iterable(self.errors.values()))
+
+
+class GeoJSONField(TextField):
+    widget = TextArea()
+
+    def process_formdata(self, valuelist):
+        if valuelist and valuelist[0]:
+            max_size = current_app.config['ISP_FORM_GEOJSON_MAX_SIZE']
+            if len(valuelist[0]) > max_size:
+                raise ValueError(_(u'JSON value too big, must be less than %(max_size)s',
+                                   max_size=filesize_fmt(max_size)))
+            try:
+                self.data = json.loads(valuelist[0], object_pairs_hook=collections.OrderedDict)
+            except Exception as e:
+                raise ValueError(_(u'Not a valid JSON value'))
+        elif valuelist and valuelist[0].strip() == '':
+            self.data = None # if an empty string was passed, set data as None
+
+    def _value(self):
+        if self.raw_data:
+            return self.raw_data[0]
+        elif self.data is not None:
+            return json.dumps(self.data)
+        else:
+            return ''
+
+    def pre_validate(self, form):
+        if self.data is not None:
+            if not validate_geojson(self.data):
+                raise StopValidation(_(u'Invalid GeoJSON, please check it'))
+            if not check_geojson_spatialite(self.data):
+                # TODO: log this
+                raise StopValidation(_(u'GeoJSON not understood by database'))
+
 
 class Unique(object):
     """ validator that checks field uniqueness """
@@ -65,7 +107,7 @@ class CoveredArea(InsecureForm):
     name         = TextField(_(u'name'), widget=partial(TextInput(), class_='input-medium', placeholder=_(u'Area')))
     technologies = SelectMultipleField(_(u'technologies'), choices=TECHNOLOGIES_CHOICES,
                                        widget=partial(Select(True), **{'class': 'selectpicker', 'data-title': _(u'Technologies deployed')}))
-#    area          =
+    area         = GeoJSONField(_('area'), widget=partial(TextArea(), class_='geoinput'))
 
     def validate(self, *args, **kwargs):
         r=super(CoveredArea, self).validate(*args, **kwargs)
@@ -103,7 +145,7 @@ class ProjectForm(Form):
     chatrooms     = FieldList(TextField(_(u'chatrooms')), min_entries=1, widget=InputListWidget(),
                               description=[None, _(u'In URI form, e.g. <code>irc://irc.isp.net/#isp</code> or '+
                                                     '<code>xmpp:isp@chat.isp.net?join</code>')])
-    covered_areas = FieldList(MyFormField(CoveredArea, widget=partial(InputListWidget(), class_='formfield')),
+    covered_areas = FieldList(MyFormField(CoveredArea, _('Covered Areas'), widget=partial(InputListWidget(), class_='formfield')),
                                           min_entries=1, widget=InputListWidget(),
                                           description=[None, _(u'Descriptive name of the covered areas and technologies deployed')])
     latitude      = DecimalField(_(u'latitude'), validators=[Optional(), NumberRange(min=-90, max=90)],
@@ -130,6 +172,14 @@ class ProjectForm(Form):
             # not printed, whatever..
             raise ValidationError(_(u'You must specify at least one area'))
 
+        geojson_size = sum([len(ca.area.raw_data[0]) for ca in self.covered_areas if ca.area.raw_data])
+        print geojson_size
+        max_size = current_app.config['ISP_FORM_GEOJSON_MAX_SIZE_TOTAL']
+        if geojson_size > max_size:
+            # TODO: XXX This is not printed !
+            raise ValidationError(gettext(u'The size of all GeoJSON data combined must not exceed %(max_size)s',
+                                          max_size=filesize_fmt(max_size)))
+
     def to_json(self, json=None):
         if json is None:
             json={}
@@ -143,6 +193,14 @@ class ProjectForm(Form):
         def optlist(k, v):
             if k in json or len(v):
                 json[k]=v
+
+        def transform_covered_areas(cas):
+            for ca in cas:
+                if not ca['name']:
+                    continue
+                if 'area' in ca and ca['area'] is None:
+                    del ca['area']
+                yield ca
 
         optstr('shortname', self.shortname.data)
         optstr('description', self.description.data)
@@ -158,7 +216,7 @@ class ProjectForm(Form):
         optlist('chatrooms', filter(bool, self.chatrooms.data)) # remove empty strings
         optstr('coordinates', {'latitude': self.latitude.data, 'longitude': self.longitude.data}
                                 if self.latitude.data else {})
-        optlist('coveredAreas', filter(lambda e: e['name'], self.covered_areas.data))
+        optlist('coveredAreas', list(transform_covered_areas(self.covered_areas.data)))
         return json
 
     @classmethod

@@ -16,6 +16,79 @@ $(function () {
     });
     $('.selectpicker').selectpicker();
     $("[rel=tooltip]").tooltip();
+
+    var Geoinput = function(el, options, e) {
+        this.$element = $(el);
+        this.init();
+    };
+    Geoinput.prototype = {
+        constructor: Geoinput,
+
+        init: function() {
+            this.$element.hide();
+            this.$button = this.makeButton();
+            this.$modal  = this.makeModal();
+            this.$element.after(this.$button);
+            this.$element.after(this.$modal);
+
+            this.$modal.find('textarea').val(this.$element.val());
+            this.buttonIcon();
+
+            var that = this;
+            this.$button.click(function(e) {
+                e.preventDefault();
+                that.$modal.modal();
+                return false;
+            });
+            this.$modal.find('.btn-primary').click(function(e) {
+                e.preventDefault();
+                that.$modal.modal('hide');
+                that.$element.val(that.$modal.find('textarea').val());
+                that.buttonIcon.call(that);
+                return false;
+            });
+        },
+
+        buttonIcon: function() {
+            if(this.$element.val())
+                this.$button[0].firstChild.src = '/static/img/map_edit.png';
+            else
+                this.$button[0].firstChild.src = '/static/img/map.png';
+        },
+
+        makeButton: function() {
+            return $('<button/>').addClass("btn btn-default geoinput-button")
+                                 .css('padding', '4px 7px')
+                                 .attr('title', 'enter geojson')
+                                 .html('<img src="/static/img/map.png" alt="map">');
+        },
+
+        makeModal: function() {
+            return $('<div class="modal hide geoinput-modal">'+
+                     '<div class="modal-header">'+
+                     '<h3>GeoJSON Input</h3>'+
+                     '</div>'+
+                     '<div class="modal-body">'+
+                     '<p>Paste your GeoJSON here:</p>'+
+                     '<textarea style="width: 97%; height: 200px"></textarea>'+
+                     '</div>'+
+                     '<div class="modal-footer">'+
+                     '<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>'+
+                     '<button class="btn btn-primary">Done</button>'+
+                     '</div>'+
+                     '</div>')
+        }
+    }
+
+    $.fn.geoinput = function(options, event) {
+        return this.each(function() {
+            var $this = $(this), data = $this.data('geoinput');
+            if($this.is('input, textarea')) {
+                $this.data('geoinput', (data = new Geoinput(this, options, event)));
+            }
+        });
+    };
+    $('.geoinput').geoinput();
     init_map();
 });
 
@@ -254,7 +327,7 @@ function init_map() {
 }
 
 function change_input_num(li, new_num, reset) {
-    li.find('input,select').each(function() {
+    li.find('input,select,textarea').each(function() {
         var id = $(this).attr('id').replace(/^(.*)-\d{1,4}/, '$1-'+new_num);
         $(this).attr({'name': id, 'id': id});
         if(!!reset)
@@ -279,11 +352,14 @@ function clone_fieldlist(el) {
     var new_element = el.clone(true);
     var elem_id = new_element.find(':input')[0].id;
     var elem_num = parseInt(elem_id.replace(/^.*-(\d{1,4})/, '$1')) + 1;
-    change_input_num(new_element, elem_num, true);
     new_element.children('button').remove();
     new_element.children('.help-inline.error-list').remove();
     new_element.find('.bootstrap-select').remove();
-    append_remove_button(new_element);
+    new_element.find('.geoinput-button').remove();
+    new_element.find('.geoinput-modal').remove();
+    change_input_num(new_element, elem_num, true);
     new_element.find('.selectpicker').data('selectpicker', null).selectpicker();
+    new_element.find('.geoinput').geoinput();
+    append_remove_button(new_element);
     el.after(new_element);
 }

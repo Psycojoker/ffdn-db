@@ -10,7 +10,7 @@ import requests
 
 from ispformat.validator import validate_isp
 from .models import ISP
-from .utils import dict_to_geojson, utcnow
+from .utils import check_geojson_spatialite, utcnow
 from . import db
 
 
@@ -291,9 +291,7 @@ class Crawler(object):
         for ca in jdict.get('coveredAreas', []):
             if not 'area' in ca:
                 continue
-            gjson=dict_to_geojson(ca['area'])
-            is_valid=bool(db.session.query(db.func.GeomFromGeoJSON(gjson) != None).first()[0])
-            if not is_valid:
+            if not check_geojson_spatialite(ca['area']):
                 yield self.err('GeoJSON data for covered area "%s" cannot '
                                'be handled by our database'%esc(ca['name']))
                 yield self.abort('Please fix your GeoJSON')
