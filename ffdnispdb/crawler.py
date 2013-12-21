@@ -10,7 +10,7 @@ import requests
 
 from ispformat.validator import validate_isp
 from .models import ISP
-from .utils import check_geojson_spatialite, utcnow
+from .utils import check_geojson_spatialite, utcnow, filesize_fmt
 from . import db
 
 
@@ -222,9 +222,10 @@ class Crawler(object):
 
         cl=r.headers.get('content-length')
         if not cl:
-            yield self.warn('No content-length. Note that we will not process a file whose size exceed 1MiB')
+            yield self.warn('No content-length. Note that we will not process a file whose size exceed %s'
+                                                                      % (filesize_fmt(self.MAX_JSON_SIZE)))
         elif int(cl) > self.MAX_JSON_SIZE:
-            yield self.abort('File too big ! File size must be less then 1MiB')
+            yield self.abort('File too big ! File size must be less then %s' % (filesize_fmt(self.MAX_JSON_SIZE)))
             return
 
 
@@ -233,7 +234,8 @@ class Crawler(object):
         for d in r.iter_content(requests.models.CONTENT_CHUNK_SIZE):
             b.write(d)
             if b.tell() > self.MAX_JSON_SIZE:
-                yield self.abort('File too big ! File size must be less then 1MiB')
+                yield self.abort('File too big ! File size must be less then %s'
+                                            % (filesize_fmt(self.MAX_JSON_SIZE)))
                 return
         r._content=b.getvalue()
         del b
