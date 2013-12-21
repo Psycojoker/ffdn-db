@@ -69,8 +69,9 @@ $(function () {
                      '<h3>'+{{ _("GeoJSON Input")|js_str }}+'</h3>'+
                      '</div>'+
                      '<div class="modal-body">'+
-                     '<p>'+{{ _("Paste your GeoJSON here")|js_str }}+'</p>'+
-                     '<textarea style="width: 97%; height: 200px"></textarea>'+
+                     '<p>'+{{ _("Paste your GeoJSON here :")|js_str }}+'</p>'+
+                     '<p><textarea style="width: 97%; height: 200px"></textarea></p>'+
+                     '<p><small>'+{{ _("Accepted types: Polygon, MultiPolygon")|js_str }}+'</small></p>'+
                      '</div>'+
                      '<div class="modal-footer">'+
                      '<button class="btn" data-dismiss="modal" aria-hidden="true">'+{{ _("Cancel")|js_str }}+'</button>'+

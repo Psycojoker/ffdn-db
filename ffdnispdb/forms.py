@@ -76,7 +76,7 @@ class GeoJSONField(TextField):
             if not validate_geojson(self.data):
                 raise StopValidation(_(u'Invalid GeoJSON, please check it'))
             if not check_geojson_spatialite(self.data):
-                # TODO: log this
+                current_app.logger.error('Spatialite could not decode the following GeoJSON: %s', self.data)
                 raise StopValidation(_(u'Unable to store GeoJSON in database'))
 
 
@@ -173,7 +173,6 @@ class ProjectForm(Form):
             raise ValidationError(_(u'You must specify at least one area'))
 
         geojson_size = sum([len(ca.area.raw_data[0]) for ca in self.covered_areas if ca.area.raw_data])
-        print geojson_size
         max_size = current_app.config['ISP_FORM_GEOJSON_MAX_SIZE_TOTAL']
         if geojson_size > max_size:
             # TODO: XXX This is not printed !

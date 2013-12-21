@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: gu1@cafai.fr\n"
-"POT-Creation-Date: 2013-12-21 11:19+0100\n"
-"PO-Revision-Date: 2013-12-21 11:21+0100\n"
+"POT-Creation-Date: 2013-12-21 15:25+0100\n"
+"PO-Revision-Date: 2013-12-21 15:25+0100\n"
 "Last-Translator: Gu1 <gu1@cafai.fr>\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "MIME-Version: 1.0\n"
@@ -237,7 +237,7 @@ msgstr "abonnées"
 msgid "Number of subscribers to an internet access"
 msgstr "Nombre d'abonnées à un accès à Internet"
 
-#: ffdnispdb/forms.py:160 ffdnispdb/forms.py:289
+#: ffdnispdb/forms.py:160 ffdnispdb/forms.py:288
 msgid "Email"
 msgstr "Email"
 
@@ -249,25 +249,25 @@ msgstr "Contact technique, en cas de problème"
 msgid "You must specify at least one area"
 msgstr "Vous devez spécifier au moins une zone"
 
-#: ffdnispdb/forms.py:181
+#: ffdnispdb/forms.py:180
 #, python-format
 msgid "The size of all GeoJSON data combined must not exceed %(max_size)s"
 msgstr ""
 "La taille de toutes les données GeoJSON ne soit pas excéder %(max_size)s"
 
-#: ffdnispdb/forms.py:270 ffdnispdb/forms.py:294
+#: ffdnispdb/forms.py:269 ffdnispdb/forms.py:293
 msgid "Invalid URL"
 msgstr "URL invalide"
 
-#: ffdnispdb/forms.py:286
+#: ffdnispdb/forms.py:285
 msgid "base url"
 msgstr "url de base"
 
-#: ffdnispdb/forms.py:286
+#: ffdnispdb/forms.py:285
 msgid "E.g. https://isp.com/"
 msgstr "E.g. https://isp.com/"
 
-#: ffdnispdb/forms.py:287
+#: ffdnispdb/forms.py:286
 msgid ""
 "A ressource implementing our JSON-Schema specification must exist at path /"
 "isp.json"
@@ -275,23 +275,23 @@ msgstr ""
 "Une ressource implémentant notre spécification JSON-Schema doit exister au "
 "chemin /isp.json"
 
-#: ffdnispdb/forms.py:290
+#: ffdnispdb/forms.py:289
 msgid "Technical contact, in case of problems"
 msgstr "Contact technique, en cas de problèmes"
 
-#: ffdnispdb/forms.py:297
+#: ffdnispdb/forms.py:296
 msgid "Invalid URL (must be HTTP(S))"
 msgstr "URL invalide (doit être HTTP(S))"
 
-#: ffdnispdb/forms.py:300
+#: ffdnispdb/forms.py:299
 msgid "This URL is already in our database"
 msgstr "Cette URL est déjà dans notre base de données"
 
-#: ffdnispdb/forms.py:304
+#: ffdnispdb/forms.py:303
 msgid "Tech Email"
 msgstr "Email Technique"
 
-#: ffdnispdb/forms.py:305
+#: ffdnispdb/forms.py:304
 msgid "The Technical contact you provided while registering"
 msgstr "Le contact technique que vous avez fourni lors de l'enregistrement"
 
@@ -395,7 +395,7 @@ msgstr "Valider"
 #: ffdnispdb/templates/gen_edit_token.html:14
 #: ffdnispdb/templates/project_form_generic.html:66
 #: ffdnispdb/templates/project_json_form_generic.html:14
-#: ffdnispdb/templates/site.js:76
+#: ffdnispdb/templates/site.js:77
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -548,14 +548,18 @@ msgid "GeoJSON Input"
 msgstr "Champ GeoJSON"
 
 #: ffdnispdb/templates/site.js:72
-msgid "Paste your GeoJSON here"
-msgstr "Collez votre GeoJSON ici"
+msgid "Paste your GeoJSON here :"
+msgstr "Collez votre GeoJSON ici :"
 
-#: ffdnispdb/templates/site.js:77
+#: ffdnispdb/templates/site.js:74
+msgid "Accepted types: Polygon, MultiPolygon"
+msgstr "Types acceptés: Polygon, Multipolygon"
+
+#: ffdnispdb/templates/site.js:78
 msgid "Done"
 msgstr "Fini"
 
-#: ffdnispdb/templates/site.js:141
+#: ffdnispdb/templates/site.js:142
 msgid "Find ISPs near you"
 msgstr "Trouvez des FAI proche de vous"
 
