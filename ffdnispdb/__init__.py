@@ -15,6 +15,8 @@ cache = Cache()
 mail = Mail()
 
 def get_locale():
+    if request.cookies.get('locale') in current_app.config['LANGUAGES'].keys():
+        return request.cookies.get('locale')
     return request.accept_languages.best_match(current_app.config['LANGUAGES'].keys())
 
 

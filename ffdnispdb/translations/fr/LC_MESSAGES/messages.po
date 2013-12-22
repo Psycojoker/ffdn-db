@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: gu1@cafai.fr\n"
-"POT-Creation-Date: 2013-12-21 15:25+0100\n"
-"PO-Revision-Date: 2013-12-21 15:25+0100\n"
+"POT-Creation-Date: 2013-12-22 10:01+0100\n"
+"PO-Revision-Date: 2013-12-22 10:02+0100\n"
 "Last-Translator: Gu1 <gu1@cafai.fr>\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "MIME-Version: 1.0\n"
@@ -443,26 +443,39 @@ msgstr ""
 msgid "Add my project"
 msgstr "Ajouter mon projet"
 
-#: ffdnispdb/templates/layout.html:36
+#: ffdnispdb/templates/layout.html:42
 #: ffdnispdb/templates/search_results.html:8
 msgid "Search"
 msgstr "Chercher"
 
-#: ffdnispdb/templates/layout.html:39
+#: ffdnispdb/templates/layout.html:45
 msgid "Home"
 msgstr "Accueil"
 
-#: ffdnispdb/templates/layout.html:40 ffdnispdb/templates/project_list.html:3
+#: ffdnispdb/templates/layout.html:46 ffdnispdb/templates/project_list.html:3
 msgid "Project List"
 msgstr "Liste des projet"
 
-#: ffdnispdb/templates/layout.html:41
+#: ffdnispdb/templates/layout.html:47
 msgid "Format"
 msgstr "Format"
 
-#: ffdnispdb/templates/layout.html:42
+#: ffdnispdb/templates/layout.html:48
 msgid "API"
 msgstr "API"
+
+#: ffdnispdb/templates/layout.html:59
+msgid "Choose your language"
+msgstr "Choisissez votre langue"
+
+#: ffdnispdb/templates/layout.html:63
+msgid "Close"
+msgstr "Fermer"
+
+#: ffdnispdb/templates/layout.html:64
+#: ffdnispdb/templates/validator_generic.html:82
+msgid "Confirm"
+msgstr "Confirmer"
 
 #: ffdnispdb/templates/map_popup.html:15
 #: ffdnispdb/templates/project_detail.html:50
@@ -566,7 +579,3 @@ msgstr "Trouvez des FAI proche de vous"
 #: ffdnispdb/templates/validator_generic.html:81
 msgid "Retry"
 msgstr "Réessayer"
-
-#: ffdnispdb/templates/validator_generic.html:82
-msgid "Confirm"
-msgstr "Confirmer"

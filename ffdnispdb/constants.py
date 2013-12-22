@@ -21,3 +21,8 @@ STEPS_LABELS = {
     6: 'warning',
     7: 'success'
 }
+
+LOCALES_FLAGS = {
+    'en': 'GB',
+    'fr': 'FR',
+}

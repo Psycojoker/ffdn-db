@@ -17,6 +17,7 @@
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/jquery.ui.all.css') }}">
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/bootstrap-select.min.css') }}">
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/leaflet.css') }}">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/flags.css') }}">
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/style.css') }}">
     {%- endblock %}
   </head>
@@ -32,6 +33,11 @@
         </a>
         <a class="brand" href="/"><span id="ffdn-header"><span>F</span><span>F</span><span>D</span><span>N</span></span> Database</a>
         <div class="nav-collapse collapse">
+          <div id="locale-selector" data-target="#locale-modal" data-toggle="modal">
+            <div class="flag flag-{{ current_locale()|locale_flag }}"></div>
+            <div class="locale-name">{{ current_locale() }}</div>
+          </div>
+          <div class="pull-right divider-vertical locale-divider"></div>
           <form method="get" action="/search" class="navbar-search pull-right">
             <input type="text" id="search-input" class="search-query input-medium" name="q" placeholder="{{ _("Search") }}" />
           </form>
@@ -45,6 +51,19 @@
         </div>
       </div>
     </div>
+  </div>
+  <div id="locale-modal" class="modal hide" data-remote="{{ url_for('ispdb.locale_selector') }}">
+    <form method="post" action="{{ url_for('ispdb.locale_selector') }}">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3>{{ _("Choose your language") }}</h3>
+      </div>
+      <div class="modal-body"></div>
+      <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">{{ _("Close") }}</button>
+        <button class="btn btn-primary">{{ _("Confirm") }}</button>
+      </div>
+    </form>
   </div>
 
   <div id="main-container" class="container">
@@ -87,7 +106,7 @@
 <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-select.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/leaflet.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('.site_js') }}"></script>
+<script type="text/javascript" src="{{ url_for('ispdb.site_js') }}"></script>
 {%- endblock %}
 </body>
 

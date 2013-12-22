@@ -417,6 +417,20 @@ def site_js():
     return r
 
 
+@ispdb.route('/locale_selector', methods=['GET', 'POST'])
+def locale_selector():
+    l = current_app.config['LANGUAGES']
+
+    if request.method == 'POST' and request.form.get('locale') in l:
+        resp = redirect(url_for('.home'))
+        resp.set_cookie('locale', request.form['locale'])
+        return resp
+
+    return render_template('locale_selector.html', locales=(
+        (code, LOCALES_FLAGS[code], name) for code, name in l.iteritems()
+    ))
+
+
 #------
 # Filters
 
@@ -434,4 +448,12 @@ def stepname(step):
 @ispdb.app_template_filter('js_str')
 def json_filter(v):
     return Markup(json.dumps(unicode(v)))
+
+@ispdb.app_template_filter('locale_flag')
+def locale_flag(l):
+    return LOCALES_FLAGS.get(str(l), '_unknown')
+
+@ispdb.app_template_global('current_locale')
+def current_locale():
+    return get_locale()
 

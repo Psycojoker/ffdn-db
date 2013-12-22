@@ -191,6 +191,42 @@ input#search-input {
     }
 }
 
+.navbar #locale-selector {
+    float: right;
+    height: 36px;
+    padding-top: 4px;
+    cursor: pointer;
+    opacity: 0.8;
+    transition-duration: 200ms;
+}
+
+.navbar #locale-selector .flag {
+    margin: 0 auto;
+}
+
+.navbar #locale-selector:hover {
+    opacity: 1;
+    transition-duration: 200ms;
+}
+
+.navbar #locale-selector .locale-name {
+    color: #f8f8f8;
+    text-align: center;
+    font-weight: bold;
+    line-height: 16px;
+}
+
+@media (max-width: 979px) {
+    .navbar-search:before {
+        top: 18px;
+        left: 22px;
+    }
+
+    .navbar #locale-selector, .navbar .locale-divider {
+        display: none;
+    }
+}
+
 
 /*
  * Sticky footer
