@@ -7,7 +7,7 @@
           {{ form.csrf_token }}
           <fieldset>
             <legend>{{ _("Edit your ISP") }}</legend>
-            <p>To edit your ISP, you need to give us the email provided while registering and we will send you a link to edit it.</p>
+            <p>{% trans %}To edit your ISP, you need to give us the email provided while registering and we will send you a link to edit it.{% endtrans %}</p>
             {{ fm.render_field(form.tech_email) }}
             <div class="form-actions">
               <input type="submit" class="btn btn-primary" value="{{ _("Submit") }}" />
