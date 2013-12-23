@@ -11,19 +11,19 @@ import string
 from datetime import datetime, timedelta
 import cPickle
 
-random=SystemRandom()
+random = SystemRandom()
 
 
 class SQLSession(CallbackDict, SessionMixin):
 
     def __init__(self, sid, db, table, new=False, initial=None):
-        self.sid=sid
-        self.db=db
-        self.table=table
-        self.modified=False
-        self.new=new
+        self.sid = sid
+        self.db = db
+        self.table = table
+        self.modified = False
+        self.new = new
         def _on_update(self):
-            self.modified=True
+            self.modified = True
         super(SQLSession, self).__init__(initial, _on_update)
 
     def save(self):
@@ -33,7 +33,7 @@ class SQLSession(CallbackDict, SessionMixin):
                 'expire': datetime.utcnow()+timedelta(hours=1),
                 'value': cPickle.dumps(dict(self), -1)
             }))
-            self.new=False
+            self.new = False
         else:
             self.db.execute(self.table.update(
                 self.table.c.session_id == self.sid,
@@ -57,14 +57,14 @@ class MySessionInterface(SessionInterface):
     def open_session(self, app, request):
         sid = request.cookies.get(app.session_cookie_name)
         if sid:
-            res=self.db.engine.execute(select([self.table.c.value], (self.table.c.session_id == sid) &
+            res = self.db.engine.execute(select([self.table.c.value], (self.table.c.session_id == sid) &
                                                                  (self.table.c.expire > datetime.utcnow()))).first()
             if res:
                 return SQLSession(sid, self.db.engine, self.table, False, cPickle.loads(res[0]))
 
         while True:
-            sid=''.join(random.choice(string.ascii_letters+string.digits) for i in range(32))
-            res=self.db.engine.execute(select([self.table.c.value], self.table.c.session_id == sid)).first()
+            sid = ''.join(random.choice(string.ascii_letters+string.digits) for i in range(32))
+            res = self.db.engine.execute(select([self.table.c.value], self.table.c.session_id == sid)).first()
             if not res:
                 break
 

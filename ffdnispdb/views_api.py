@@ -41,9 +41,9 @@ class REST(object):
 
     @classmethod
     def accepted_mimetypes(cls, default_mime=DEFAULT_MIMETYPE):
-        am=[m for m, q in request.accept_mimetypes]
+        am = [m for m, q in request.accept_mimetypes]
         if default_mime:
-            am+=[default_mime]
+            am += [default_mime]
         return am
 
     @classmethod
@@ -176,7 +176,7 @@ class ISPResource(Resource):
         GET - return ISP with the given id
     """
     def isp_to_dict(self, isp):
-        r=OrderedDict()
+        r = OrderedDict()
         r['id'] = isp.id
         r['is_ffdn_member'] = isp.is_ffdn_member
         r['json_url'] = isp.json_url
@@ -211,7 +211,7 @@ class CoveredAreaResource(Resource):
         GET - return covered areas for the given ISP
     """
     def ca_to_dict(self, ca):
-        r=OrderedDict()
+        r = OrderedDict()
         r['id'] = ca.id
         if not self.isp_id:
             r['isp'] = OrderedDict()
@@ -230,7 +230,7 @@ class CoveredAreaResource(Resource):
             s = CoveredArea.query.get_or_404(area_id)
             return self.ca_to_dict(s)
         else:
-            s = CoveredArea.query.filter(ISP.is_disabled==False)\
+            s = CoveredArea.query.filter(ISP.is_disabled == False)\
                                  .options(db.joinedload('isp'),
                                           db.defer('isp.json'),
                                           db.defer('area'),
@@ -238,7 +238,7 @@ class CoveredAreaResource(Resource):
             if isp_id:
                 if not ISP.query.filter_by(id=isp_id, is_disabled=False).scalar():
                     raise ObjectNotFound
-                s = s.filter(CoveredArea.isp_id==isp_id)
+                s = s.filter(CoveredArea.isp_id == isp_id)
             return self.handle_list(s, self.ca_to_dict, out_var='covered_areas')
 
 
@@ -267,9 +267,10 @@ def handle_generic_exception(e):
 
 isp_view = ISPResource.as_view('isp_api')
 ispdbapi.add_url_rule('/v1/isp/', defaults={'isp_id': None},
-                      view_func=isp_view, methods=['GET',])
+                      view_func=isp_view, methods=['GET'])
 ispdbapi.add_url_rule('/v1/isp/<int:isp_id>/', view_func=isp_view,
                       methods=['GET'])
+
 
 @ispdbapi.route('/v1/isp/export_urls/')
 @ispdbapi.route('/v1/isp/all_your_urls_are_belong_to_us/')
@@ -286,7 +287,7 @@ def all_urls():
 
 ca_view = CoveredAreaResource.as_view('covered_area_api')
 ispdbapi.add_url_rule('/v1/covered_area/', defaults={'area_id': None},
-                      view_func=ca_view, methods=['GET',])
+                      view_func=ca_view, methods=['GET'])
 ispdbapi.add_url_rule('/v1/covered_area/<int:area_id>/', view_func=ca_view,
                       methods=['GET'])
 ispdbapi.add_url_rule('/v1/isp/<int:isp_id>/covered_areas/', view_func=ca_view,

@@ -84,7 +84,7 @@ class ISP(db.Model):
 
     def __init__(self, *args, **kwargs):
         super(ISP, self).__init__(*args, **kwargs)
-        self.json={}
+        self.json = {}
 
     def pre_save(self, *args):
         if 'name' in self.json:
@@ -106,17 +106,17 @@ class ISP(db.Model):
         RegisteredOffice.query.filter_by(isp_id=self.id).delete()
 
         for ca_js in self.json.get('coveredAreas', []):
-            ca=CoveredArea()
-            ca.name=ca_js['name']
-            area=ca_js.get('area')
-            ca.area=db.func.CastToMultiPolygon(
+            ca = CoveredArea()
+            ca.name = ca_js['name']
+            area = ca_js.get('area')
+            ca.area = db.func.CastToMultiPolygon(
                 db.func.GeomFromGeoJSON(dict_to_geojson(area))
             ) if area else None
             self.covered_areas.append(ca)
 
-        coords=self.json.get('coordinates')
+        coords = self.json.get('coordinates')
         if coords:
-            self.registered_office=RegisteredOffice(
+            self.registered_office = RegisteredOffice(
                 point=db.func.MakePoint(coords['longitude'], coords['latitude'], 4326)
             )
 
@@ -137,15 +137,15 @@ class ISP(db.Model):
 
     @staticmethod
     def str2date(_str):
-        d=None
+        d = None
         try:
-            d=datetime.strptime(_str, '%Y-%m-%d')
+            d = datetime.strptime(_str, '%Y-%m-%d')
         except ValueError:
             pass
 
         if d is None:
             try:
-                d=datetime.strptime(_str, '%Y-%m')
+                d = datetime.strptime(_str, '%Y-%m')
             except ValueError:
                 pass
         return d
@@ -220,7 +220,7 @@ class ISPWhoosh(object):
 
     @classmethod
     def get_index(cls):
-        idxdir=cls.get_index_dir()
+        idxdir = cls.get_index_dir()
         if index.exists_in(idxdir):
             idx = index.open_dir(idxdir)
         else:
@@ -239,21 +239,21 @@ class ISPWhoosh(object):
     @classmethod
     def search(cls, terms):
         with ISPWhoosh.get_index().searcher() as s:
-            sres=cls._search(s, terms)
-            ranks={}
+            sres = cls._search(s, terms)
+            ranks = {}
             for rank, r in enumerate(sres):
-                ranks[r['id']]=rank
+                ranks[r['id']] = rank
 
             if not len(ranks):
                 return []
 
-            _res=ISP.query.filter(ISP.id.in_(ranks.keys()))
+            _res = ISP.query.filter(ISP.id.in_(ranks.keys()))
 
         return sorted(_res, key=lambda r: ranks[r.id])
 
     @classmethod
     def update_document(cls, writer, model):
-        kw={
+        kw = {
             'id': unicode(model.id),
             '_stored_id': model.id,
             'is_ffdn_member': model.is_ffdn_member,
@@ -277,7 +277,7 @@ class ISPWhoosh(object):
         if not len(changes):
             return
 
-        idx=cls.get_index()
+        idx = cls.get_index()
         with idx.writer() as writer:
             for update, model in isp_changes:
                 if update:

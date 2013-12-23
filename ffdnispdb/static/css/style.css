@@ -258,6 +258,7 @@ footer .bracket:before {
     margin: 11px 0 0 22px;
     color: #cccccc;
     transition-duration: 300ms;
+    cursor: default;
 }
 
 footer:hover .bracket:before {
