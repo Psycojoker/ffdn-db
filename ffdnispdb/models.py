@@ -261,7 +261,7 @@ class ISPWhoosh(object):
             'name': model.name,
             'shortname': model.shortname,
             'description': model.json.get('description'),
-            'covered_areas': model.covered_areas_names(),
+            'covered_areas': ','.join(model.covered_areas_names()),
             'step': model.json.get('progressStatus')
         }
         writer.update_document(**kw)
