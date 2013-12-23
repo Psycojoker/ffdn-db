@@ -1,6 +1,6 @@
 
 from ffdnispdb import create_app, db, utils
-from ffdnispdb.models import ISP
+from ffdnispdb.models import ISP, CoveredArea
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 import unittest
@@ -116,6 +116,9 @@ class TestForm(TestCase):
         })
         self.assertNotEqual(resp.location, None)
         self.assertEqual(ISP.query.filter_by(name='Test').count(), 1)
+        self.assertEqual(
+            CoveredArea.query.filter_by(name='Somewhere over the rainbow').count(), 1
+        )
 
 
 class TestAPI(TestCase):
