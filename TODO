@@ -1,22 +1,22 @@
 
 
 - Crawler:
-~ i18n
+X i18n
 X http cache support
 X write a "cron task" to periodically update the data
 
 - Manual ISP insertion form:
 * date picker
-* geo coordinates picker
+~ geo coordinates picker
 
 - Misc:
-* Rest API
-* geo stuff with spatialite (e.g find an ISP near you)
+X Rest API
+X geo stuff with spatialite (e.g find an ISP near you)
 X Full-text search engine based on woosh 
 X Access-control on the edit feature
-* separate config for prod/dev, email admin on error for prod
+X separate config for prod/dev, email admin on error for prod
 ~ write unit-test
-* better cache support
+~ better cache support
 
 
 Legend:
