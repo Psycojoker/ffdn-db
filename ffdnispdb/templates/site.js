@@ -275,7 +275,8 @@ function init_map() {
     legend.onAdd = function (map) {
         var div = L.DomUtil.create('div', 'info legend');
         div.innerHTML  = '<small>'+{{ _('Legend')|js_str }}+'&thinsp;:</small>&nbsp; ';
-        div.innerHTML += '<i title="'+{{ _('Member of the FDN Federation')|js_str }}+'" /> ';
+        div.innerHTML += '<i style="background: #ff7900" title="'+{{ _('ISP')|js_str }}+'"></i> ';
+        div.innerHTML += '<i style="background: #00aac9" title="'+{{ _('Member of the FDN Federation')|js_str }}+'"></i> ';
         $(div).children('i').tooltip({container: 'body'});
 
         return div;
