@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: gu1@cafai.fr\n"
-"POT-Creation-Date: 2013-12-23 21:20+0100\n"
-"PO-Revision-Date: 2013-12-23 21:25+0100\n"
+"POT-Creation-Date: 2013-12-24 16:27+0100\n"
+"PO-Revision-Date: 2013-12-24 16:27+0100\n"
 "Last-Translator: Gu1 <gu1@cafai.fr>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -462,7 +462,7 @@ msgstr "Accueil"
 
 #: ffdnispdb/templates/layout.html:46 ffdnispdb/templates/project_list.html:3
 msgid "Project List"
-msgstr "Liste des projet"
+msgstr "Liste des projets"
 
 #: ffdnispdb/templates/layout.html:47
 msgid "Format"
@@ -484,6 +484,10 @@ msgstr "Fermer"
 #: ffdnispdb/templates/validator_generic.html:82
 msgid "Confirm"
 msgstr "Confirmer"
+
+#: ffdnispdb/templates/locale_selector.html:7
+msgid "Help us translate this website to your language !"
+msgstr "Aidez-nous à traduire ce site dans votre langue !"
 
 #: ffdnispdb/templates/map_popup.html:15
 #: ffdnispdb/templates/project_detail.html:50
@@ -549,6 +553,7 @@ msgid "Step"
 msgstr "Étape"
 
 #: ffdnispdb/templates/project_list_macro.html:19
+#: ffdnispdb/templates/site.js:278
 msgid "Member of the FDN Federation"
 msgstr "Membre de la Fédération FDN"
 
@@ -583,6 +588,10 @@ msgstr "Fini"
 #: ffdnispdb/templates/site.js:142
 msgid "Find ISPs near you"
 msgstr "Trouvez des FAI proche de vous"
+
+#: ffdnispdb/templates/site.js:277
+msgid "Legend"
+msgstr "Légende"
 
 #: ffdnispdb/templates/validator_generic.html:81
 msgid "Retry"

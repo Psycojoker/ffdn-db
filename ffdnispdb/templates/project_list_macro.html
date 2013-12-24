@@ -16,7 +16,7 @@
         <td>
           {{ project.json.progressStatus|step_to_label|safe }}
           {%- if project.is_ffdn_member %}
-          &thinsp;<a href="#" rel="tooltip" data-placement="right" title="{{ _("Member of the FDN Federation") }}"><span class="label label-info">FFDN</span></a>
+          &thinsp;<a href="#" data-toggle="tooltip" data-placement="right" title="{{ _("Member of the FDN Federation") }}"><span class="label label-info">FFDN</span></a>
           {%- endif %}
         </td>
         <td><a class="pull-right btn btn-small" title="{{ _("Examine") }}" href="{{ url_for('.project', projectid=project.id) }}"><i class="icon-search"></i></a>

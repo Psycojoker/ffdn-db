@@ -15,7 +15,7 @@ $(function () {
         });
     });
     $('.selectpicker').selectpicker();
-    $("[rel=tooltip]").tooltip();
+    $("[data-toggle='tooltip']").tooltip();
 
     var Geoinput = function(el, options, e) {
         this.$element = $(el);
@@ -267,6 +267,20 @@ function init_map() {
     if(!$('#map').length)
         return;
 
+
+    var legend = L.control({
+        position: 'bottomleft'
+    });
+
+    legend.onAdd = function (map) {
+        var div = L.DomUtil.create('div', 'info legend');
+        div.innerHTML  = '<small>'+{{ _('Legend')|js_str }}+'&thinsp;:</small>&nbsp; ';
+        div.innerHTML += '<i title="'+{{ _('Member of the FDN Federation')|js_str }}+'" /> ';
+        $(div).children('i').tooltip({container: 'body'});
+
+        return div;
+    };
+
     var map = L.map('map', {
         center: new L.LatLng(46.603354, 10),
         zoom: 4,
@@ -276,6 +290,7 @@ function init_map() {
     });
     map.attributionControl.setPrefix('');
     map.addControl(new L.Control.Pinpoint);
+    map.addControl(legend);
 
     L.control.layers({'MapQuest': mapquest, 'OSM Mapnik': osm, 'MapQuest Aerial': mapquestsat}).addTo(map);
     map.on('baselayerchange', function(a) {
