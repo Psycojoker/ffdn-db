@@ -16,7 +16,7 @@ gevent==1.0
 jsonschema==2.3.0
 requests==2.1.0
 # ndg & pyasn required for SNI
-ndg-httpsclient==0.3.2
+-e git+https://github.com/Gu1/ndg_httpsclient.git#egg=ndg-httpsclient
 pyasn1==0.1.7
 docutils==0.11
 # full-text search
