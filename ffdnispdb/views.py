@@ -438,7 +438,7 @@ def locale_selector():
 @ispdb.app_template_filter('step_to_label')
 def step_to_label(step):
     if step:
-        return u"<a href='#' rel='tooltip' data-placement='right' title='" + STEPS[step] + "'><span class='badge badge-" + STEPS_LABELS[step] + "'>" + str(step) + "</span></a>"
+        return u"<a href='#' data-toggle='tooltip' data-placement='right' title='" + STEPS[step] + "'><span class='badge badge-" + STEPS_LABELS[step] + "'>" + str(step) + "</span></a>"
     else:
         return u'-'
 

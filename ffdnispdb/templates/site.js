@@ -138,7 +138,7 @@ L.Control.Pinpoint = L.Control.extend({
         this._button = L.DomUtil.create('a', 'leaflet-control-pinpoint-button', this._container);
         this._button.href = '#';
         this._button.innerHTML = '<i class="icon-hand-down"></i>';
-        this._button.style = 'cursor: pointer';
+        this._button.style.cursor = 'pointer';
         this._button.title = {{ _('Find ISPs near you')|js_str }};
         L.DomEvent
          .addListener(this._button, 'click', L.DomEvent.stop)
