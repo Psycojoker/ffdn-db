@@ -2,6 +2,7 @@
 
 import io
 import cgi
+import sys
 import pytz
 from datetime import datetime, timedelta
 from werkzeug.http import parse_date
@@ -122,8 +123,12 @@ class Crawler(object):
             yield self.err('Too many redirects')
         except requests.exceptions.RequestException as e:
             yield self.err('Internal request exception')
-#        except Exception as e:
-#            yield self.err('Unexpected request exception')
+        except Exception as e:
+            # Unexpected exception: abort the validation, then re-raise it
+            # so that it's logged.
+            tb = sys.exc_info()[2]
+            yield self.abort('Unexpected request exception')
+            raise e, None, tb
 
         if r is None:
             yield self.abort('Connection could not be established, aborting')

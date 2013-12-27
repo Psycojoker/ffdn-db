@@ -110,7 +110,15 @@ try:
             db.session.commit()
 
             validator=TextValidator()
-            log=''.join(validator(isp.json_url, isp.cache_info or {}))
+            log = ''
+            exc, exc_trace = None, None
+            try:
+                for l in validator(isp.json_url, isp.cache_info or {}):
+                    log += l
+            except Exception as e:
+                exc = e
+                exc_trace = traceback.format_exc()
+
             if not validator.success: # handle error
                 isp.update_error_strike += 1
                 # reset cache info (to force refetch next time)
@@ -124,6 +132,10 @@ try:
                     send_warning_email(isp, log)
 
                 print log.rstrip()+'\n'
+                if exc:
+                    print u'Unexpected exception in the validator: %r' % exc
+                    print exc_log
+
                 continue
 
             if validator.modified:

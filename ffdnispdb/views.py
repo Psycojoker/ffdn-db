@@ -2,7 +2,7 @@
 
 from flask import request, redirect, url_for, abort, \
     render_template, flash, json, session, Response, Markup, \
-    stream_with_context, current_app, Blueprint
+    current_app, Blueprint
 from flask.ext.babel import gettext as _, get_locale
 from flask.ext.mail import Message
 import itsdangerous
@@ -16,7 +16,7 @@ locale.setlocale(locale.LC_ALL, '')
 from time import time
 import os.path
 
-from . import forms
+from . import forms, utils
 from .constants import STEPS, STEPS_LABELS, LOCALES_FLAGS
 from . import db, cache, mail
 from .models import ISP, ISPWhoosh, CoveredArea, RegisteredOffice
@@ -254,7 +254,7 @@ def json_url_validator():
         session['form_json']['validator'] = time()
 
     validator = WebValidator(session._get_current_object(), 'form_json')
-    return Response(stream_with_context(
+    return Response(utils.stream_with_ctx_and_exc(
         validator(session['form_json']['url'])
     ), mimetype="text/event-stream")
 
@@ -317,7 +317,7 @@ def reactivate_validator():
         session['form_reactivate']['validator'] = time()
 
     validator = PrettyValidator(session._get_current_object(), 'form_reactivate')
-    return Response(stream_with_context(
+    return Response(utils.stream_with_ctx_and_exc(
         validator(p.json_url, p.cache_info or {})
     ), mimetype="text/event-stream")
 

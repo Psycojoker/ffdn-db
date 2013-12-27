@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from flask import current_app
+from flask.globals import _request_ctx_stack
 from collections import OrderedDict
 from datetime import datetime
 import pytz
 import json
+import sys
 from . import db
 
 
@@ -67,3 +69,48 @@ def filesize_fmt(num):
             return fmt(num, x)
         num /= 1024.0
     return fmt(num, 'TiB')
+
+
+def stream_with_ctx_and_exc(generator_or_function):
+    """
+    taken from flask's code, added exception logging
+    """
+    try:
+        gen = iter(generator_or_function)
+    except TypeError:
+        def decorator(*args, **kwargs):
+            gen = generator_or_function()
+            return stream_with_context(gen)
+        return update_wrapper(decorator, generator_or_function)
+
+    def generator():
+        ctx = _request_ctx_stack.top
+        if ctx is None:
+            raise RuntimeError('Attempted to stream with context but '
+                'there was no context in the first place to keep around.')
+        with ctx:
+            # Dummy sentinel.  Has to be inside the context block or we're
+            # not actually keeping the context around.
+            yield None
+
+            # The try/finally is here so that if someone passes a WSGI level
+            # iterator in we're still running the cleanup logic.  Generators
+            # don't need that because they are closed on their destruction
+            # automatically.
+            try:
+                for item in gen:
+                    yield item
+            except Exception as e:
+                exc_type, exc_value, tb = sys.exc_info()
+                current_app.log_exception((exc_type, exc_value, tb))
+            finally:
+                if hasattr(gen, 'close'):
+                    gen.close()
+
+    # The trick is to start the generator.  Then the code execution runs until
+    # the first dummy None is yielded at which point the context was already
+    # pushed.  This item is discarded.  Then when the iteration continues the
+    # real generator is executed.
+    wrapped_g = generator()
+    next(wrapped_g)
+    return wrapped_g
