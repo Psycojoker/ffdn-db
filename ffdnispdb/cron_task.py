@@ -84,7 +84,7 @@ Thanks,
 The FFDN ISP Database team
 https://db.ffdn.org
     """.strip()%(isp.complete_name, isp.json_url, debug_msg.strip(),
-                 url_for('reactivate_isp', projectid=isp.id), gen_reactivate_key(isp))
+                 url_for('ispdb.reactivate_isp', projectid=isp.id), gen_reactivate_key(isp))
     msg.add_recipient(isp.tech_email)
     print u'    Sending notification email to %s'%(isp.tech_email)
     mail.send(msg)
