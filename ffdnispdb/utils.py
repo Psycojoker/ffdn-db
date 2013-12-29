@@ -4,6 +4,7 @@ from flask import current_app
 from flask.globals import _request_ctx_stack
 from collections import OrderedDict
 from datetime import datetime
+from urlparse import urlunsplit
 import pytz
 import json
 import sys
@@ -114,3 +115,17 @@ def stream_with_ctx_and_exc(generator_or_function):
     wrapped_g = generator()
     next(wrapped_g)
     return wrapped_g
+
+
+def make_ispjson_url(split_url):
+    """
+    Take a tuple as returned by urlsplit and return the
+    isp.json url for that domain
+
+    >>> from urlparse import urlsplit
+    >>> make_ispjson_url(urlsplit('http://isp.com'))
+    'http://isp.com/isp.json'
+    """
+    u = list(split_url)
+    u[2] = '/isp.json'  # new path
+    return urlunsplit(u)

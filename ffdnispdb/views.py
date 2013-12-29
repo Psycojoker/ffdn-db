@@ -10,7 +10,6 @@ import docutils.core
 import ispformat.specs
 
 from datetime import datetime
-from urlparse import urlunsplit
 import locale
 locale.setlocale(locale.LC_ALL, '')
 from time import time
@@ -168,9 +167,7 @@ def edit_project(projectid):
         form = forms.ProjectJSONForm(obj=isp)
         if form.validate_on_submit():
             isp.tech_email = form.tech_email.data
-            u = list(form.json_url.data)
-            u[2] = '/isp.json'  # new path
-            url = urlunsplit(u)
+            url = utils.make_ispjson_url(form.json_url.data)
             isp.json_url = url
 
             db.session.add(isp)
@@ -263,9 +260,7 @@ def json_url_validator():
 def create_project_json():
     form = forms.ProjectJSONForm()
     if form.validate_on_submit():
-        u = list(form.json_url.data)
-        u[2] = '/isp.json'  # new path
-        url = urlunsplit(u)
+        url = utils.make_ispjson_url(form.json_url.data)
         session['form_json'] = {'url': url, 'tech_email': form.tech_email.data}
         return render_template('project_json_validator.html')
     return render_template('add_project_json_form.html', form=form)
