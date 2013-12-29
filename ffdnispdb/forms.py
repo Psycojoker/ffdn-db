@@ -149,7 +149,8 @@ class ProjectForm(Form):
                                           min_entries=1, widget=InputListWidget(),
                                           description=[None, _(u'Descriptive name of the covered areas and technologies deployed')])
     latitude      = DecimalField(_(u'latitude'), validators=[Optional(), NumberRange(min=-90, max=90)],
-                             description=[None, _(u'Geographical coordinates of your registered office or usual meeting location.')])
+                             description=[None, _(u'Coordinates of your registered office or usual meeting location. '
+                                                   '<strong>Required in order to appear on the map.</strong>')])
     longitude     = DecimalField(_(u'longitude'), validators=[Optional(), NumberRange(min=-180, max=180)])
     step          = SelectField(_(u'progress step'), choices=STEP_CHOICES, coerce=int)
     member_count     = IntegerField(_(u'members'), validators=[Optional(), NumberRange(min=0)],
@@ -224,7 +225,7 @@ class ProjectForm(Form):
         obj=type('abject', (object,), {})()
         def set_attr(attr, itemk=None, d=json):
             if itemk is None:
-                itemk=attr
+                itemk = attr
             if itemk in d:
                 setattr(obj, attr, d[itemk])
         set_attr('name')
@@ -236,7 +237,7 @@ class ProjectForm(Form):
         set_attr('main_ml', 'mainMailingList')
         set_attr('creation_date', 'creationDate')
         if hasattr(obj, 'creation_date'):
-            obj.creation_date=ISP.str2date(obj.creation_date)
+            obj.creation_date = ISP.str2date(obj.creation_date)
         set_attr('step', 'progressStatus')
         set_attr('member_count', 'memberCount')
         set_attr('subscriber_count', 'subscriberCount')
@@ -247,7 +248,7 @@ class ProjectForm(Form):
         if 'otherWebsites' in json:
             setattr(obj, 'other_websites', [{'name': n, 'url': w} for n, w in json['otherWebsites'].iteritems()])
         set_attr('covered_areas', 'coveredAreas')
-        obj.tech_email=isp.tech_email
+        obj.tech_email = isp.tech_email
         return cls(obj=obj)
 
 

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: gu1@cafai.fr\n"
-"POT-Creation-Date: 2013-12-24 17:06+0100\n"
-"PO-Revision-Date: 2013-12-24 17:06+0100\n"
+"POT-Creation-Date: 2013-12-29 17:22+0100\n"
+"PO-Revision-Date: 2013-12-29 17:23+0100\n"
 "Last-Translator: Gu1 <gu1@cafai.fr>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -101,7 +101,7 @@ msgstr "Technologies déployées"
 msgid "area"
 msgstr "zone"
 
-#: ffdnispdb/forms.py:115 ffdnispdb/forms.py:166
+#: ffdnispdb/forms.py:115 ffdnispdb/forms.py:167
 msgid "You must fill both fields"
 msgstr "Vous devez remplir les deux champs"
 
@@ -208,66 +208,69 @@ msgstr "latitude"
 
 #: ffdnispdb/forms.py:152
 msgid ""
-"Geographical coordinates of your registered office or usual meeting location."
-msgstr "Coordonées géographiques de votre siège ou lieu habituel de rencontre."
+"Coordinates of your registered office or usual meeting location. "
+"<strong>Required in order to appear on the map.</strong>"
+msgstr ""
+"Coordonées de votre siège ou lieu habituel de rencontre. <strong>Requis pour "
+"apparaitre sur la carte.</strong>"
 
-#: ffdnispdb/forms.py:153
+#: ffdnispdb/forms.py:154
 msgid "longitude"
 msgstr "longitude"
 
-#: ffdnispdb/forms.py:154
+#: ffdnispdb/forms.py:155
 msgid "progress step"
 msgstr "étape de progression"
 
-#: ffdnispdb/forms.py:155 ffdnispdb/templates/map_popup.html:18
+#: ffdnispdb/forms.py:156 ffdnispdb/templates/map_popup.html:18
 #: ffdnispdb/templates/project_detail.html:72
 msgid "members"
 msgstr "membres"
 
-#: ffdnispdb/forms.py:156
+#: ffdnispdb/forms.py:157
 msgid "Number of members"
 msgstr "Nombre de membres"
 
-#: ffdnispdb/forms.py:157 ffdnispdb/templates/map_popup.html:21
+#: ffdnispdb/forms.py:158 ffdnispdb/templates/map_popup.html:21
 #: ffdnispdb/templates/project_detail.html:76
 msgid "subscribers"
 msgstr "abonné-e-s"
 
-#: ffdnispdb/forms.py:158
+#: ffdnispdb/forms.py:159
 msgid "Number of subscribers to an internet access"
 msgstr "Nombre d'abonné-e-s à un accès à Internet"
 
-#: ffdnispdb/forms.py:160 ffdnispdb/forms.py:288
+#: ffdnispdb/forms.py:161 ffdnispdb/forms.py:289
 msgid "Email"
 msgstr "Email"
 
-#: ffdnispdb/forms.py:161
+#: ffdnispdb/forms.py:162
 msgid "Technical contact, in case of problems with your submission"
 msgstr "Contact technique, en cas de problème"
 
-#: ffdnispdb/forms.py:173
+#: ffdnispdb/forms.py:174
 msgid "You must specify at least one area"
 msgstr "Vous devez spécifier au moins une zone"
 
-#: ffdnispdb/forms.py:180
+#: ffdnispdb/forms.py:181
 #, python-format
 msgid "The size of all GeoJSON data combined must not exceed %(max_size)s"
 msgstr ""
 "La taille de toutes les données GeoJSON ne soit pas excéder %(max_size)s"
 
-#: ffdnispdb/forms.py:269 ffdnispdb/forms.py:293
+#: ffdnispdb/forms.py:270 ffdnispdb/forms.py:294
 msgid "Invalid URL"
 msgstr "URL invalide"
 
-#: ffdnispdb/forms.py:285
+#: ffdnispdb/forms.py:286
 msgid "base url"
 msgstr "url de base"
 
-#: ffdnispdb/forms.py:285
+#: ffdnispdb/forms.py:286
 msgid "E.g. https://isp.com/"
 msgstr "E.g. https://isp.com/"
 
-#: ffdnispdb/forms.py:286
+#: ffdnispdb/forms.py:287
 msgid ""
 "A ressource implementing our JSON-Schema specification must exist at path /"
 "isp.json"
@@ -275,31 +278,31 @@ msgstr ""
 "Une ressource implémentant notre spécification JSON-Schema doit exister au "
 "chemin /isp.json"
 
-#: ffdnispdb/forms.py:289
+#: ffdnispdb/forms.py:290
 msgid "Technical contact, in case of problems"
 msgstr "Contact technique, en cas de problèmes"
 
-#: ffdnispdb/forms.py:296
+#: ffdnispdb/forms.py:297
 msgid "Invalid URL (must be HTTP(S))"
 msgstr "URL invalide (doit être HTTP(S))"
 
-#: ffdnispdb/forms.py:299
+#: ffdnispdb/forms.py:300
 msgid "This URL is already in our database"
 msgstr "Cette URL est déjà dans notre base de données"
 
-#: ffdnispdb/forms.py:303
+#: ffdnispdb/forms.py:304
 msgid "Tech Email"
 msgstr "Email Technique"
 
-#: ffdnispdb/forms.py:304
+#: ffdnispdb/forms.py:305
 msgid "The Technical contact you provided while registering"
 msgstr "Le contact technique que vous avez fourni lors de l'enregistrement"
 
-#: ffdnispdb/views.py:164 ffdnispdb/views.py:178
+#: ffdnispdb/views.py:163 ffdnispdb/views.py:175
 msgid "Project modified"
 msgstr "Projet modifié"
 
-#: ffdnispdb/views.py:213
+#: ffdnispdb/views.py:210
 msgid ""
 "If you provided the correct email adress, you must will receive a message "
 "shortly (check your spam folder)"
@@ -307,11 +310,11 @@ msgstr ""
 "Si vous avez fourni l'adresse correcte, vous allez recevoir un message sous "
 "peu (regardez dans votre dossier spam)"
 
-#: ffdnispdb/views.py:237 ffdnispdb/views.py:295
+#: ffdnispdb/views.py:234 ffdnispdb/views.py:290
 msgid "Project created"
 msgstr "Projet créé"
 
-#: ffdnispdb/views.py:361
+#: ffdnispdb/views.py:356
 msgid "Automatic updates activated"
 msgstr "Mises à jour automatiques activées"
 
