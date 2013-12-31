@@ -131,7 +131,7 @@ try:
                     print u'    three strikes, you\'re out'
                     send_warning_email(isp, log)
 
-                print log.rstrip()+'\n'
+                print log.rstrip().encode('utf-8')+'\n'
                 if exc:
                     print u'Unexpected exception in the validator: %r' % exc
                     print exc_log
