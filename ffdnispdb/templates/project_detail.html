@@ -48,7 +48,7 @@
         {%- endif %}
         {%- if project.email %}
         {{ field(_("email")) }}
-          <dd>{% if project.email %}<a href="mailto:{{ project.email }}"><i class="icon-envelope"></i> {{ project.email }}</a>{% else %}<em>None given</em>{% endif %}</dd>
+          <dd>{% if project.email %}<a href="mailto:{{ "[NO_SPAM]"+project.email }}"><i class="icon-envelope"></i> {{ project.email|e|replace("@", '<span style="display: none">PWET</span>@'|safe) }}</a>{% else %}<em>None given</em>{% endif %}</dd>
         {%- endif %}
         {%- if project.mainMailingList %}
         {{ field(_("main mailing list")) }}
