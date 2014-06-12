@@ -61,7 +61,7 @@ class GeoJSONField(TextField):
             except Exception as e:
                 raise ValueError(_(u'Not a valid JSON value'))
         elif valuelist and valuelist[0].strip() == '':
-            self.data = None # if an empty string was passed, set data as None
+            self.data = None  # if an empty string was passed, set data as None
 
     def _value(self):
         if self.raw_data:
@@ -90,7 +90,7 @@ class Unique(object):
         self.message = message
 
     def __call__(self, form, field):
-        default=field.default() if callable(field.default) else field.default
+        default = field.default() if callable(field.default) else field.default
         if field.object_data != default and field.object_data == field.data:
             return
         check = self.model.query.filter(self.field == field.data).first()
@@ -98,63 +98,66 @@ class Unique(object):
             raise ValidationError(self.message)
 
 
-TECHNOLOGIES_CHOICES=(
+TECHNOLOGIES_CHOICES = (
     ('ftth', _('FTTH')),
     ('dsl', _('DSL')),
     ('wifi', _('Wi-Fi')),
 )
+
+
 class CoveredArea(InsecureForm):
-    name         = TextField(_(u'name'), widget=partial(TextInput(), class_='input-medium', placeholder=_(u'Area')))
+    name = TextField(_(u'name'), widget=partial(TextInput(), class_='input-medium', placeholder=_(u'Area')))
     technologies = SelectMultipleField(_(u'technologies'), choices=TECHNOLOGIES_CHOICES,
                                        widget=partial(Select(True), **{'class': 'selectpicker', 'data-title': _(u'Technologies deployed')}))
-    area         = GeoJSONField(_('area'), widget=partial(TextArea(), class_='geoinput'))
+    area = GeoJSONField(_('area'), widget=partial(TextArea(), class_='geoinput'))
 
     def validate(self, *args, **kwargs):
-        r=super(CoveredArea, self).validate(*args, **kwargs)
+        r = super(CoveredArea, self).validate(*args, **kwargs)
         if bool(self.name.data) != bool(self.technologies.data):
             self._fields['name'].errors += [_(u'You must fill both fields')]
-            r=False
+            r = False
         return r
 
 
 class OtherWebsites(InsecureForm):
     name = TextField(_(u'name'), widget=partial(TextInput(), class_='input-small', placeholder=_(u'Name')))
-    url  = TextField(_(u'url'), widget=partial(TextInput(), class_='input-medium', placeholder=_(u'URL')),
-                     validators=[Optional(), URL(require_tld=True)])
+    url = TextField(_(u'url'), widget=partial(TextInput(), class_='input-medium', placeholder=_(u'URL')),
+                   validators=[Optional(), URL(require_tld=True)])
 
 
 STEP_CHOICES = [(k, LazyProxy(lambda k, s: u'%u - %s' % (k, s), k, STEPS[k], enable_cache=False)) for k in STEPS]
 
+
 class ProjectForm(Form):
-    name          = TextField(_(u'full name'), description=[_(u'E.g. French Data Network')],
-                              validators=[DataRequired(), Length(min=2), Unique(ISP, ISP.name)])
-    shortname     = TextField(_(u'short name'), description=[_(u'E.g. FDN')],
-                              validators=[Optional(), Length(min=2, max=15), Unique(ISP, ISP.shortname)])
-    description   = TextField(_(u'description'), description=[None, _(u'Short text describing the project')])
-    logo_url      = TextField(_(u'logo url'), validators=[Optional(), URL(require_tld=True)])
-    website       = TextField(_(u'website'), validators=[Optional(), URL(require_tld=True)])
-    other_websites= FieldList(MyFormField(OtherWebsites, widget=partial(InputListWidget(), class_='formfield')),
-                                          min_entries=1, widget=InputListWidget(),
-                                          description=[None, _(u'Additional websites that you host (e.g. wiki, etherpad...)')])
+    name = TextField(_(u'full name'), description=[_(u'E.g. French Data Network')],
+                    validators=[DataRequired(), Length(min=2), Unique(ISP, ISP.name)])
+    shortname = TextField(_(u'short name'), description=[_(u'E.g. FDN')],
+                         validators=[Optional(), Length(min=2, max=15), Unique(ISP, ISP.shortname)])
+    description = TextField(_(u'description'), description=[None, _(u'Short text describing the project')])
+    logo_url = TextField(_(u'logo url'), validators=[Optional(), URL(require_tld=True)])
+    website = TextField(_(u'website'), validators=[Optional(), URL(require_tld=True)])
+    other_websites = FieldList(MyFormField(OtherWebsites, widget=partial(InputListWidget(), class_='formfield')),
+                              min_entries=1, widget=InputListWidget(),
+                              description=[None, _(u'Additional websites that you host (e.g. wiki, etherpad...)')])
     contact_email = TextField(_(u'contact email'), validators=[Optional(), Email()],
                               description=[None, _(u'General contact email address')])
-    main_ml       = TextField(_(u'main mailing list'), validators=[Optional(), Email()],
-                              description=[None, _(u'Address of your main mailing list')])
+    main_ml = TextField(_(u'main mailing list'), validators=[Optional(), Email()],
+                       description=[None, _(u'Address of your main mailing list')])
     creation_date = DateField(_(u'creation date'), validators=[Optional()], widget=partial(TextInput(), placeholder=_(u'YYYY-mm-dd')),
                               description=[None, _(u'Date at which the legal structure for your project was created')])
-    chatrooms     = FieldList(TextField(_(u'chatrooms')), min_entries=1, widget=InputListWidget(),
-                              description=[None, _(u'In URI form, e.g. <code>irc://irc.isp.net/#isp</code> or '+
-                                                    '<code>xmpp:isp@chat.isp.net?join</code>')])
+    chatrooms = FieldList(TextField(_(u'chatrooms')), min_entries=1, widget=InputListWidget(),
+                         description=[None, _(u'In URI form, e.g. <code>irc://irc.isp.net/#isp</code> or ' +
+                         '<code>xmpp:isp@chat.isp.net?join</code>')])
     covered_areas = FieldList(MyFormField(CoveredArea, _('Covered Areas'), widget=partial(InputListWidget(), class_='formfield')),
-                                          min_entries=1, widget=InputListWidget(),
-                                          description=[None, _(u'Descriptive name of the covered areas and technologies deployed')])
-    latitude      = DecimalField(_(u'latitude'), validators=[Optional(), NumberRange(min=-90, max=90)],
-                             description=[None, _(u'Coordinates of your registered office or usual meeting location. '
-                                                   '<strong>Required in order to appear on the map.</strong>')])
-    longitude     = DecimalField(_(u'longitude'), validators=[Optional(), NumberRange(min=-180, max=180)])
-    step          = SelectField(_(u'progress step'), choices=STEP_CHOICES, coerce=int)
-    member_count     = IntegerField(_(u'members'), validators=[Optional(), NumberRange(min=0)],
-                                    description=[None, _('Number of members')])
+                             min_entries=1, widget=InputListWidget(),
+                             description=[None, _(u'Descriptive name of the covered areas and technologies deployed')])
+    latitude = DecimalField(_(u'latitude'), validators=[Optional(), NumberRange(min=-90, max=90)],
+                           description=[None, _(u'Coordinates of your registered office or usual meeting location. '
+                           '<strong>Required in order to appear on the map.</strong>')])
+    longitude = DecimalField(_(u'longitude'), validators=[Optional(), NumberRange(min=-180, max=180)])
+    step = SelectField(_(u'progress step'), choices=STEP_CHOICES, coerce=int)
+    member_count = IntegerField(_(u'members'), validators=[Optional(), NumberRange(min=0)],
+                               description=[None, _('Number of members')])
     subscriber_count = IntegerField(_(u'subscribers'), validators=[Optional(), NumberRange(min=0)],
                                     description=[None, _('Number of subscribers to an internet access')])
 
@@ -162,10 +165,10 @@ class ProjectForm(Form):
                             _('Technical contact, in case of problems with your submission')])
 
     def validate(self, *args, **kwargs):
-        r=super(ProjectForm, self).validate(*args, **kwargs)
+        r = super(ProjectForm, self).validate(*args, **kwargs)
         if (self.latitude.data is None) != (self.longitude.data is None):
             self._fields['longitude'].errors += [_(u'You must fill both fields')]
-            r=False
+            r = False
         return r
 
     def validate_covered_areas(self, field):
@@ -182,17 +185,17 @@ class ProjectForm(Form):
 
     def to_json(self, json=None):
         if json is None:
-            json={}
+            json = {}
 
         json['name'] = self.name.data
 
         def optstr(k, v):
             if k in json or v:
-                json[k]=v
+                json[k] = v
 
         def optlist(k, v):
             if k in json or len(v):
-                json[k]=v
+                json[k] = v
 
         def transform_covered_areas(cas):
             for ca in cas:
@@ -213,16 +216,17 @@ class ProjectForm(Form):
         optstr('progressStatus', self.step.data)
         optstr('memberCount', self.member_count.data)
         optstr('subscriberCount', self.subscriber_count.data)
-        optlist('chatrooms', filter(bool, self.chatrooms.data)) # remove empty strings
+        optlist('chatrooms', filter(bool, self.chatrooms.data))  # remove empty strings
         optstr('coordinates', {'latitude': self.latitude.data, 'longitude': self.longitude.data}
-                                if self.latitude.data else {})
+              if self.latitude.data else {})
         optlist('coveredAreas', list(transform_covered_areas(self.covered_areas.data)))
         return json
 
     @classmethod
     def edit_json(cls, isp):
-        json=isp.json
-        obj=type('abject', (object,), {})()
+        json = isp.json
+        obj = type('abject', (object,), {})()
+
         def set_attr(attr, itemk=None, d=json):
             if itemk is None:
                 itemk = attr
@@ -272,20 +276,21 @@ class URLField(TextField):
 
 def is_url_unique(url):
     if isinstance(url, basestring):
-        url=urlparse.urlsplit(url)
-    t=list(url)
-    t[2]=''
-    u1=urlparse.urlunsplit(t)
-    t[0]='http' if t[0] == 'https' else 'https'
-    u2=urlparse.urlunsplit(t)
+        url = urlparse.urlsplit(url)
+    t = list(url)
+    t[2] = ''
+    u1 = urlparse.urlunsplit(t)
+    t[0] = 'http' if t[0] == 'https' else 'https'
+    u2 = urlparse.urlunsplit(t)
     if ISP.query.filter(ISP.json_url.startswith(u1) | ISP.json_url.startswith(u2)).count() > 0:
         return False
     return True
 
+
 class ProjectJSONForm(Form):
     json_url = URLField(_(u'base url'), description=[_(u'E.g. https://isp.com/'),
-                            _(u'A ressource implementing our JSON-Schema specification '+
-                               'must exist at path /isp.json')])
+                            _(u'A ressource implementing our JSON-Schema specification ' +
+                       'must exist at path /isp.json')])
     tech_email = TextField(_(u'Email'), validators=[Email()], description=[None,
                            _(u'Technical contact, in case of problems')])
 
@@ -303,4 +308,3 @@ class ProjectJSONForm(Form):
 class RequestEditToken(Form):
     tech_email = TextField(_(u'Tech Email'), validators=[Email()], description=[None,
                            _(u'The Technical contact you provided while registering')])
-
