@@ -81,7 +81,7 @@ def isp_find_near():
         'area': {
             'id': ca.id,
             'name': ca.name,
-        }
+            }
     } for ca in q]]
 
     dst = RegisteredOffice.point.distance(db.func.MakePoint(lon, lat), 1).label('distance')
@@ -147,7 +147,7 @@ def edit_project(projectid):
         tokens[r[0]] = r[1]
         # refresh page, without the token in the url
         return redirect(url_for('.edit_project', projectid=r[0]))
-    elif (sess_token is None or (datetime.utcnow()-sess_token).total_seconds() > MAX_TOKEN_AGE):
+    elif (sess_token is None or (datetime.utcnow() - sess_token).total_seconds() > MAX_TOKEN_AGE):
         return redirect(url_for('.gen_edit_token', projectid=isp.id))
 
     if isp.is_local:
@@ -245,7 +245,7 @@ def json_url_validator():
     v = session['form_json'].get('validator')
 
     if v is not None:
-        if v > time()-5:
+        if v > time() - 5:
             abort(429)
     else:
         session['form_json']['validator'] = time()
@@ -306,7 +306,7 @@ def reactivate_validator():
     v = session['form_reactivate'].get('validator')
 
     if v is not None:
-        if v > time()-5:
+        if v > time() - 5:
             abort(429)
     else:
         session['form_reactivate']['validator'] = time()
@@ -317,7 +317,7 @@ def reactivate_validator():
     ), mimetype="text/event-stream")
 
 
-@ispdb.route('/isp/<projectid>/reactivate',  methods=['GET', 'POST'])
+@ispdb.route('/isp/<projectid>/reactivate', methods=['GET', 'POST'])
 def reactivate_isp(projectid):
     """
     Allow to reactivate an ISP after it has been disabled
@@ -382,7 +382,7 @@ def format():
             destination_path=None, writer_name='html',
             settings_overrides=overrides
         )
-        cache.set('format-spec', parts, timeout=60*60*24)
+        cache.set('format-spec', parts, timeout=60 * 60 * 24)
     return render_template('format_spec.html', spec=Markup(parts['html_body']))
 
 
@@ -404,7 +404,7 @@ def site_js():
     js_i18n = cache.get('site_js_%s' % (l,))
     if not js_i18n:
         js_i18n = render_template('site.js')
-        cache.set('site_js_%s' % (l,), js_i18n, timeout=60*60)
+        cache.set('site_js_%s' % (l,), js_i18n, timeout=60 * 60)
     r = Response(js_i18n, headers={
         'Content-type': 'application/javascript',
         'Cache-control': 'private, max-age=3600'
@@ -457,4 +457,3 @@ def locale_flag(l):
 @ispdb.app_template_global('current_locale')
 def current_locale():
     return get_locale()
-
