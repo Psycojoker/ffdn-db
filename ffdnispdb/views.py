@@ -32,7 +32,7 @@ def home():
 
 @ispdb.route('/isp/')
 def project_list():
-    return render_template('project_list.html', projects=ISP.query.filter_by(is_disabled=False))
+    return render_template('project_list.html', projects=ISP.query.filter_by(is_disabled=False).order_by(ISP.name.asc()))
 
 
 @ispdb.app_errorhandler(404)
