@@ -6,9 +6,10 @@ import collections
 from flask import current_app
 from flask.ext.wtf import Form
 from wtforms import Form as InsecureForm
-from wtforms import (TextField, DateField, DecimalField, IntegerField, SelectField,
-                     SelectMultipleField, FieldList, FormField)
-from wtforms.widgets import TextInput, ListWidget, html_params, HTMLString, CheckboxInput, Select, TextArea
+from wtforms import (TextField, DateField, DecimalField, IntegerField,
+                     SelectField, SelectMultipleField, FieldList, FormField)
+from wtforms.widgets import (TextInput, ListWidget, html_params, HTMLString,
+                             CheckboxInput, Select, TextArea)
 from wtforms.validators import (DataRequired, Optional, URL, Email, Length,
                                 NumberRange, ValidationError, StopValidation)
 from flask.ext.babel import lazy_gettext as _, gettext
@@ -122,7 +123,7 @@ class CoveredArea(InsecureForm):
 class OtherWebsites(InsecureForm):
     name = TextField(_(u'name'), widget=partial(TextInput(), class_='input-small', placeholder=_(u'Name')))
     url = TextField(_(u'url'), widget=partial(TextInput(), class_='input-medium', placeholder=_(u'URL')),
-                   validators=[Optional(), URL(require_tld=True)])
+                    validators=[Optional(), URL(require_tld=True)])
 
 
 STEP_CHOICES = [(k, LazyProxy(lambda k, s: u'%u - %s' % (k, s), k, STEPS[k], enable_cache=False)) for k in STEPS]
@@ -130,34 +131,34 @@ STEP_CHOICES = [(k, LazyProxy(lambda k, s: u'%u - %s' % (k, s), k, STEPS[k], ena
 
 class ProjectForm(Form):
     name = TextField(_(u'full name'), description=[_(u'E.g. French Data Network')],
-                    validators=[DataRequired(), Length(min=2), Unique(ISP, ISP.name)])
+                     validators=[DataRequired(), Length(min=2), Unique(ISP, ISP.name)])
     shortname = TextField(_(u'short name'), description=[_(u'E.g. FDN')],
-                         validators=[Optional(), Length(min=2, max=15), Unique(ISP, ISP.shortname)])
+                          validators=[Optional(), Length(min=2, max=15), Unique(ISP, ISP.shortname)])
     description = TextField(_(u'description'), description=[None, _(u'Short text describing the project')])
     logo_url = TextField(_(u'logo url'), validators=[Optional(), URL(require_tld=True)])
     website = TextField(_(u'website'), validators=[Optional(), URL(require_tld=True)])
     other_websites = FieldList(MyFormField(OtherWebsites, widget=partial(InputListWidget(), class_='formfield')),
-                              min_entries=1, widget=InputListWidget(),
-                              description=[None, _(u'Additional websites that you host (e.g. wiki, etherpad...)')])
+                               min_entries=1, widget=InputListWidget(),
+                               description=[None, _(u'Additional websites that you host (e.g. wiki, etherpad...)')])
     contact_email = TextField(_(u'contact email'), validators=[Optional(), Email()],
                               description=[None, _(u'General contact email address')])
     main_ml = TextField(_(u'main mailing list'), validators=[Optional(), Email()],
-                       description=[None, _(u'Address of your main mailing list')])
+                        description=[None, _(u'Address of your main mailing list')])
     creation_date = DateField(_(u'creation date'), validators=[Optional()], widget=partial(TextInput(), placeholder=_(u'YYYY-mm-dd')),
                               description=[None, _(u'Date at which the legal structure for your project was created')])
     chatrooms = FieldList(TextField(_(u'chatrooms')), min_entries=1, widget=InputListWidget(),
-                         description=[None, _(u'In URI form, e.g. <code>irc://irc.isp.net/#isp</code> or ' +
-                         '<code>xmpp:isp@chat.isp.net?join</code>')])
+                          description=[None, _(u'In URI form, e.g. <code>irc://irc.isp.net/#isp</code> or ' +
+                          '<code>xmpp:isp@chat.isp.net?join</code>')])
     covered_areas = FieldList(MyFormField(CoveredArea, _('Covered Areas'), widget=partial(InputListWidget(), class_='formfield')),
-                             min_entries=1, widget=InputListWidget(),
-                             description=[None, _(u'Descriptive name of the covered areas and technologies deployed')])
+                              min_entries=1, widget=InputListWidget(),
+                              description=[None, _(u'Descriptive name of the covered areas and technologies deployed')])
     latitude = DecimalField(_(u'latitude'), validators=[Optional(), NumberRange(min=-90, max=90)],
-                           description=[None, _(u'Coordinates of your registered office or usual meeting location. '
-                           '<strong>Required in order to appear on the map.</strong>')])
+                            description=[None, _(u'Coordinates of your registered office or usual meeting location. '
+                            '<strong>Required in order to appear on the map.</strong>')])
     longitude = DecimalField(_(u'longitude'), validators=[Optional(), NumberRange(min=-180, max=180)])
     step = SelectField(_(u'progress step'), choices=STEP_CHOICES, coerce=int)
     member_count = IntegerField(_(u'members'), validators=[Optional(), NumberRange(min=0)],
-                               description=[None, _('Number of members')])
+                                description=[None, _('Number of members')])
     subscriber_count = IntegerField(_(u'subscribers'), validators=[Optional(), NumberRange(min=0)],
                                     description=[None, _('Number of subscribers to an internet access')])
 
