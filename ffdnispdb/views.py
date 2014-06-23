@@ -5,6 +5,7 @@ from flask import request, redirect, url_for, abort, \
     current_app, Blueprint
 from flask.ext.babel import gettext as _, get_locale
 from flask.ext.mail import Message
+from sqlalchemy.sql import func, asc
 import itsdangerous
 import docutils.core
 import ispformat.specs
@@ -32,7 +33,7 @@ def home():
 
 @ispdb.route('/isp/')
 def project_list():
-    return render_template('project_list.html', projects=ISP.query.filter_by(is_disabled=False).order_by(ISP.name.asc()))
+    return render_template('project_list.html', projects=ISP.query.filter_by(is_disabled=False).order_by(asc(func.lower(ISP.name))))
 
 
 @ispdb.app_errorhandler(404)
